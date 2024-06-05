@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/05/29 09:40:25 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/03 13:25:47 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	check_heredoc(t_msh *msh, char **av)
 {
 	int	i;
 
-	i = 1;
+	i = 0;
 	while (av[i])
 	{
 		if (ft_strcmp(av[i], "<<") == 0 && av[i + 1])
@@ -40,7 +40,7 @@ void	here_doc(t_msh *msh, char **av)
 {
 	char	*line;
 
-	if (check_heredoc(msh, av))
+	if (*av && check_heredoc(msh, av))
 	{
 		line = readline("msh_heredoc> ");
 		while (line)

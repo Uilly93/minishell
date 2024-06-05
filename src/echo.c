@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/05/22 17:18:04 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/03 13:25:19 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@ void ft_echo(char **prompt)
 	int		j;
 	bool	new_line;
 	
-	i = 1;
+	i = 0;
 	j = 1;
 	new_line = true;
-	if (ft_strcmp(prompt[i++], "echo") == 0)
+	if (*prompt && ft_strcmp(prompt[i++], "echo") == 0)
 	{
 		if(prompt[i] == NULL)
 			return ;

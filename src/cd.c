@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/05/27 10:15:32 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/05 10:44:37 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,16 @@ int	ft_cd(char **arg)
 	char	*pwd;
 	char	*path;
 
-	arg++; // skip le ./minishell (pour les tests)
-	if(ft_strcmp(*arg, "cd") == 0)
+	if(*arg && ft_strcmp(*arg, "cd") == 0)
 	{
 		pwd = getcwd(NULL, 0);
 		if (!pwd)
 			return (1);
-		path = join_path(pwd, *arg);
+		arg++;
+		if(*arg == NULL)
+			path = ft_strdup("/"); // need env to fix
+		else
+			path = join_path(pwd, *arg);
 		if (!path)
 			return (1);
 		if (chdir(path) == -1)

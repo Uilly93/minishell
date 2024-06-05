@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 10:42:38 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/05/27 10:45:24 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/03 10:50:33 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	create_child(t_msh *msh, int ac);
 	i = 0;
 	while(i < msh->cmd)
 	{
-		
+		break ;
 	}
+	return (0);
 }

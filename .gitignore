@@ -3,3 +3,4 @@ obj
 includes/libft/*.o
 includes/libft/*.a
 Shelldivers
+out

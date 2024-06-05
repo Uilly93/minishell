@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/05/30 13:55:58 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/05 13:44:18 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,14 @@
 
 typedef struct s_msh
 {
-	char 	*hlimit;
-	char	**prompt;
-	int		nb_cmd;
-	int		out;
-	int		in;
-	char	*infile;
-	char	*outfile;
+	char 			*hlimit;
+	char			**prompt;
+	int				in;
+	int				out;
+	char			*infile;
+	char			*outfile;
+	int				index;
+	struct s_msh	*next;
 }	t_msh;
 
 int		check_heredoc(t_msh *msh, char **av);
