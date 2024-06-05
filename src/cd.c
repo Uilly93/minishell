@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/05 16:28:36 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/05 17:05:20 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,14 @@ int	ft_cd(char **arg)
 			free(pwd);
 		}
 		else
-			path = join_path(pwd, *arg);
+		{
+			path = ft_strjoin(pwd, *arg);
+			free(pwd);
+		}
 		if (!path)
 			return (1);
+		// if(++*arg != NULL)
+		// 	return (write(2, "minishell: cd: too many arguments\n", 34), 1);
 		if (chdir(path) == -1)
 			return (perror("minishell: cd "), free(path), 1);
 		free(path);
