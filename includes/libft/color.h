@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 14:19:38 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/05/29 14:20:22 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/05 15:23:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,49 +15,49 @@
 # define COLOR_H
 
 // Couleurs du texte
-# define BLACK "\033[0;30m"
-# define RED "\033[0;31m"
-# define GREEN "\033[0;32m"
-# define YELLOW "\033[0;33m"
-# define BLUE "\033[0;34m"
-# define MAGENTA "\033[0;35m"
-# define CYAN "\033[0;36m"
-# define WHITE "\033[0;37m"
+# define BLACK "\001\033[0;30m\002"
+# define RED "\001\033[0;31m\002"
+# define GREEN "\001\033[0;32m\002"
+# define YELLOW "\001\033[0;33m\002"
+# define BLUE "\001\033[0;34m\002"
+# define MAGENTA "\001\033[0;35m\002"
+# define CYAN "\001\033[0;36m\002"
+# define WHITE "\001\033[0;37m\002"
 
 // Couleurs du texte en gras
-# define BOLD_BLACK "\033[1;30m"
-# define BOLD_RED "\033[1;31m"
-# define BOLD_GREEN "\033[1;32m"
-# define BOLD_YELLOW "\033[1;33m"
-# define BOLD_BLUE "\033[1;34m"
-# define BOLD_MAGENTA "\033[1;35m"
-# define BOLD_CYAN "\033[1;36m"
-# define BOLD_WHITE "\033[1;37m"
+# define BOLD_BLACK "\001\033[1;30m\002"
+# define BOLD_RED "\001\033[1;31m\002"
+# define BOLD_GREEN "\001\033[1;32m\002"
+# define BOLD_YELLOW "\001\033[1;33m\002"
+# define BOLD_BLUE "\001\033[1;34m\002"
+# define BOLD_MAGENTA "\001\033[1;35m\002"
+# define BOLD_CYAN "\001\033[1;36m\002"
+# define BOLD_WHITE "\001\033[1;37m\002"
 
 // Couleurs de fond
-# define BG_BLACK "\033[40m"
-# define BG_RED "\033[41m"
-# define BG_GREEN "\033[42m"
-# define BG_YELLOW "\033[43m"
-# define BG_BLUE "\033[44m"
-# define BG_MAGENTA "\033[45m"
-# define BG_CYAN "\033[46m"
-# define BG_WHITE "\033[47m"
+# define BG_BLACK "\001\033[40m\002"
+# define BG_RED "\001\033[41m\002"
+# define BG_GREEN "\001\033[42m\002"
+# define BG_YELLOW "\001\033[43m\002"
+# define BG_BLUE "\001\033[44m\002"
+# define BG_MAGENTA "\001\033[45m\002"
+# define BG_CYAN "\001\033[46m\002"
+# define BG_WHITE "\001\033[47m\002"
 
 // Couleurs de fond en haute intensité
-# define BG_BRIGHT_BLACK "\033[0;100m"
-# define BG_BRIGHT_RED "\033[0;101m"
-# define BG_BRIGHT_GREEN "\033[0;102m"
-# define BG_BRIGHT_YELLOW "\033[0;103m"
-# define BG_BRIGHT_BLUE "\033[0;104m"
-# define BG_BRIGHT_MAGENTA "\033[0;105m"
-# define BG_BRIGHT_CYAN "\033[0;106m"
-# define BG_BRIGHT_WHITE "\033[0;107m"
+# define BG_BRIGHT_BLACK "\001\033[0;100m\002"
+# define BG_BRIGHT_RED "\001\033[0;101m\002"
+# define BG_BRIGHT_GREEN "\001\033[0;102m\002"
+# define BG_BRIGHT_YELLOW "\001\033[0;103m\002"
+# define BG_BRIGHT_BLUE "\001\033[0;104m\002"
+# define BG_BRIGHT_MAGENTA "\001\033[0;105m\002"
+# define BG_BRIGHT_CYAN "\001\033[0;106m\002"
+# define BG_BRIGHT_WHITE "\001\033[0;107m\002"
 
 // Attributs de texte
-# define RESET "\033[0m"
-# define BOLD "\033[1m"
-# define UNDERLINE "\033[4m"
-# define REVERSED "\033[7m"
+# define RESET "\001\033[0m\002"
+# define BOLD "\001\033[1m\002"
+# define UNDERLINE "\001\033[4m\002"
+# define REVERSED "\001\033[7m\002"
 
 #endif // COLOR_H

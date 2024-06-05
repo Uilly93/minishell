@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/05 11:05:29 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/05 16:15:06 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,19 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-char *pipe_split(char *prompt)
+char **pipe_split(char *prompt)
 {
 	char **splited;
 	
 	splited = ft_split(prompt, '|');
-	if(splited == NULL)
+	if (splited == NULL)
 		return (NULL);
+	return (splited);
 }
 
 void	ft_free(void *ptr)
 {
-	if(ptr)
+	if (ptr)
 		free(ptr);
 }
 
@@ -55,9 +56,9 @@ void	free_tab(char **tab)
 	int i;
 
 	i = 0;
-	while(tab[i])
+	while (tab[i])
 	{
-		if(tab[i])
+		if (tab[i])
 			ft_free(tab[i]);
 		i++;
 	}
@@ -79,11 +80,11 @@ char *pwd_prompt()
 	free(line);
 	if (!pwd)
 		return (NULL);
-	if(*pwd)
-		while(pwd[i] != NULL)
+	if (*pwd)
+		while (pwd[i] != NULL)
 			i++;
 	printf(BOLD_BLUE);
-	if(i == 0)
+	if (i == 0)
 		new_line = ft_strjoin("/", "> "RESET);
 	else
 		new_line = ft_strjoin(pwd[i - 1], "> "RESET);
@@ -98,10 +99,10 @@ int	get_prompt(t_msh *msh, char *line, char *prompt)
 	prompt = NULL;
 	printf(BOLD_GREEN"➜  ");
 	prompt = pwd_prompt();
-	if(!prompt)
+	if (!prompt)
 		return (printf(RESET), free(msh), 1);
 	line = readline(prompt);
-	if(line == NULL)
+	if (line == NULL)
 	{
 		ft_free(msh);
 		ft_free(prompt);
@@ -110,53 +111,97 @@ int	get_prompt(t_msh *msh, char *line, char *prompt)
 	return (0);
 }
 
-int main(int ac, char **av)
+char	**get_path(char **envp)
 {
-	t_msh *msh = malloc(sizeof(t_msh));
-	char *line;
-	char *prompt;
+	int	i;
+
+	i = 0;
+	while (envp[i])
+	{
+		if (ft_strncmp("PATH=", envp[i], 5) == 0)
+			return (ft_split(envp[i], ':'));
+		else
+			i++;
+	}
+	return (NULL);
+}
+
+char	*join_path_access(char *av, char **envp)
+{
+	int		i;
+	char	**s;
+	char	*res;
+
+	i = 0;
+	res = NULL;
+	s = get_path(envp);
+	if (!s)
+		return (write(2, "Error: no environment\n", 22), NULL);
+	while (s[i])
+	{
+		res = ft_strcat_malloc(s[i], "/");
+		if (!res)
+			return (NULL);
+		res = join_free(res, av);
+		if (!res)
+			return (NULL);
+		if (access(res, X_OK) == 0)
+			return (free_tab(s), res);
+		free(res);
+		i++;
+	}
+	free_tab(s);
+	return (NULL);
+}
+
+int is_it_builtin(char **cmd, t_msh *msh)
+{
+	if (*cmd && ft_strcmp(*cmd, "<<") == 0)
+		return (here_doc(msh, cmd), 1);
+	if (*cmd && ft_strcmp(*cmd, "echo") == 0)
+		return (ft_echo(cmd), 1);
+	if (*cmd && ft_strcmp(*cmd, "cd") == 0)
+		if (ft_cd(cmd) == 0)
+			return (1);
+	if (*cmd && ft_strcmp(*cmd, "pwd") == 0)
+		return (get_pwd(cmd), 1);
+	return (0);
+}
+
+int	msh_loop(t_msh *msh)
+{	
+	char *line = NULL;
+	char *prompt = NULL;
 	char **splited = NULL;
-	(void)ac;
-	(void)av;
 	
-	while(1)
+	while (1)
 	{
 		printf(BOLD_GREEN"➜  ");
 		prompt = pwd_prompt();
-		if(!prompt)
-			return (printf(RESET), free(msh), 1);
+		if (!prompt)
+			return (printf(RESET), 1);
 		line = readline(prompt);
-		if(line == NULL)
-		{
-			ft_free(msh);
-			ft_free(prompt);
-			return(1);
-		}
+		if (!line)
+			return (ft_free(prompt), 1);
 		splited = ft_split(line, ' ');
-		if(!splited)
-		{
-			ft_free(line);
-			ft_free(prompt);
-			ft_free(msh);
-			return (1);
-		}
-		here_doc(msh, splited);
-		ft_echo(splited);
-		if(ft_cd(splited) == 0)
-		{
-			free(prompt);
-			prompt = pwd_prompt();
-		}
-		get_pwd(splited);
+		if (!splited)
+			return (ft_free(line), ft_free(prompt), 1);
+		is_it_builtin(splited, msh);
 		if (*splited && ft_strcmp(*splited, "exit") == 0)
 			break;
 		free_tab(splited);
 		ft_free(line);
 		ft_free(prompt);	
 	}
-	free_tab(splited);
-	ft_free(line);
-	ft_free(prompt);
+	return (0);
+}
+
+int main(int ac, char **av)
+{
+	t_msh *msh = malloc(sizeof(t_msh));
+	(void)ac;
+	(void)av;
+	msh_loop(msh);
 	ft_free(msh);
 	return (0);
 }
