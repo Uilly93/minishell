@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/05 16:43:23 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/06 13:50:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,6 +199,7 @@ int	msh_loop(t_msh *msh)
 int main(int ac, char **av)
 {
 	t_msh msh = {0};// = ft_calloc(1, sizeof(t_msh));
+	msh.out = 0;
 	(void)ac;
 	(void)av;
 	msh_loop(&msh);

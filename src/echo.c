@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/03 13:25:19 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/06 14:02:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ void print_args(char **prompt, int j, int i, bool new_line)
 		return ;
 	while (prompt[j++] && prompt[i] != NULL)
 		if(prompt[i + 1] == NULL)
-			ft_printf("%s", prompt[i++]);
+			printf("%s", prompt[i++]);
 		else
-			ft_printf("%s ", prompt[i++]);
+			printf("%s ", prompt[i++]);
 	if(new_line == true)
 		printf("\n");
 }

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/06 11:44:25 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/06 15:05:24 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,10 @@
 // }
 void ft_err(char *error)
 {
+	printf(RED);
 	write(2, error, ft_strlen(error));
 	write(2, "\n", 1);
+	printf(RESET);
 }
 
 int	ft_cd(char **arg)
@@ -45,7 +47,7 @@ int	ft_cd(char **arg)
 		if (!pwd)
 			return (1);
 		if(*arg == NULL)
-			path = ft_strdup("/"); // need env to fix
+			path = ft_strdup("/home/wnocchi"); // need env to fix
 		else
 		{
 			path = ft_strjoin(pwd, "/");
