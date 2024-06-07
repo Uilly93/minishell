@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/05 14:38:11 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/07 09:37:19 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,19 +50,27 @@ int	redirect_fd_write(t_msh *msh, int *pipefd)
 	}
 	close(pipefd[0]);
 	close(msh->out);
+	return (0);
 }
 
-int	create_child(t_msh *msh, int *pipefd) // enfant qui lis dans un infile
+
+
+int	create_child(t_msh *msh, int *pipefd, char **envp, char *av) // enfant qui lis dans un infile
 {
 	pid_t	child;
+	char	*path;
 
 	child = fork();
 	if (child == 0)
 	{
+		path = join_path_access(av, envp);
 		redirect_fd_read(msh, pipefd);
 		redirect_fd_write(msh, pipefd);
-		execve();
+		if(execve(av, msh->cmd, envp) == -1)
+			return (free(path), 1);
+		free(path);
 	}
+	return (0);
 }
 
 // int	in_pipe(t_msh *msh)

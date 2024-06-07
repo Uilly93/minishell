@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/06 13:49:05 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/07 09:23:07 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef struct s_msh
 {
 	char 			*hlimit;
 	char			**prompt;
+	char			**cmd;
 	int				in;
 	int				out;
 	char			*infile;
@@ -40,6 +41,9 @@ int		export_env(char *arg, char **envp);
 int		redirect_fd_read(t_msh *msh, int *pipefd);
 int		redirect_fd_write(t_msh *msh, int *pipefd);
 void	ft_free(void *ptr);
+char	*join_path_access(char *av, char **envp);
+char	**get_path(char **envp);
+int		create_child(t_msh *msh, int *pipefd, char **envp, char *av); // enfant qui lis dans un infile
 
 
 #endif
