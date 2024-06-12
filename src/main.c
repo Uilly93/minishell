@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/12 11:03:05 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/12 11:16:08 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 		return (get_pwd(cmd), 1);
 	return (0);
 }
-int	test_child(char **envp, char **av)
+int	test_child(char **envp, char **av, char *prompt)
 {
 	pid_t	child;
 	char	*path;
@@ -187,12 +187,13 @@ int	test_child(char **envp, char **av)
 	{
 		path = join_path_access(*av, envp);
 		if(!path)
-			return (free_tab(av), exit(127), 1);
+			return (free(prompt), free_tab(av), exit(127), 1);
 		// redirect_fd_read(msh, pipefd);
 		// redirect_fd_write(msh, pipefd);
 		if(execve(path, av, envp) == -1)
-			return (free_tab(av), free(path), exit(127), 1);
+			return (free(prompt), free_tab(av), free(path), exit(127), 1);
 		free(path);
+		free(prompt);
 	}
 	while (wait(&status) < 0)
 		;
@@ -219,7 +220,7 @@ int	msh_loop(t_msh *msh, char **envp)
 		if (!splited)
 			return (ft_free(line), ft_free(prompt), 1);
 		if(*splited && is_it_builtin(splited, msh, envp) == 0)
-			test_child(envp, splited);
+			test_child(envp, splited, prompt);
 		if (*splited && ft_strcmp(*splited, "exit") == 0)
 			break;
 		free_tab(splited);
