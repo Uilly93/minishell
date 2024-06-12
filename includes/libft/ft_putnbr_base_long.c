@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:39:41 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:52:42 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/12 10:46:57 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_putnbr_base_long(unsigned long nb, char *base)
 		return (1);
 	}
 	i = 0;
-	if (nb < 0)
+	if ((int)nb < 0)
 	{
 		ft_putchar('-');
 		nb *= -1;

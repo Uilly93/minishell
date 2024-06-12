@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/07 14:38:17 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/12 11:03:05 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,10 +186,12 @@ int	test_child(char **envp, char **av)
 	if (child == 0)
 	{
 		path = join_path_access(*av, envp);
+		if(!path)
+			return (free_tab(av), exit(127), 1);
 		// redirect_fd_read(msh, pipefd);
 		// redirect_fd_write(msh, pipefd);
 		if(execve(path, av, envp) == -1)
-			return (free(path), exit(127), 1);
+			return (free_tab(av), free(path), exit(127), 1);
 		free(path);
 	}
 	while (wait(&status) < 0)
@@ -216,7 +218,7 @@ int	msh_loop(t_msh *msh, char **envp)
 		splited = ft_split(line, ' ');
 		if (!splited)
 			return (ft_free(line), ft_free(prompt), 1);
-		if(is_it_builtin(splited, msh, envp) == 0)
+		if(*splited && is_it_builtin(splited, msh, envp) == 0)
 			test_child(envp, splited);
 		if (*splited && ft_strcmp(*splited, "exit") == 0)
 			break;
