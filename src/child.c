@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/07 09:37:19 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/14 14:59:34 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,40 +16,42 @@
 
 int	redirect_fd_read(t_msh *msh, int *pipefd)
 {
-	if (msh->outfile != NULL)
-		close(msh->out);
+	// if (msh->outfile != NULL)
+	// 	close(msh->out);
 	close(pipefd[0]);
-	if (msh->infile == NULL && msh->index != 0)
+	if (/* msh->infile == NULL &&  */msh->index != 1)
 	{
-		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-			return (close(pipefd[1]), close(msh->in), 1);	
+		if (dup2(pipefd[1], STDIN_FILENO) == -1)
+			return (close(pipefd[1]),/*  close(msh->in),  */1);	
 	}
-	else if (msh->infile)
-	{
-		if (dup2(msh->in, STDIN_FILENO) == -1)
-			return (close(msh->in), close(pipefd[1]), 1);
-	}
-	close(msh->in);
+	// else if (msh->infile)
+	// {
+	// 	if (dup2(msh->in, STDIN_FILENO) == -1)
+	// 		return (close(msh->in), close(pipefd[1]), 1);
+	// }
+	// close(msh->in);
 	close(pipefd[1]);
 	return (0);
 }
 int	redirect_fd_write(t_msh *msh, int *pipefd)
 {
-	if (msh->infile != NULL)
-		close(msh->in);
+	// if (msh->infile != NULL)
+	// 	close(msh->in);
 	close(pipefd[1]);
-	if (msh->outfile == NULL && msh->next)
+	printf("adress node %p\n",msh);
+	printf("adress next->node %p\n",msh->next);
+	if (/* msh->outfile == NULL &&  */msh->next)
 	{
 		if (dup2(pipefd[0], STDOUT_FILENO) == -1)
-			return (close(pipefd[0]), close(msh->out), 1);
+			return (close(pipefd[0]),/*  close(msh->out),  */1);
 	}
-	else if (msh->outfile)
-	{
-		if (dup2(msh->out, STDOUT_FILENO) == -1)
-			return (close(msh->out), close(pipefd[0]), 1);
-	}
+	// else if (msh->outfile)
+	// {
+	// 	if (dup2(msh->out, STDOUT_FILENO) == -1)
+	// 		return (close(msh->out), close(pipefd[0]), 1);
+	// }
 	close(pipefd[0]);
-	close(msh->out);
+	// close(msh->out);
 	return (0);
 }
 

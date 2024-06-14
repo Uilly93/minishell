@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/14 12:10:38 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/14 14:44:59 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,17 +183,18 @@ int	test_child(t_msh *msh, char **envp)
 {
 	pid_t	child;
 	char	*path;
-	int status;
-	// int		pipefd[2];
+	int		status;
+	int		pipefd[2];
 
+	pipe(pipefd);
 	child = fork();
 	if (child == 0)
 	{
 		path = join_path_access(*msh->cmd, envp);
 		if(!path)
 			return (free_lst(msh), exit(127), 1);
-		// redirect_fd_read(msh, pipefd);
-		// redirect_fd_write(msh, pipefd);
+		redirect_fd_read(msh, pipefd);
+		redirect_fd_write(msh, pipefd);
 		if(execve(path, msh->cmd, envp) == -1)
 			return (free_lst(msh), free(msh), free(path), exit(127), 1);
 		free(path);
@@ -280,6 +281,23 @@ void	ft_addnode(t_msh **lst, t_msh *add)
 		ft_lastnode(*lst)->next = add;
 }
 
+int	ft_lstlen(t_msh *msh)
+{
+	t_msh	*current;
+	int		i;
+
+	if (!msh)
+		return (0);
+	current = msh;
+	i = 0;
+	while (current)
+	{
+		i++;
+		current = current->next;
+	}
+	return (i);
+}
+
 void	print_node(t_msh *msh)
 {
 	t_msh *current;
@@ -288,9 +306,10 @@ void	print_node(t_msh *msh)
 	int i = 1;
 	int j = 0;
 	printf("-----------------------------------------\n");
+	printf("lst size = %d\n", ft_lstlen(msh));
 	while(current)
 	{
-		printf("cmd %d = ", i);
+		printf("cmd %d = ", current->index);
 		j = 0;
 		while(current->cmd[j])
 		{
@@ -336,6 +355,7 @@ t_msh *parsing(char *line)
 	{
 		tmp = cmd_node(splited[i]);
 		ft_addnode(&msh, tmp);
+		tmp->index = i + 1;
 		i++;
 	}
 	free_tab(splited);
@@ -362,12 +382,14 @@ int parsing_exec(t_msh *msh, char *line, char **envp)
 {
 	t_msh *current;
 	t_msh *prev;
+	// int pipefd[2];
 
 	msh = parsing(line);
 	current = msh;
 	print_node(msh);
 	while(current)
 	{
+		// pipe(pipefd);
 		prev = current;
 		if(is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp);
@@ -395,9 +417,7 @@ int	msh_loop(t_msh *msh, char **envp)
 		if (!line)
 			return (1);
 		add_history(line);
-		// msh = parsing(line);
 		parsing_exec(msh, line, envp);
-		// print_node(msh);
 	}
 	return (0);
 }
