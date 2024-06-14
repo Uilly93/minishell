@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/13 18:01:04 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/14 12:03:16 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,9 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 		return (get_pwd(cmd), 1);
 	return (0);
 }
+
+void	free_lst(t_msh *msh);
+
 int	test_child(t_msh *msh, char **envp)
 {
 	pid_t	child;
@@ -188,13 +191,12 @@ int	test_child(t_msh *msh, char **envp)
 	{
 		path = join_path_access(*msh->cmd, envp);
 		if(!path)
-			return (free_tab(msh->cmd), exit(127), 1);
+			return (free_lst(msh), exit(127), 1);
 		// redirect_fd_read(msh, pipefd);
 		// redirect_fd_write(msh, pipefd);
 		if(execve(path, msh->cmd, envp) == -1)
-			return (free_tab(msh->cmd), free(path), exit(127), 1);
+			return (free_lst(msh), free(msh), free(path), exit(127), 1);
 		free(path);
-		// free(prompt);
 	}
 	while (wait(&status) < 0)
 		;
@@ -280,15 +282,18 @@ void	ft_addnode(t_msh **lst, t_msh *add)
 
 void	print_node(t_msh *msh)
 {
+	t_msh *current;
+
+	current = msh;
 	int i = 1;
 	printf("-----------------------------------------\n");
-	while(msh)
+	while(current)
 	{
 		printf("cmd %d = ", i++);
-		while(*msh->cmd != NULL)
-			printf("%s ", *msh->cmd++);
+		while(*current->cmd != NULL)
+			printf("%s ", *current->cmd++);
 		printf("\n");
-		msh = msh->next;
+		current = current->next;
 	}
 	printf("-----------------------------------------\n");
 }
@@ -325,7 +330,6 @@ t_msh *parsing(char *line)
 		ft_addnode(&msh, tmp);
 		i++;
 	}
-	// print_node(msh);
 	free_tab(splited);
 	return (msh);
 }
@@ -338,18 +342,39 @@ void	free_lst(t_msh *msh)
 	current = msh;
 	while (current)
 	{
+		free_tab(current->cmd);
 		prev = current;
 		current = current->next;
 		free(prev);
 	}
-	free(msh);
+	//free(msh);
+}
+
+int parsing_exec(t_msh *msh, char *line, char **envp)
+{
+	t_msh *current;
+	t_msh *prev;
+
+	msh = parsing(line);
+	current = msh;
+	// print_node(msh);
+	while(current)
+	{
+		prev = current;
+		if(is_it_builtin(current->cmd, current, envp) == 0)
+			test_child(current, envp);
+		free_tab(current->cmd);
+		current = current->next;
+		free(prev);
+	}
+	return (0);
 }
 
 int	msh_loop(t_msh *msh, char **envp)
 {	
+	(void)envp;
 	char *line;
 	char *prompt;
-	// char **splited;
 	
 	while (1)
 	{
@@ -362,41 +387,19 @@ int	msh_loop(t_msh *msh, char **envp)
 		if (!line)
 			return (1);
 		add_history(line);
-		msh = parsing(line);
-		while(msh)
-		{
-			if(is_it_builtin(msh->cmd, msh, envp) == 0)
-				test_child(msh, envp);
-			free_tab(msh->cmd);
-			msh = msh->next;
-		}
-		free_lst(msh);
-		// free(msh);
+		// msh = parsing(line);
+		parsing_exec(msh, line, envp);
 		// print_node(msh);
-		// splited = ft_split(line, ' ');
-		// if (!splited)
-		// 	return (ft_free(line), ft_free(prompt), 1);
-		// if(*splited && is_it_builtin(splited, msh, envp) == 0)
-		// 	test_child(envp, splited, prompt);
-		// if(split_and_exec(msh, envp, line))
-		// 	break;
-		// if (*splited && ft_strcmp(*splited, "exit") == 0)
-		// 	break;
-		// free_tab(splited);
-		// ft_free(line);
-		// ft_free(prompt);
 	}
 	return (0);
 }
 
 int main(int ac, char **av, char **envp)
 {
-	// (void)envp;
-	t_msh msh = {0};// = ft_calloc(1, sizeof(t_msh));
+	t_msh msh = {0};
 	msh.out = 0;
 	(void)ac;
 	(void)av;
 	msh_loop(&msh, envp);
-	// ft_free(msh);
 	return (0);
 }
