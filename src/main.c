@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/14 12:03:16 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/14 12:10:38 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,14 +286,22 @@ void	print_node(t_msh *msh)
 
 	current = msh;
 	int i = 1;
+	int j = 0;
 	printf("-----------------------------------------\n");
 	while(current)
 	{
-		printf("cmd %d = ", i++);
-		while(*current->cmd != NULL)
-			printf("%s ", *current->cmd++);
+		printf("cmd %d = ", i);
+		j = 0;
+		while(current->cmd[j])
+		{
+			printf("%s ", current->cmd[j]);
+			j++;
+		}
 		printf("\n");
 		current = current->next;
+		if (current == NULL)
+			break ;
+		i++;
 	}
 	printf("-----------------------------------------\n");
 }
@@ -357,7 +365,7 @@ int parsing_exec(t_msh *msh, char *line, char **envp)
 
 	msh = parsing(line);
 	current = msh;
-	// print_node(msh);
+	print_node(msh);
 	while(current)
 	{
 		prev = current;
