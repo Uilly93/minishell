@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/14 14:05:22 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/19 15:40:35 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	ft_echo(char **cmd);
 int		ft_cd(char **arg);
 int		get_pwd(char **arg);
 int		export_env(char *arg, char **envp);
-int		redirect_fd_read(t_msh *msh, int *pipefd);
+int		redirect_fd(t_msh *msh, int *pipefd);
+int		close_pipes(int *pipefd);
 int		redirect_fd_write(t_msh *msh, int *pipefd);
 int		ft_lstlen(t_msh *msh);
 void	ft_free(void *ptr);
