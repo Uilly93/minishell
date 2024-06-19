@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/19 15:41:25 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/19 17:34:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,17 @@ int	redirect_fd(t_msh *msh, int *pipefd)
 	if (msh->index != 1)
 	{
 		if (dup2(pipefd[0], STDIN_FILENO) == -1)
-			return (close_pipes(pipefd),/*  close(msh->in),  */1);	
+			return (close_fds(pipefd, msh),/*  close(msh->in),  */1);	
 	}
 	if (msh->next != NULL)
 	{
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-			return (close_pipes(pipefd),/*  close(msh->out),  */1);
+			return (close_fds(pipefd, msh),/*  close(msh->out),  */1);
 	}
-	// if (msh->in != -1 && msh->in != 0)
+	// if (msh->in != -1)
 	// {
 	// 	if(dup2(msh->in, pipefd[0]) == -1)
-	// 		return (close_pipes(pipefd),/*  close(msh->out),  */1);
+	// 		return (close_fds(pipefd, msh),/*  close(msh->out),  */1);
 	// }
 	return (0);
 }

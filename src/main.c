@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/19 15:41:59 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/19 17:35:41 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <unistd.h>
 #include <readline/history.h>
 
@@ -158,10 +159,13 @@ char	*join_path_access(char *av, char **envp)
 	return (NULL);
 }
 
-int	close_pipes(int *pipefd)
+int	close_fds(int *pipefd, t_msh *msh)
 {
-	close(pipefd[0]);
-	close(pipefd[1]);
+	(void)msh;
+	if(pipefd[0] != -1)
+		close(pipefd[0]);
+	if(pipefd[1] != -1)
+		close(pipefd[1]);
 	return (0);
 }
 
@@ -184,6 +188,7 @@ void	free_lst(t_msh *msh);
 
 int	test_child(t_msh *msh, char **envp, int *pipefd)
 {
+	static int i = 0;
 	pid_t	child;
 	char	*path;
 	// int		status;
@@ -195,7 +200,8 @@ int	test_child(t_msh *msh, char **envp, int *pipefd)
 		if(!path)
 			return (free_lst(msh), exit(127), 1);
 		redirect_fd(msh, pipefd);
-		close_pipes(pipefd);
+		i++;
+		close_fds(pipefd, msh);
 		if(execve(path, msh->cmd, envp) == -1)
 		{
 			perror("msh :");
@@ -206,54 +212,6 @@ int	test_child(t_msh *msh, char **envp, int *pipefd)
 	return (0);
 }
 
-// char	**split_pipes(char *prompt)
-// {
-// 	char **splited;
-	
-// 	splited = ft_split(prompt, '|');
-// 	// free(prompt);
-// 	if (!splited)
-// 		return(NULL);
-// 	return (splited);
-// }
-
-// int	split_args(t_msh *msh, char *arg, char **envp, char *prompt)
-// {
-// 	char **splited;
-
-// 	splited = ft_split(arg, ' ');
-// 	if(!splited)
-// 		return (1);
-// 	// free(arg);
-// 	if(*splited && is_it_builtin(splited, msh, envp) == 0)
-// 		test_child(envp, splited, prompt);
-// 	free_tab(splited);
-// 	return (0);
-// }
-
-// int	split_and_exec(t_msh *msh, char **envp, char *line)
-// {
-// 	char **cmd;
-// 	int		i;
-
-// 	i = 0;	
-// 	cmd = ft_split(line, '|');
-// 	if(!cmd)
-// 		return (1);
-// 	if (*cmd && ft_strcmp(*cmd, "exit") == 0)
-// 			return (free_tab(cmd), free(line), 1);
-// 	while(cmd[i])
-// 	{
-// 		// printf("cmd %d = %s\n", i, cmd[i]);
-// 		if(split_args(msh, cmd[i], envp, line))
-// 			return (free_tab(cmd), 1);
-// 		free(cmd[i]);
-// 		i++;
-// 	}
-// 	free(line);
-// 	free(cmd);
-// 	return (0);
-// }
 
 t_msh	*ft_lastnode(t_msh *lst)
 {
@@ -326,39 +284,17 @@ void	print_node(t_msh *msh)
 	printf("-----------------------------------------\n");
 }
  
-// char **get_infile(char **splited, t_msh *msh)
-// {
-// 	int i;
-
-// 	i = 0;
-// 	if(splited)
-// 	{
-// 		while(splited[i])
-// 		{
-// 			if(ft_strcmp(splited[i], "<") && splited[i + 1])
-// 			{
-// 				msh->in = open(splited[i + 1], O_RDONLY);
-// 				if(msh->in == -1)
-// 					perror(splited[i + 1]);
-// 				free(splited[i]);
-// 				free(splited[i + 1]);
-// 			}
-// 			i++;
-// 		}
-// 		return (splited + i + 2);
-// 	}
-// 	return (NULL);
-// }
- 
 t_msh *cmd_node(char *line)
 {
 	t_msh *msh;
 	// char **tmp;
 	
+	// msh = NULL;
 	msh = malloc(sizeof(t_msh));
 	if(!msh)
 		return (NULL);
-	// tmp = ft_split(line, ' ');
+	msh->in = -1;
+	msh->out = -1;
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
 		return (NULL);
@@ -401,30 +337,24 @@ void	free_lst(t_msh *msh)
 		current = current->next;
 		free(prev);
 	}
-	//free(msh);
 }
 
-int parsing_exec(t_msh *msh, char *line, char **envp)
+int exec(t_msh *msh, char **envp)
 {
 	t_msh *current;
-	t_msh *prev;
 	int pipefd[2];
 
-	msh = parsing(line);
 	current = msh;
 	print_node(msh);
-	pipe(pipefd);
 	while(current)
 	{
-		prev = current;
+		pipe(pipefd);
 		if(is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp, pipefd);
-		free_tab(current->cmd);
 		current = current->next;
-		free(prev);
-		close(pipefd[1]);
+		close_fds(pipefd, msh);
 	}
-	close_pipes(pipefd);
+	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
 	
@@ -448,7 +378,8 @@ int	msh_loop(t_msh *msh, char **envp)
 		if (!line)
 			return (1);
 		add_history(line);
-		parsing_exec(msh, line, envp);
+		msh = parsing(line);
+		exec(msh, envp);
 	}
 	return (0);
 }
@@ -456,7 +387,6 @@ int	msh_loop(t_msh *msh, char **envp)
 int main(int ac, char **av, char **envp)
 {
 	t_msh msh = {0};
-	msh.out = 0;
 	(void)ac;
 	(void)av;
 	msh_loop(&msh, envp);
