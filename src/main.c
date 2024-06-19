@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/19 17:35:41 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/19 19:39:08 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,14 +346,19 @@ int exec(t_msh *msh, char **envp)
 
 	current = msh;
 	print_node(msh);
+	pipe(pipefd);
 	while(current)
 	{
-		pipe(pipefd);
+		if (join_path_access(msh->cmd[0], envp) == NULL)
+		{
+			close_fds(pipefd, msh);
+			printf("%s: command not found\n", msh->cmd[0]);
+		}
 		if(is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp, pipefd);
 		current = current->next;
-		close_fds(pipefd, msh);
 	}
+	close_fds(pipefd, msh);
 	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
