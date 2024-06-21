@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/21 16:46:11 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/21 16:47:28 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,9 +161,8 @@ char	*join_path_access(char *av, char **envp)
 
 t_msh	*ft_lastnode(t_msh *lst);
 
-int	close_fds(int *pipefd, t_msh *msh)
+int	close_fds(t_msh *msh)
 {
-	(void)pipefd;
 	t_msh	*current;
 
 	current = ft_lastnode(msh);
@@ -206,12 +205,12 @@ int	test_child(t_msh *msh, char **envp)
 		path = join_path_access(*msh->cmd, envp);
 		if(!path)
 		{
-			close_fds(msh->pipefd, msh);
+			close_fds(msh);
 			printf("command not found\n");
 			return (free_lst(msh), exit(127), 1);
 		}
 		redirect_fd(msh);
-		close_fds(msh->pipefd, msh);
+		close_fds(msh);
 		if(execve(path, msh->cmd, envp) == -1)
 		{
 			perror("msh :");
@@ -367,7 +366,7 @@ int exec(t_msh *msh, char **envp)
 			test_child(current, envp);
 		current = current->next;
 	}
-	close_fds(msh->pipefd, msh);
+	close_fds(msh);
 	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
