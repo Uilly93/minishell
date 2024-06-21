@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/21 14:06:49 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/21 16:46:11 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,8 +183,8 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 	(void)envp;
 	if (*cmd && ft_strcmp(*cmd, "<<") == 0)
 		return (here_doc(msh, cmd), 1);
-	// if (*cmd && ft_strcmp(*cmd, "echo") == 0)
-	// 	return (ft_echo(cmd), 1);
+	if (*cmd && ft_strcmp(*cmd, "echo") == 0)
+		return (ft_echo(cmd), 1);
 	if (*cmd && ft_strcmp(*cmd, "cd") == 0)
 		if (ft_cd(cmd) == 0)
 			return (1);
@@ -197,7 +197,6 @@ void	free_lst(t_msh *msh);
 
 int	test_child(t_msh *msh, char **envp)
 {
-	static int i = 0;
 	pid_t	child;
 	char	*path;
 
@@ -207,11 +206,11 @@ int	test_child(t_msh *msh, char **envp)
 		path = join_path_access(*msh->cmd, envp);
 		if(!path)
 		{
+			close_fds(msh->pipefd, msh);
 			printf("command not found\n");
 			return (free_lst(msh), exit(127), 1);
 		}
 		redirect_fd(msh);
-		i++;
 		close_fds(msh->pipefd, msh);
 		if(execve(path, msh->cmd, envp) == -1)
 		{
@@ -363,6 +362,7 @@ int exec(t_msh *msh, char **envp)
 	{
 		prev = current;
 		pipe(current->pipefd);
+		
 		if(is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp);
 		current = current->next;
