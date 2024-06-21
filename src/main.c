@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/19 19:39:08 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/21 10:34:50 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,13 +159,22 @@ char	*join_path_access(char *av, char **envp)
 	return (NULL);
 }
 
+t_msh	*ft_lastnode(t_msh *lst);
+
 int	close_fds(int *pipefd, t_msh *msh)
 {
-	(void)msh;
-	if(pipefd[0] != -1)
-		close(pipefd[0]);
-	if(pipefd[1] != -1)
-		close(pipefd[1]);
+	(void)pipefd;
+	t_msh	*current;
+
+	current = msh;//ft_lastnode(msh);
+	while(current)
+	{
+		if(current->pipefd[0] != -1)
+			close(pipefd[0]);
+		if(current->pipefd[1] != -1)
+			close(pipefd[1]);
+		current = current->prev;
+	}
 	return (0);
 }
 
@@ -186,7 +195,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 
 void	free_lst(t_msh *msh);
 
-int	test_child(t_msh *msh, char **envp, int *pipefd)
+int	test_child(t_msh *msh, char **envp)
 {
 	static int i = 0;
 	pid_t	child;
@@ -199,9 +208,9 @@ int	test_child(t_msh *msh, char **envp, int *pipefd)
 		path = join_path_access(*msh->cmd, envp);
 		if(!path)
 			return (free_lst(msh), exit(127), 1);
-		redirect_fd(msh, pipefd);
+		redirect_fd(msh/* , pipefd */);
 		i++;
-		close_fds(pipefd, msh);
+		close_fds(msh->pipefd, msh);
 		if(execve(path, msh->cmd, envp) == -1)
 		{
 			perror("msh :");
@@ -216,15 +225,12 @@ int	test_child(t_msh *msh, char **envp, int *pipefd)
 t_msh	*ft_lastnode(t_msh *lst)
 {
 	t_msh	*current;
-	int		i;
 
 	if (!lst)
 		return (0);
 	current = lst;
-	i = 0;
 	while (current->next)
 	{
-		i++;
 		current = current->next;
 	}
 	return (current);
@@ -232,12 +238,18 @@ t_msh	*ft_lastnode(t_msh *lst)
 
 void	ft_addnode(t_msh **lst, t_msh *add)
 {
+	t_msh *last_node;
+	
 	if (!lst || !add)
 		return ;
 	if (!*lst)
 		*lst = add;
 	else
-		ft_lastnode(*lst)->next = add;
+	{
+		last_node = ft_lastnode(*lst);
+		last_node->next = add;
+		add->prev = last_node;
+	}
 }
 
 int	ft_lstlen(t_msh *msh)
@@ -299,6 +311,7 @@ t_msh *cmd_node(char *line)
 	if (!msh->cmd)
 		return (NULL);
 	msh->next = NULL;
+	msh->prev = NULL;
 	return(msh);
 }
 
@@ -316,8 +329,10 @@ t_msh *parsing(char *line)
 	while(splited[i])
 	{
 		tmp = cmd_node(splited[i]);
-		ft_addnode(&msh, tmp);
+		tmp->pipefd[1] = -1;
+		tmp->pipefd[0] = -1;
 		tmp->index = i + 1;
+		ft_addnode(&msh, tmp);
 		i++;
 	}
 	free_tab(splited);
@@ -333,6 +348,9 @@ void	free_lst(t_msh *msh)
 	while (current)
 	{
 		free_tab(current->cmd);
+		// close_fds(current->pipefd, msh);
+		close(current->pipefd[0]);
+		close(current->pipefd[1]);
 		prev = current;
 		current = current->next;
 		free(prev);
@@ -342,23 +360,32 @@ void	free_lst(t_msh *msh)
 int exec(t_msh *msh, char **envp)
 {
 	t_msh *current;
-	int pipefd[2];
+	t_msh *prev;
+	// int pipefd[2];
 
 	current = msh;
 	print_node(msh);
-	pipe(pipefd);
 	while(current)
 	{
-		if (join_path_access(msh->cmd[0], envp) == NULL)
-		{
-			close_fds(pipefd, msh);
-			printf("%s: command not found\n", msh->cmd[0]);
-		}
+		prev = current;
+		// if (join_path_access(msh->cmd[0], envp) == NULL)
+		// {
+		// 	close_fds(pipefd, msh);
+		// 	printf("%s: command not found\n", msh->cmd[0]);
+		// }
+		// close(current->pipefd[1]);
+		pipe(current->pipefd);
 		if(is_it_builtin(current->cmd, current, envp) == 0)
-			test_child(current, envp, pipefd);
+			test_child(current, envp);
+		// if(!current->next)
+		if(current->next == NULL)
+			close_fds(msh->pipefd, msh);
 		current = current->next;
+		// pipe(current->pipefd);
 	}
-	close_fds(pipefd, msh);
+	close_fds(msh->pipefd, msh);
+	// close(current->pipefd[1]);
+	// close(current->pipefd[0]);
 	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
