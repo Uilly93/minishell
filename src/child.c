@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/20 18:51:21 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/21 14:07:26 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 #include <linux/limits.h>
 #include <unistd.h>
 
-int	redirect_fd(t_msh *msh/* , int *pipefd */)
+int	redirect_fd(t_msh *msh)
 {
-	// (void)msh;
 	printf("pipe0 = %d\n", msh->pipefd[0]);
 	printf("pipe1 = %d\n", msh->pipefd[1]);
 	if (msh->index != 1)
@@ -34,26 +33,5 @@ int	redirect_fd(t_msh *msh/* , int *pipefd */)
 	// 	if(dup2(msh->in, pipefd[0]) == -1)
 	// 		return (close_fds(pipefd, msh),/*  close(msh->out),  */1);
 	// }
-	return (0);
-}
-int	redirect_fd_write(t_msh *msh, int *pipefd)
-{
-	if (/* msh->outfile == NULL &&  */msh->next)
-	{
-		// close(pipefd[1]);
-		// printf("test2");
-		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-		{
-			printf("dup 2 failed write");
-			return (close(pipefd[0]),/*  close(msh->out),  */1);
-		}
-		// close(pipefd[0]);
-	}
-	// else if (msh->outfile)
-	// {
-	// 	if (dup2(msh->out, STDOUT_FILENO) == -1)
-	// 		return (close(msh->out), close(pipefd[0]), 1);
-	// }
-	// close(msh->out);
 	return (0);
 }

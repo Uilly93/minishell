@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/21 10:34:50 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/21 14:06:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,13 +166,13 @@ int	close_fds(int *pipefd, t_msh *msh)
 	(void)pipefd;
 	t_msh	*current;
 
-	current = msh;//ft_lastnode(msh);
+	current = ft_lastnode(msh);
 	while(current)
 	{
 		if(current->pipefd[0] != -1)
-			close(pipefd[0]);
+			close(current->pipefd[0]);
 		if(current->pipefd[1] != -1)
-			close(pipefd[1]);
+			close(current->pipefd[1]);
 		current = current->prev;
 	}
 	return (0);
@@ -200,15 +200,17 @@ int	test_child(t_msh *msh, char **envp)
 	static int i = 0;
 	pid_t	child;
 	char	*path;
-	// int		status;
 
 	child = fork();
 	if (child == 0)
 	{
 		path = join_path_access(*msh->cmd, envp);
 		if(!path)
+		{
+			printf("command not found\n");
 			return (free_lst(msh), exit(127), 1);
-		redirect_fd(msh/* , pipefd */);
+		}
+		redirect_fd(msh);
 		i++;
 		close_fds(msh->pipefd, msh);
 		if(execve(path, msh->cmd, envp) == -1)
@@ -299,9 +301,7 @@ void	print_node(t_msh *msh)
 t_msh *cmd_node(char *line)
 {
 	t_msh *msh;
-	// char **tmp;
 	
-	// msh = NULL;
 	msh = malloc(sizeof(t_msh));
 	if(!msh)
 		return (NULL);
@@ -323,7 +323,6 @@ t_msh *parsing(char *line)
 	int	i;
 
 	msh = NULL;
-	// char *s = malloc(sizeof(char) * )
 	i = 0;
 	splited = ft_split(line, '|');
 	while(splited[i])
@@ -348,9 +347,6 @@ void	free_lst(t_msh *msh)
 	while (current)
 	{
 		free_tab(current->cmd);
-		// close_fds(current->pipefd, msh);
-		close(current->pipefd[0]);
-		close(current->pipefd[1]);
 		prev = current;
 		current = current->next;
 		free(prev);
@@ -361,31 +357,17 @@ int exec(t_msh *msh, char **envp)
 {
 	t_msh *current;
 	t_msh *prev;
-	// int pipefd[2];
 
 	current = msh;
-	print_node(msh);
 	while(current)
 	{
 		prev = current;
-		// if (join_path_access(msh->cmd[0], envp) == NULL)
-		// {
-		// 	close_fds(pipefd, msh);
-		// 	printf("%s: command not found\n", msh->cmd[0]);
-		// }
-		// close(current->pipefd[1]);
 		pipe(current->pipefd);
 		if(is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp);
-		// if(!current->next)
-		if(current->next == NULL)
-			close_fds(msh->pipefd, msh);
 		current = current->next;
-		// pipe(current->pipefd);
 	}
 	close_fds(msh->pipefd, msh);
-	// close(current->pipefd[1]);
-	// close(current->pipefd[0]);
 	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
@@ -409,7 +391,8 @@ int	msh_loop(t_msh *msh, char **envp)
 		free(prompt);
 		if (!line)
 			return (1);
-		add_history(line);
+		if(ft_strlen(line))
+			add_history(line);
 		msh = parsing(line);
 		exec(msh, envp);
 	}
