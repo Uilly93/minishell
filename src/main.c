@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/21 16:47:28 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/24 14:22:23 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ char	*join_path_access(char *av, char **envp)
 
 t_msh	*ft_lastnode(t_msh *lst);
 
-int	close_fds(t_msh *msh)
+int	close_pipes(t_msh *msh)
 {
 	t_msh	*current;
 
@@ -205,12 +205,12 @@ int	test_child(t_msh *msh, char **envp)
 		path = join_path_access(*msh->cmd, envp);
 		if(!path)
 		{
-			close_fds(msh);
+			close_pipes(msh);
 			printf("command not found\n");
 			return (free_lst(msh), exit(127), 1);
 		}
-		redirect_fd(msh);
-		close_fds(msh);
+		if(redirect_fd(msh))
+			return (free_lst(msh), free(path), exit(127), 1);
 		if(execve(path, msh->cmd, envp) == -1)
 		{
 			perror("msh :");
@@ -305,6 +305,9 @@ t_msh *cmd_node(char *line)
 		return (NULL);
 	msh->in = -1;
 	msh->out = -1;
+	msh->outfile = NULL;
+	msh->infile = NULL;
+	msh->out_appen = 1;
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
 		return (NULL);
@@ -366,7 +369,7 @@ int exec(t_msh *msh, char **envp)
 			test_child(current, envp);
 		current = current->next;
 	}
-	close_fds(msh);
+	close_pipes(msh);
 	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
