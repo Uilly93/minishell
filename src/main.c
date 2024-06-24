@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/24 14:22:23 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/24 17:08:35 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,9 +230,7 @@ t_msh	*ft_lastnode(t_msh *lst)
 		return (0);
 	current = lst;
 	while (current->next)
-	{
 		current = current->next;
-	}
 	return (current);
 }
 
@@ -300,19 +298,15 @@ t_msh *cmd_node(char *line)
 {
 	t_msh *msh;
 	
-	msh = malloc(sizeof(t_msh));
+	msh = ft_calloc(sizeof(t_msh), 1);
 	if(!msh)
 		return (NULL);
 	msh->in = -1;
 	msh->out = -1;
-	msh->outfile = NULL;
-	msh->infile = NULL;
 	msh->out_appen = 1;
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
 		return (NULL);
-	msh->next = NULL;
-	msh->prev = NULL;
 	return(msh);
 }
 
@@ -403,7 +397,8 @@ int	msh_loop(t_msh *msh, char **envp)
 
 int main(int ac, char **av, char **envp)
 {
-	t_msh msh = {0};
+	t_msh msh;
+	ft_bzero(&msh, sizeof(t_msh));
 	(void)ac;
 	(void)av;
 	msh_loop(&msh, envp);

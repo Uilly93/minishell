@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/06 15:05:24 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/24 17:10:54 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,3 @@ int	ft_cd(char **arg)
 	}
 	return (0);
 }
-
-// write(2, "msh: cd:too many arguments\n", 27)
