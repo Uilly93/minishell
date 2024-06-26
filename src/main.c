@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/25 13:57:24 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/26 10:35:41 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,7 +306,8 @@ t_msh *cmd_node(char *line)
 	msh->in = -1;
 	msh->out = -1;
 	msh->out_appen = 0;
-	// msh->outfile = NULL;
+	// msh->outfile = "test";
+	// msh->outfile = "outfile";
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
 		return (NULL);

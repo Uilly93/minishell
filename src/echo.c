@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 09:44:14 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/26 10:32:41 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdio.h>
 #include <unistd.h>
 // #include <string.h>
 
@@ -45,6 +46,11 @@ void print_args(t_msh *msh, int j, int i, bool new_line)
 	int fd;
 	
 	fd = which_fd(msh);
+	if(fd == -1)
+	{
+		perror("msh");
+		return ;
+	}
 	if (msh->cmd[i] == NULL)
 		return ;
 	while (msh->cmd[j++] && msh->cmd[i] != NULL)

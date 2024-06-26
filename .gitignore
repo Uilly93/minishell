@@ -4,3 +4,5 @@ includes/libft/*.o
 includes/libft/*.a
 Shelldivers
 out
+test
+infile
