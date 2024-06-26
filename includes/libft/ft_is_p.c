@@ -6,19 +6,22 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:46:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:51:37 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 12:55:24 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_is_p(void *ptr)
+int	ft_is_p(void *ptr, int fd)
 {
+	char *s;
+
+	s = "0123456789abcdef";
 	if (!ptr)
 	{
-		write(1, "(nil)", 5);
+		ft_putstr_fd("(nil)", fd);
 		return (5);
 	}
-	write(1, "0x", 2);
-	return (ft_putnbr_base_long((unsigned long) ptr, "0123456789abcdef") + 2);
+	ft_putstr_fd("0x", fd);
+	return (ft_putnbr_base_long((unsigned long) ptr, s, fd) + 2);
 }

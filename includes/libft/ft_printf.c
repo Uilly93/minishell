@@ -6,13 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 09:36:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:52:29 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 13:19:35 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_printf(const char *s, ...)
+int	ft_printf(int fd, const char *s, ...)
 {
 	int	i;
 	int	len;
@@ -28,11 +28,11 @@ int	ft_printf(const char *s, ...)
 		if (s[i] == '%')
 		{
 			i++;
-			len += ft_mandatory(&s[i++], args);
+			len += ft_mandatory(&s[i++], args, fd);
 		}
 		else
 		{
-			len += ft_putchar(s[i]);
+			len += ft_putchar_f(s[i], fd);
 			i++;
 		}
 	}

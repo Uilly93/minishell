@@ -6,38 +6,62 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/06 14:02:49 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/26 09:44:14 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <unistd.h>
 // #include <string.h>
+
+int	which_fd(t_msh *msh)
+{
+	if (msh->outfile != NULL)
+	{
+		msh->out = open(msh->outfile, get_flags(msh), 0644);
+		return (msh->out);
+	}
+	else if (msh->next == NULL)
+		return (1);
+	else if (msh->pipefd[1] != -1)
+		return (msh->pipefd[1]);
+	else
+		return (1);
+}
 
 static int handle_flag(char **prompt, int i, int j)
 {
 	while(prompt[i][j])
 	{
-		if(prompt[i][j] != 'n')
+		if (prompt[i][j] != 'n')
 			return (0);
 		j++;
 	}
 		return (1);
 }
 
-void print_args(char **prompt, int j, int i, bool new_line)
+void print_args(t_msh *msh, int j, int i, bool new_line)
 {
-	if(prompt[i] == NULL)
+	int fd;
+	
+	fd = which_fd(msh);
+	if (msh->cmd[i] == NULL)
 		return ;
-	while (prompt[j++] && prompt[i] != NULL)
-		if(prompt[i + 1] == NULL)
-			printf("%s", prompt[i++]);
+	while (msh->cmd[j++] && msh->cmd[i] != NULL)
+		if (msh->cmd[i + 1] == NULL)
+			ft_printf(fd, "%s", msh->cmd[i++]);
 		else
-			printf("%s ", prompt[i++]);
-	if(new_line == true)
-		printf("\n");
+			ft_printf(fd, "%s ", msh->cmd[i++]);
+	if (new_line == true)
+		ft_printf(fd, "\n");
+	close_files(msh);
+	if (msh->pipefd[0] != -1)
+		close(msh->pipefd[0]);
+	if (msh->pipefd[0] != -1)
+		close(msh->pipefd[1]);
 }
 
-void ft_echo(char **prompt)
+void ft_echo(t_msh *msh)
 {
 	int		i;
 	int		j;
@@ -46,23 +70,23 @@ void ft_echo(char **prompt)
 	i = 0;
 	j = 1;
 	new_line = true;
-	if (*prompt && ft_strcmp(prompt[i++], "echo") == 0)
+	if (msh->cmd[0] && ft_strcmp(msh->cmd[i++], "echo") == 0)
 	{
-		if(prompt[i] == NULL)
+		if (msh->cmd[i] == NULL)
 			return ;
-		if (*prompt[i] != '\0' && ft_strncmp(prompt[i], "-n", 2) == 0)
+		if (msh->cmd[i][0] != '\0' && ft_strncmp(msh->cmd[i], "-n", 2) == 0)
 		{
-			while (ft_strncmp(prompt[i], "-n", 2) == 0)
+			while (ft_strncmp(msh->cmd[i], "-n", 2) == 0)
 			{
-				if(handle_flag(prompt, i, j) == 0)
+				if (handle_flag(msh->cmd, i, j) == 0)
 					break;
 				new_line = false;
 				i++;
-				if(prompt[i] == NULL)
+				if (msh->cmd[i] == NULL)
 					return ;
 			}
 		}
-		print_args(prompt, j, i, new_line);
+		print_args(msh, j, i, new_line);
 	}
 }
 

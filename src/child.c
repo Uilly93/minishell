@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/24 14:20:41 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 09:36:32 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	get_flags(t_msh *msh)
 	int flags;
 	
 	flags = O_WRONLY | O_CREAT;
-	if (msh->out_appen == 1)
+	if (msh->out_appen == true)
     	flags |= O_APPEND;
 	else
 		flags |= O_TRUNC;
@@ -31,9 +31,9 @@ int	get_flags(t_msh *msh)
 
 int	close_files(t_msh *msh)
 {
-	if(msh->in != -1)
+	if (msh->in != -1)
 		close(msh->in);
-	if(msh->out != -1)
+	if (msh->out != -1)
 		close(msh->out);
 	return (0);
 }
@@ -43,9 +43,9 @@ int open_fd(t_msh *msh)
 	if (msh->infile != NULL)
 	{
 		msh->in = open(msh->infile, O_RDONLY, 0644);
-		if(msh->in != -1)
+		if (msh->in != -1)
 		{
-			if(dup2(msh->in, STDIN_FILENO) == -1)
+			if (dup2(msh->in, STDIN_FILENO) == -1)
 				return (close_pipes(msh), close_files(msh), 1);
 		}
 		else
@@ -54,9 +54,9 @@ int open_fd(t_msh *msh)
 	if (msh->outfile != NULL)
 	{
 		msh->out = open(msh->outfile, get_flags(msh), 0644);
-		if(msh->out != -1)
+		if (msh->out != -1)
 		{
-			if(dup2(msh->out, STDOUT_FILENO) == -1)
+			if (dup2(msh->out, STDOUT_FILENO) == -1)
 				return (close_pipes(msh), close_files(msh), 1);
 		}
 		else
@@ -77,7 +77,7 @@ int	redirect_fd(t_msh *msh)
 		if (dup2(msh->pipefd[1], STDOUT_FILENO) == -1)
 			return (close_pipes(msh), 1);
 	}
-	if(open_fd(msh))
+	if (open_fd(msh))
 		return (close_files(msh), 1);
 	close_files(msh);
 	close_pipes(msh);

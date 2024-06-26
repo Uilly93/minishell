@@ -6,28 +6,28 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:37:45 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:53:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 11:27:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_putnbr(long int nb)
+int	ft_putnbr_f(long int nb, int fd)
 {
 	size_t		len;
 
 	len = 0;
 	if (nb < 0)
 	{
-		len += ft_putchar('-');
+		len += ft_is_c('-', fd);
 		nb *= -1;
 	}
 	if (nb >= 10)
 	{
-		len += ft_putnbr(nb / 10);
-		len += ft_putnbr(nb % 10);
+		len += ft_putnbr_f(nb / 10, fd);
+		len += ft_putnbr_f(nb % 10, fd);
 	}
 	else
-		len += ft_putchar(nb + 48);
+		len += ft_is_c(nb + 48, fd);
 	return (len);
 }

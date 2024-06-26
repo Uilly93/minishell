@@ -6,13 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:43:28 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:51:49 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 11:18:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_is_xl(int hexa)
+int	ft_is_xl(int hexa, int fd)
 {
-	return (ft_putnbr_base(hexa, "0123456789abcdef"));
+	return (ft_putnbr_base(hexa, "0123456789abcdef", fd));
 }

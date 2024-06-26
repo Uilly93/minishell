@@ -6,14 +6,14 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:33:37 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:52:35 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 13:19:11 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_putchar(char c)
+int	ft_putchar_f(char c, int fd)
 {
-	write(1, &c, 1);
+	write(fd, &c, 1);
 	return (1);
 }

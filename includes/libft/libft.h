@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 15:52:42 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/05/29 14:21:06 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 13:01:00 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,19 +105,19 @@ char	*ft_strdup_gnl(char *s);
 
 // ft_printf
 
-int		ft_is_c(char c);
-int		ft_is_di(int nb);
-int		ft_is_p(void *ptr);
-int		ft_is_s(const char *s);
-int		ft_is_u(unsigned int nb);
-int		ft_is_xl(int hexa);
-int		ft_is_xu(int hexa);
-int		ft_mandatory(const char *fmt, va_list args);
-int		ft_printf(const char *s, ...);
-int		ft_putchar(char c);
-int		ft_putnbr_base(unsigned int nb, char *base);
-int		ft_putnbr(long int nb);
-int		ft_putnbr_base_long(unsigned long nb, char *base);
+int		ft_is_c(char c, int fd);
+int		ft_is_di(int nb, int fd);
+int		ft_is_p(void *ptr, int fd);
+int		ft_is_s(const char *s, int fd);
+int		ft_is_u(unsigned int nb, int fd);
+int		ft_is_xl(int hexa, int fd);
+int		ft_is_xu(int hexa, int fd);
+int		ft_mandatory(const char *fmt, va_list args, int fd);
+int		ft_printf(int fd, const char *s, ...);
+int		ft_putchar_f(char c, int fd);
+int		ft_putnbr_base(unsigned int nb, char *base, int fd);
+int		ft_putnbr_f(long int nb, int fd);
+int		ft_putnbr_base_long(unsigned long nb, char *base, int fd);
 int		ft_putstr(char *s);
 
 #endif

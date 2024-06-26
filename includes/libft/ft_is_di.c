@@ -6,13 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:41:29 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/19 09:53:29 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 11:30:02 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_is_di(int nb)
+int	ft_is_di(int nb, int fd)
 {
-	return (ft_putnbr(nb));
+	return (ft_putnbr_f(nb, fd));
 }

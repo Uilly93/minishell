@@ -6,13 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:44:14 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:51:46 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 11:18:16 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_is_u(unsigned int nb)
+int	ft_is_u(unsigned int nb, int fd)
 {
-	return (ft_putnbr_base(nb, "0123456789"));
+	return (ft_putnbr_base(nb, "0123456789", fd));
 }

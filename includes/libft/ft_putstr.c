@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:36:53 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 11:53:17 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 13:04:00 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	ft_putstr(char *s)
 		return (0);
 	while (s[i])
 	{
-		ft_putchar(s[i]);
+		ft_putchar_fd(s[i], 1);
 		i++;
 	}
 	return (i);

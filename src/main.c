@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/24 17:08:35 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 13:57:24 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,10 +180,12 @@ int	close_pipes(t_msh *msh)
 int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 {
 	(void)envp;
+	// if(redirect_fd(msh))
+	// 	return (-1);
 	if (*cmd && ft_strcmp(*cmd, "<<") == 0)
 		return (here_doc(msh, cmd), 1);
 	if (*cmd && ft_strcmp(*cmd, "echo") == 0)
-		return (ft_echo(cmd), 1);
+		return (ft_echo(msh), 1);
 	if (*cmd && ft_strcmp(*cmd, "cd") == 0)
 		if (ft_cd(cmd) == 0)
 			return (1);
@@ -303,7 +305,8 @@ t_msh *cmd_node(char *line)
 		return (NULL);
 	msh->in = -1;
 	msh->out = -1;
-	msh->out_appen = 1;
+	msh->out_appen = 0;
+	// msh->outfile = NULL;
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
 		return (NULL);
@@ -357,8 +360,10 @@ int exec(t_msh *msh, char **envp)
 	while(current)
 	{
 		prev = current;
-		pipe(current->pipefd);
-		
+		if(ft_lstlen(msh) > 1)
+			pipe(current->pipefd);
+		// if(redirect_fd(msh))
+		// 	break ;
 		if(is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp);
 		current = current->next;

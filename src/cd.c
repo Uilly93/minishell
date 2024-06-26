@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/24 17:10:54 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/25 09:35:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ int	ft_cd(char **arg)
 	char	*pwd;
 	char	*path;
 
-	if(*arg && ft_strcmp(*arg++, "cd") == 0)
+	if (*arg && ft_strcmp(*arg++, "cd") == 0)
 	{
 		pwd = getcwd(NULL, 0);
 		if (!pwd)
 			return (1);
-		if(*arg == NULL)
+		if (*arg == NULL)
 			path = ft_strdup("/home/wnocchi"); // need env to fix
 		else
 		{
@@ -56,7 +56,7 @@ int	ft_cd(char **arg)
 		free(pwd);
 		if (!path)
 			return (1);
-		if(*arg)
+		if (*arg)
 			return (ft_err("minishell: cd: too many arguments"), free(path), 1);
 		if (chdir(path) == -1)
 			return (perror("minishell: cd"), free(path), 1);
