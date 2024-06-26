@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/25 09:35:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/26 17:16:28 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,28 +15,74 @@
 #include <string.h>
 #include <unistd.h>
 
-// char	*join_path(char *pwd, char *arg)
-// {
-// 	char	*res;
-// 	char	*buffer;
-
-// 	buffer = join_free(pwd, "/");
-// 	if (!buffer)
-// 		return (NULL);
-// 	res = join_free(buffer, arg);
-// 	if (!res)
-// 		return (NULL);
-// 	return (res);
-// }
-void ft_err(char *error)
+char *get_user(char **envp)
 {
-	printf(RED);
-	write(2, error, ft_strlen(error));
-	write(2, "\n", 1);
-	printf(RESET);
+	int i;
+	char **tab;
+	char *res;
+	
+	i = 0;
+	while(envp[i])
+	{
+		if(ft_strncmp(envp[i], "HOME=", 5))
+		{
+			tab = ft_split(envp[i], '=');
+			if(!tab)
+				return (NULL);
+			res = ft_strjoin("/home/", tab[1]);
+			if(!res)
+				return (free_tab(tab), NULL);
+			free_tab(tab);
+			return (res);
+		}
+		i++;
+	}
+	return (NULL);
 }
 
-int	ft_cd(char **arg)
+void ft_err(char *error)
+{
+	write(2, (BOLD_RED), ft_strlen(BOLD_RED));
+	write(2, error, ft_strlen(error));
+	write(2, "\n", 1);
+	write(2, (RESET), ft_strlen(RESET));
+
+}
+
+int	no_args(char **arg, char **envp)
+{
+	char *usr;
+	char *res;
+	
+	if (*arg == NULL)
+	{
+		usr = get_user(envp);
+		res = ft_strjoin("/home/", usr);
+		if(!res)
+			return (free(usr), 1);
+		free(usr);
+		if(chdir(res) == -1)
+			return (perror("minishell: cd"), free(res), 1);
+		free(res);
+		return (0);
+	}
+	return (0);
+}
+
+char *add_path(char **arg, char *pwd)
+{
+	char *tmp;
+
+	tmp = ft_strjoin(pwd, "/"); // protect
+	if(!tmp)
+		return (NULL);
+	tmp = join_free(tmp, *arg++); //protect
+	if(!tmp)
+		return (NULL);
+	return(tmp);
+}
+
+int	ft_cd(char **arg, char **envp)
 {
 	char	*pwd;
 	char	*path;
@@ -47,11 +93,11 @@ int	ft_cd(char **arg)
 		if (!pwd)
 			return (1);
 		if (*arg == NULL)
-			path = ft_strdup("/home/wnocchi"); // need env to fix
+			path = get_user(envp); //protect
 		else
 		{
-			path = ft_strjoin(pwd, "/");
-			path = join_free(path, *arg++);
+			path = ft_strjoin(pwd, "/"); // protect
+			path = join_free(path, *arg++); //protect
 		}
 		free(pwd);
 		if (!path)

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 13:39:32 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/26 16:54:40 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,18 +140,16 @@ char	*join_path_access(char *av, char **envp)
 	i = 0;
 	res = NULL;
 	if (access(av, X_OK) == 0)
-		return (ft_strdup(av));
+		return (av);
 	s = get_path(envp);
-	if (!s)
-		return (write(2, "Error: no environment\n", 22), NULL);
 	while (s[i++])
 	{
-		res = ft_strcat_malloc(s[i], "/");
+		res = ft_strjoin(s[i], "/");
 		if (!res)
-			return (NULL);
+			return (free_tab(s), NULL);
 		res = join_free(res, av);
 		if (!res)
-			return (NULL);
+			return (free_tab(s), NULL);
 		if (access(res, X_OK) == 0)
 			return (free_tab(s), res);
 		free(res);
@@ -181,14 +179,14 @@ int	close_pipes(t_msh *msh)
 int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 {
 	(void)envp;
-	if (*cmd && ft_strcmp(*cmd, "<<") == 0)
+	if (cmd[0] && ft_strcmp(cmd[0], "<<") == 0)
 		return (here_doc(msh, cmd), 1);
-	if (*cmd && ft_strcmp(*cmd, "echo") == 0)
+	if (cmd[0] && ft_strcmp(cmd[0], "echo") == 0)
 		return (ft_echo(msh), 1);
-	if (*cmd && ft_strcmp(*cmd, "cd") == 0)
-		if (ft_cd(cmd) == 0)
+	if (cmd[0] && ft_strcmp(cmd[0], "cd") == 0)
+		if (ft_cd(cmd, envp) == 0)
 			return (1);
-	if (*cmd && ft_strcmp(*cmd, "pwd") == 0)
+	if (cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
 	return (0);
 }
@@ -203,11 +201,11 @@ int	test_child(t_msh *msh, char **envp)
 	child = fork();
 	if (child == 0)
 	{
-		path = join_path_access(*msh->cmd, envp);
+		path = join_path_access(msh->cmd[0], envp);
 		if(!path)
 		{
 			close_pipes(msh);
-			printf("command not found\n");
+			ft_err("msh: command not found");
 			return (free_lst(msh), exit(127), 1);
 		}
 		if(redirect_fd(msh))
