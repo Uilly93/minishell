@@ -6,14 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 10:32:41 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/26 13:43:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <stdio.h>
 #include <unistd.h>
-// #include <string.h>
 
 int	which_fd(t_msh *msh)
 {
@@ -61,10 +60,6 @@ void print_args(t_msh *msh, int j, int i, bool new_line)
 	if (new_line == true)
 		ft_printf(fd, "\n");
 	close_files(msh);
-	if (msh->pipefd[0] != -1)
-		close(msh->pipefd[0]);
-	if (msh->pipefd[0] != -1)
-		close(msh->pipefd[1]);
 }
 
 void ft_echo(t_msh *msh)

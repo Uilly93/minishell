@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 10:35:41 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/26 13:39:32 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,10 +139,12 @@ char	*join_path_access(char *av, char **envp)
 
 	i = 0;
 	res = NULL;
+	if (access(av, X_OK) == 0)
+		return (ft_strdup(av));
 	s = get_path(envp);
 	if (!s)
 		return (write(2, "Error: no environment\n", 22), NULL);
-	while (s[i])
+	while (s[i++])
 	{
 		res = ft_strcat_malloc(s[i], "/");
 		if (!res)
@@ -153,7 +155,6 @@ char	*join_path_access(char *av, char **envp)
 		if (access(res, X_OK) == 0)
 			return (free_tab(s), res);
 		free(res);
-		i++;
 	}
 	free_tab(s);
 	return (NULL);
@@ -180,8 +181,6 @@ int	close_pipes(t_msh *msh)
 int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 {
 	(void)envp;
-	// if(redirect_fd(msh))
-	// 	return (-1);
 	if (*cmd && ft_strcmp(*cmd, "<<") == 0)
 		return (here_doc(msh, cmd), 1);
 	if (*cmd && ft_strcmp(*cmd, "echo") == 0)
@@ -190,7 +189,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 		if (ft_cd(cmd) == 0)
 			return (1);
 	if (*cmd && ft_strcmp(*cmd, "pwd") == 0)
-		return (get_pwd(cmd), 1);
+		return (get_pwd(cmd, msh), 1);
 	return (0);
 }
 
@@ -306,7 +305,7 @@ t_msh *cmd_node(char *line)
 	msh->in = -1;
 	msh->out = -1;
 	msh->out_appen = 0;
-	// msh->outfile = "test";
+	// msh->infile = "test";
 	// msh->outfile = "outfile";
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
@@ -363,8 +362,6 @@ int exec(t_msh *msh, char **envp)
 		prev = current;
 		if(ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
-		// if(redirect_fd(msh))
-		// 	break ;
 		if(is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp);
 		current = current->next;
