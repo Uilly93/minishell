@@ -6,12 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 16:54:40 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/27 11:09:48 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <errno.h>
 #include <readline/chardefs.h>
 #include <readline/readline.h>
 #include <stdio.h>
@@ -184,8 +183,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 	if (cmd[0] && ft_strcmp(cmd[0], "echo") == 0)
 		return (ft_echo(msh), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "cd") == 0)
-		if (ft_cd(cmd, envp) == 0)
-			return (1);
+		return(ft_cd(cmd, envp), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
 	return (0);

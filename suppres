@@ -4,3 +4,15 @@
 	...
 	obj:*/libreadline.so*
 }
+{
+	ignore_readline_leaks
+	Memcheck:Leak
+	...
+	obj:*/usr/bin/ls*
+}
+{
+	ignore_readline_leaks
+	Memcheck:Leak
+	...
+	obj:*/usr/bin/grep*
+}

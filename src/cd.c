@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 17:16:28 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/27 10:49:29 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 
-char *get_user(char **envp)
+char *get_home(char **envp)
 {
 	int i;
 	char **tab;
@@ -24,12 +24,12 @@ char *get_user(char **envp)
 	i = 0;
 	while(envp[i])
 	{
-		if(ft_strncmp(envp[i], "HOME=", 5))
+		if(ft_strncmp(envp[i], "HOME=", 5) == 0)
 		{
 			tab = ft_split(envp[i], '=');
 			if(!tab)
 				return (NULL);
-			res = ft_strjoin("/home/", tab[1]);
+			res = ft_strdup(tab[1]);
 			if(!res)
 				return (free_tab(tab), NULL);
 			free_tab(tab);
@@ -49,37 +49,33 @@ void ft_err(char *error)
 
 }
 
-int	no_args(char **arg, char **envp)
-{
-	char *usr;
-	char *res;
-	
-	if (*arg == NULL)
-	{
-		usr = get_user(envp);
-		res = ft_strjoin("/home/", usr);
-		if(!res)
-			return (free(usr), 1);
-		free(usr);
-		if(chdir(res) == -1)
-			return (perror("minishell: cd"), free(res), 1);
-		free(res);
-		return (0);
-	}
-	return (0);
-}
-
-char *add_path(char **arg, char *pwd)
+char *join_path(char *arg, char *pwd)
 {
 	char *tmp;
+	char *path;
+	
+	tmp = ft_strjoin(pwd, "/");
+	// free(pwd);
+	if (!tmp)
+		return (free(pwd), NULL);
+	path = ft_strjoin(tmp, arg);
+	free(tmp);
+	if (!path)
+		return (free(pwd), free(path), NULL);
+	return (path);
+}
 
-	tmp = ft_strjoin(pwd, "/"); // protect
-	if(!tmp)
-		return (NULL);
-	tmp = join_free(tmp, *arg++); //protect
-	if(!tmp)
-		return (NULL);
-	return(tmp);
+int	err_and_chdir(char *path, char *arg)
+{
+
+	if (!path)
+		return (1);
+	if (arg)
+		return (ft_err("msh: cd: too many arguments"), free(path), 1);
+	if (chdir(path) == -1)
+		return (ft_err("msh: cd: No such file or directory"), free(path), 1);
+	free(path);
+	return (0);
 }
 
 int	ft_cd(char **arg, char **envp)
@@ -92,21 +88,14 @@ int	ft_cd(char **arg, char **envp)
 		pwd = getcwd(NULL, 0);
 		if (!pwd)
 			return (1);
-		if (*arg == NULL)
-			path = get_user(envp); //protect
+		if(*arg)
+			path = join_path(*arg++, pwd);
 		else
-		{
-			path = ft_strjoin(pwd, "/"); // protect
-			path = join_free(path, *arg++); //protect
-		}
+			path = get_home(envp);
 		free(pwd);
 		if (!path)
 			return (1);
-		if (*arg)
-			return (ft_err("minishell: cd: too many arguments"), free(path), 1);
-		if (chdir(path) == -1)
-			return (perror("minishell: cd"), free(path), 1);
-		free(path);
+		err_and_chdir(path, *arg);
 	}
 	return (0);
 }
