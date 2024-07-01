@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 13:43:52 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/01 14:52:10 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	which_fd(t_msh *msh)
 
 static int handle_flag(char **prompt, int i, int j)
 {
-	while(prompt[i][j])
+	while (prompt[i][j])
 	{
 		if (prompt[i][j] != 'n')
 			return (0);
@@ -45,7 +45,7 @@ void print_args(t_msh *msh, int j, int i, bool new_line)
 	int fd;
 	
 	fd = which_fd(msh);
-	if(fd == -1)
+	if (fd == -1)
 	{
 		perror("msh");
 		return ;
@@ -67,7 +67,7 @@ void ft_echo(t_msh *msh)
 	int		i;
 	int		j;
 	bool	new_line;
-	
+
 	i = 0;
 	j = 1;
 	new_line = true;
@@ -90,10 +90,3 @@ void ft_echo(t_msh *msh)
 		print_args(msh, j, i, new_line);
 	}
 }
-
-// int main(int ac, char **av)
-// {
-// 	(void)ac;
-// 	ft_echo(av, av[3]);
-// 	return (0);
-// }

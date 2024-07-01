@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/27 11:09:48 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/01 16:22:03 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,12 +164,13 @@ int	close_pipes(t_msh *msh)
 	t_msh	*current;
 
 	current = ft_lastnode(msh);
-	while(current)
+	while (current)
 	{
-		if(current->pipefd[0] != -1)
+		if (current->pipefd[0] != -1)
 			close(current->pipefd[0]);
-		if(current->pipefd[1] != -1)
+		if (current->pipefd[1] != -1)
 			close(current->pipefd[1]);
+		close_files(current);
 		current = current->prev;
 	}
 	return (0);
@@ -183,7 +184,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 	if (cmd[0] && ft_strcmp(cmd[0], "echo") == 0)
 		return (ft_echo(msh), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "cd") == 0)
-		return(ft_cd(cmd, envp), 1);
+		return (ft_cd(cmd, envp), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
 	return (0);
@@ -200,15 +201,14 @@ int	test_child(t_msh *msh, char **envp)
 	if (child == 0)
 	{
 		path = join_path_access(msh->cmd[0], envp);
-		if(!path)
+		if (!path)
 		{
-			close_pipes(msh);
 			ft_err("msh: command not found");
 			return (free_lst(msh), exit(127), 1);
 		}
-		if(redirect_fd(msh))
+		if (redirect_fd(msh))
 			return (free_lst(msh), free(path), exit(127), 1);
-		if(execve(path, msh->cmd, envp) == -1)
+		if (execve(path, msh->cmd, envp) == -1)
 		{
 			perror("msh :");
 			return (free_lst(msh), free(msh), free(path), exit(127), 1);
@@ -273,11 +273,11 @@ void	print_node(t_msh *msh)
 	int j = 0;
 	printf("-----------------------------------------\n");
 	printf("lst size = %d\n", ft_lstlen(msh));
-	while(current)
+	while (current)
 	{
 		printf("cmd %d = ", current->index);
 		j = 0;
-		while(current->cmd[j])
+		while (current->cmd[j])
 		{
 			printf("%s ", current->cmd[j]);
 			j++;
@@ -296,7 +296,7 @@ t_msh *cmd_node(char *line)
 	t_msh *msh;
 	
 	msh = ft_calloc(sizeof(t_msh), 1);
-	if(!msh)
+	if (!msh)
 		return (NULL);
 	msh->in = -1;
 	msh->out = -1;
@@ -306,7 +306,7 @@ t_msh *cmd_node(char *line)
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
 		return (NULL);
-	return(msh);
+	return (msh);
 }
 
 t_msh *parsing(char *line)
@@ -319,7 +319,7 @@ t_msh *parsing(char *line)
 	msh = NULL;
 	i = 0;
 	splited = ft_split(line, '|');
-	while(splited[i])
+	while (splited[i])
 	{
 		tmp = cmd_node(splited[i]);
 		tmp->pipefd[1] = -1;
@@ -335,15 +335,18 @@ t_msh *parsing(char *line)
 void	free_lst(t_msh *msh)
 {
 	t_msh	*current;
-	t_msh	*prev;
+	t_msh	*next;
 
-	current = msh;
+	current = ft_lastnode(msh);
 	while (current)
 	{
 		free_tab(current->cmd);
-		prev = current;
-		current = current->next;
-		free(prev);
+		if(current->hlimit)
+			free(current->hlimit);
+		close_files(current);
+		next = current;
+		current = current->prev;
+		free(next);
 	}
 }
 
@@ -353,16 +356,15 @@ int exec(t_msh *msh, char **envp)
 	t_msh *prev;
 
 	current = msh;
-	while(current)
+	while (current)
 	{
 		prev = current;
-		if(ft_lstlen(msh) > 1)
+		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
-		if(is_it_builtin(current->cmd, current, envp) == 0)
+		if (is_it_builtin(current->cmd, current, envp) == 0)
 			test_child(current, envp);
 		current = current->next;
 	}
-	close_pipes(msh);
 	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
@@ -386,7 +388,7 @@ int	msh_loop(t_msh *msh, char **envp)
 		free(prompt);
 		if (!line)
 			return (1);
-		if(ft_strlen(line))
+		if (ft_strlen(line))
 			add_history(line);
 		msh = parsing(line);
 		exec(msh, envp);

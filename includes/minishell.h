@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/26 16:52:18 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/06/27 16:59:12 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ typedef struct s_msh
 	struct s_msh	*prev;
 }	t_msh;
 
-int		check_heredoc(t_msh *msh, char **av);
+// int		check_heredoc(t_msh *msh, char **av);
 void	here_doc(t_msh *msh, char **av);
 void	ft_echo(t_msh *msh);
 int		ft_cd(char **arg, char **envp);
