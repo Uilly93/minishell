@@ -6,13 +6,16 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/01 16:22:03 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/02 16:35:22 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <bits/types/siginfo_t.h>
 #include <readline/chardefs.h>
 #include <readline/readline.h>
+#include <readline/rltypedefs.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -210,7 +213,7 @@ int	test_child(t_msh *msh, char **envp)
 			return (free_lst(msh), free(path), exit(127), 1);
 		if (execve(path, msh->cmd, envp) == -1)
 		{
-			perror("msh :");
+			perror("msh");
 			return (free_lst(msh), free(msh), free(path), exit(127), 1);
 		}
 		free(path);
@@ -301,7 +304,7 @@ t_msh *cmd_node(char *line)
 	msh->in = -1;
 	msh->out = -1;
 	msh->out_appen = 0;
-	// msh->infile = "test";
+	// msh->infile = "/tmp/heredoc_1";
 	// msh->outfile = "outfile";
 	msh->cmd = ft_split(line, ' ');
 	if (!msh->cmd)
@@ -372,15 +375,55 @@ int exec(t_msh *msh, char **envp)
 	return (0);
 }
 
+void signal_handler(int sig, siginfo_t *info, void *context)
+{
+	(void)info;
+	(void)context;
+	if(sig == SIGINT)
+	{
+		rl_done = true;
+	}
+	else if(sig == SIGQUIT)
+	{
+		;
+	}
+}
+
+void void_func(void)
+{
+	return ;
+}
+
+int	init_sigint()
+{
+	struct sigaction sa;
+    sa.sa_sigaction = signal_handler;
+    sigemptyset(&sa.sa_mask);
+	rl_event_hook = (void *)void_func;
+    sa.sa_flags = 0;
+
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        perror("sigaction failed for SIGINT");
+        return 1;
+    }
+	sa.sa_handler = SIG_IGN;
+    if (sigaction(SIGQUIT, &sa, NULL) == -1) {
+        perror("sigaction failed for SIGQUIT");
+        return 1;
+    }
+	return (0);
+}
+
 int	msh_loop(t_msh *msh, char **envp)
 {	
 	(void)envp;
 	char *line;
 	char *prompt;
-	
+
 	while (1)
 	{
-		printf(BOLD_GREEN"➜  ");
+		init_sigint();
+		printf(BOLD_GREEN"➜  "RESET);
 		prompt = pwd_prompt();
 		if (!prompt)
 			return (printf(RESET), 1);

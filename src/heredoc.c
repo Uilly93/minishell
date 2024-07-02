@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/01 15:34:07 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/02 09:36:28 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	check_heredoc(t_msh *msh, char **av)
 			unlink(filename);
 			free(filename);
 			if(msh->in == -1)
-				return (/* free(msh->hlimit),  */perror("msh"), 1);
+				return (perror("msh"), 1);
 		}
 	return (0);
 }
@@ -52,17 +52,13 @@ void	here_doc(t_msh *msh, char **av)
 		{
 			if (!line || ft_strcmp(line, msh->hlimit) == 0)
 			{
-				// if(msh->in != -1)
-				// 	close(msh->in);
 				free(line);
-				// free(msh->hlimit);
 				return ;
 			}
-				ft_putendl_fd(line, msh->in);
+			ft_putendl_fd(line, msh->in);
 			free(line);
 			line = readline(MAGENTA"msh_heredoc> "RESET);
 		}
 		free(line);
-		// free(msh->hlimit);
 	}
 }
