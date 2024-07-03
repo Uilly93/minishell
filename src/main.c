@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/03 09:49:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/03 10:26:47 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,6 @@
 #include <unistd.h>
 #include <readline/history.h>
 
-char **pipe_split(char *prompt)
-{
-	char **splited;
-	
-	splited = ft_split(prompt, '|');
-	if (splited == NULL)
-		return (NULL);
-	return (splited);
-}
 
 void	ft_free(void *ptr)
 {
@@ -39,25 +30,6 @@ void	ft_free(void *ptr)
 		free(ptr);
 }
 
-char *skip_chars(char *line)
-{
-	char *new_line;
-	int i;
-	int count;
-	
-	count = 0;
-	i = 0;
-	while (count < 3 && line[i])
-	{
-		if (line[i++] == '/')
-			count++;
-		else
-			i++;
-	}
-	new_line = ft_strdup(line + i);
-	free(line);
-	return (new_line);
-}
 void	free_tab(char **tab)
 {
 	int i;
@@ -72,24 +44,6 @@ void	free_tab(char **tab)
 	ft_free(tab);
 }
 
-// char *skip_dir(char *line)
-// {
-// 	char **pwd;
-// 	int i;
-// 	char *new_line;
-	
-// 	line = getcwd(NULL, 0);
-// 	if (!line)
-// 		return (NULL);
-// 	pwd = ft_split(line, '/');
-// 	free(line);
-// 	if (!pwd)
-// 		return (NULL);
-// 	if (*pwd)
-// 		while (pwd[i] != NULL)
-// 			i++;
-// 	return (new_line)
-// }
 
 char *pwd_prompt()
 {
@@ -132,25 +86,6 @@ char *custom_prompt()
 	if(!custom_prompt)
 		return (NULL);
 	return(custom_prompt);
-}
-
-
-int	get_prompt(t_msh *msh, char *line, char *prompt)
-{
-	line = NULL;
-	prompt = NULL;
-	printf(BOLD_GREEN"➜  ");
-	prompt = pwd_prompt();
-	if (!prompt)
-		return (printf(RESET), free(msh), 1);
-	line = readline(prompt);
-	if (line == NULL)
-	{
-		ft_free(msh);
-		ft_free(prompt);
-		return (1);
-	}
-	return (0);
 }
 
 char	**get_path(char **envp)
@@ -230,7 +165,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 
 void	free_lst(t_msh *msh);
 
-int	test_child(t_msh *msh, char **envp)
+int	test_child(t_msh *msh, char **envp) // rename
 {
 	pid_t	child;
 	char	*path;
@@ -302,7 +237,7 @@ int	ft_lstlen(t_msh *msh)
 	return (i);
 }
 
-void	print_node(t_msh *msh)
+void	print_node(t_msh *msh) // testing
 {
 	t_msh *current;
 
@@ -437,7 +372,7 @@ int	init_sigint()
 	struct sigaction sa;
     sa.sa_sigaction = signal_handler;
     sigemptyset(&sa.sa_mask);
-	// sa.sa_flags = SA_SIGINFO;
+	sa.sa_flags = SA_SIGINFO;
 	rl_event_hook = (void *)void_func;
     sa.sa_flags = 0;
 
@@ -459,10 +394,9 @@ int	msh_loop(t_msh *msh, char **envp)
 	char *line;
 	char *prompt;
 
+	init_sigint();
 	while (1)
 	{
-		if (init_sigint())
-			continue ;
 		prompt = custom_prompt();
 		if (!prompt)
 			return (printf(RESET), 1);

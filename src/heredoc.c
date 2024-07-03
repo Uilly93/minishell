@@ -6,13 +6,21 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/02 09:36:28 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/03 11:11:22 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <stdio.h>
 #include <unistd.h>
+
+// int heredoc_signal_handler(int sig) {
+//     if (sig == SIGINT) {
+//         printf("\nExiting heredoc mode.\n");
+//         return (1); // Quitte le mode heredoc
+//     }
+// 	return (0);
+// }
 
 int	check_heredoc(t_msh *msh, char **av)
 {

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/27 16:59:12 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/03 10:21:25 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void	ft_free(void *ptr);
 char	*join_path_access(char *av, char **envp);
 char	**get_path(char **envp);
 void	ft_err(char *error);
+int		init_sigint();
+void	signal_handler(int sig, siginfo_t *info, void *context);
 int		create_child(t_msh *msh, int *pipefd, char **envp, char *av); // enfant qui lis dans un infile
 
 
