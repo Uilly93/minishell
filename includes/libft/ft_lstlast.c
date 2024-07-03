@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:36:39 by wnocchi           #+#    #+#             */
-/*   Updated: 2023/11/20 11:35:32 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/03 14:11:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,11 @@
 t_list	*ft_lstlast(t_list *lst)
 {
 	t_list	*current;
-	int		i;
 
 	if (!lst)
 		return (0);
 	current = lst;
-	i = 0;
 	while (current->next)
-	{
-		i++;
 		current = current->next;
-	}
 	return (current);
 }
