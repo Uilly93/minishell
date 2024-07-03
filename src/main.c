@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/02 16:35:22 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/03 09:49:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,25 @@ void	free_tab(char **tab)
 	ft_free(tab);
 }
 
+// char *skip_dir(char *line)
+// {
+// 	char **pwd;
+// 	int i;
+// 	char *new_line;
+	
+// 	line = getcwd(NULL, 0);
+// 	if (!line)
+// 		return (NULL);
+// 	pwd = ft_split(line, '/');
+// 	free(line);
+// 	if (!pwd)
+// 		return (NULL);
+// 	if (*pwd)
+// 		while (pwd[i] != NULL)
+// 			i++;
+// 	return (new_line)
+// }
+
 char *pwd_prompt()
 {
 	char *line;
@@ -90,13 +109,29 @@ char *pwd_prompt()
 	if (*pwd)
 		while (pwd[i] != NULL)
 			i++;
-	printf(BOLD_BLUE);
 	if (i == 0)
-		new_line = ft_strjoin("/", "> "RESET);
+		new_line = ft_strjoin("/", BOLD_BLUE"> "RESET);
 	else
-		new_line = ft_strjoin(pwd[i - 1], "> "RESET);
+		new_line = ft_strjoin(pwd[i - 1], BOLD_BLUE"> "RESET);
 	free_tab(pwd);
+	if(!new_line)
+		return (NULL);
 	return (new_line);
+}
+
+char *custom_prompt()
+{
+	char *tmp;
+	char *custom_prompt;
+	
+	tmp = pwd_prompt();
+	if(!tmp)
+		return (NULL);
+	custom_prompt = ft_strjoin(BOLD_GREEN"➜  "BOLD_BLUE, tmp);
+	free(tmp);
+	if(!custom_prompt)
+		return (NULL);
+	return(custom_prompt);
 }
 
 
@@ -381,6 +416,9 @@ void signal_handler(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if(sig == SIGINT)
 	{
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
 		rl_done = true;
 	}
 	else if(sig == SIGQUIT)
@@ -399,32 +437,33 @@ int	init_sigint()
 	struct sigaction sa;
     sa.sa_sigaction = signal_handler;
     sigemptyset(&sa.sa_mask);
+	// sa.sa_flags = SA_SIGINFO;
 	rl_event_hook = (void *)void_func;
     sa.sa_flags = 0;
 
-    if (sigaction(SIGINT, &sa, NULL) == -1) {
+    if (sigaction(SIGINT, &sa, NULL) == -1)
+	{
         perror("sigaction failed for SIGINT");
-        return 1;
+        return (1);
     }
 	sa.sa_handler = SIG_IGN;
     if (sigaction(SIGQUIT, &sa, NULL) == -1) {
         perror("sigaction failed for SIGQUIT");
-        return 1;
+        return (1);
     }
 	return (0);
 }
 
 int	msh_loop(t_msh *msh, char **envp)
 {	
-	(void)envp;
 	char *line;
 	char *prompt;
 
 	while (1)
 	{
-		init_sigint();
-		printf(BOLD_GREEN"➜  "RESET);
-		prompt = pwd_prompt();
+		if (init_sigint())
+			continue ;
+		prompt = custom_prompt();
 		if (!prompt)
 			return (printf(RESET), 1);
 		line = readline(prompt);
