@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 15:52:42 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/25 13:01:00 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/04 14:11:05 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # include <sys/uio.h>
 # include <fcntl.h>
 # include <stdbool.h>
+# include <inttypes.h>
+
 
 void	ft_bzero(void *s, size_t n);
 int		ft_isalnum(int c);

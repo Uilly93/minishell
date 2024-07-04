@@ -6,12 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/03 10:26:47 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/04 15:56:39 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <bits/types/siginfo_t.h>
+// #include <bits/types/siginfo_t.h>
 #include <readline/chardefs.h>
 #include <readline/readline.h>
 #include <readline/rltypedefs.h>
@@ -160,12 +160,14 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 		return (ft_cd(cmd, envp), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
+	if (cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
+		return (ft_exit(msh), 1);
 	return (0);
 }
 
 void	free_lst(t_msh *msh);
 
-int	test_child(t_msh *msh, char **envp) // rename
+int	create_child(t_msh *msh, char **envp) // rename
 {
 	pid_t	child;
 	char	*path;
@@ -227,12 +229,12 @@ int	ft_lstlen(t_msh *msh)
 
 	if (!msh)
 		return (0);
-	current = msh;
+	current = ft_lastnode(msh);
 	i = 0;
 	while (current)
 	{
+		current = current->prev;
 		i++;
-		current = current->next;
 	}
 	return (i);
 }
@@ -335,7 +337,7 @@ int exec(t_msh *msh, char **envp)
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
 		if (is_it_builtin(current->cmd, current, envp) == 0)
-			test_child(current, envp);
+			create_child(current, envp);
 		current = current->next;
 	}
 	free_lst(msh);

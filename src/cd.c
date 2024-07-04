@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/27 10:49:29 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/04 16:08:55 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,7 @@ char *get_home(char **envp)
 
 void ft_err(char *error)
 {
-	write(2, (BOLD_RED), ft_strlen(BOLD_RED));
-	write(2, error, ft_strlen(error));
-	write(2, "\n", 1);
-	write(2, (RESET), ft_strlen(RESET));
-
+	ft_printf(2, BOLD_RED"%s\n"RESET, error);
 }
 
 char *join_path(char *arg, char *pwd)
