@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/04 15:56:39 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/05 17:01:03 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,12 +162,14 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 		return (get_pwd(cmd, msh), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
 		return (ft_exit(msh), 1);
+	if (cmd[0] && ft_strcmp(cmd[0], "export") == 0)
+		return (ft_export(msh), 1);
 	return (0);
 }
 
 void	free_lst(t_msh *msh);
 
-int	create_child(t_msh *msh, char **envp) // rename
+int	create_child(t_msh *msh, char **envp)
 {
 	pid_t	child;
 	char	*path;
@@ -284,8 +286,9 @@ t_msh *cmd_node(char *line)
 	return (msh);
 }
 
-t_msh *parsing(char *line)
+t_msh *parsing(char *line, char **envp)
 {
+	(void)envp;
 	t_msh *msh;
 	t_msh *tmp;
 	char **splited;
@@ -297,6 +300,7 @@ t_msh *parsing(char *line)
 	while (splited[i])
 	{
 		tmp = cmd_node(splited[i]);
+		tmp->my_env = cpy_env(envp);
 		tmp->pipefd[1] = -1;
 		tmp->pipefd[0] = -1;
 		tmp->index = i + 1;
@@ -316,6 +320,7 @@ void	free_lst(t_msh *msh)
 	while (current)
 	{
 		free_tab(current->cmd);
+		free_tab(current->my_env);
 		if(current->hlimit)
 			free(current->hlimit);
 		close_files(current);
@@ -408,7 +413,7 @@ int	msh_loop(t_msh *msh, char **envp)
 			return (1);
 		if (ft_strlen(line))
 			add_history(line);
-		msh = parsing(line);
+		msh = parsing(line, envp);
 		exec(msh, envp);
 	}
 	return (0);
@@ -420,6 +425,7 @@ int main(int ac, char **av, char **envp)
 	ft_bzero(&msh, sizeof(t_msh));
 	(void)ac;
 	(void)av;
+	// msh.my_env = cpy_env(envp);
 	msh_loop(&msh, envp);
 	return (0);
 }

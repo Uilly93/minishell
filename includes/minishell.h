@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/04 14:52:52 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/05 15:30:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@
 # include <errno.h>
 # include <signal.h>
 
-
 typedef struct s_msh
 {
 	char 			*hlimit;
 	// char			**prompt;
 	char			**cmd;
+	char			**my_env;
 	int				in;
 	int				out;
 	bool			out_appen;
@@ -43,7 +43,8 @@ void	ft_echo(t_msh *msh);
 int		ft_cd(char **arg, char **envp);
 int		ft_exit(t_msh *msh);
 int		get_pwd(char **arg, t_msh *msh);
-int		export_env(char *arg, char **envp);
+int		ft_export(t_msh *msh);
+// int		export_env(char *arg, char **envp);
 int		redirect_fd(t_msh *msh);
 int		which_fd(t_msh *msh);
 int		close_pipes(t_msh *msh);
@@ -57,6 +58,7 @@ char	*join_path_access(char *av, char **envp);
 char	**get_path(char **envp);
 void	ft_err(char *error);
 int		init_sigint();
+char	**cpy_env(char **envp);
 void	signal_handler(int sig, siginfo_t *info, void *context);
 void	free_lst(t_msh *msh);
 
