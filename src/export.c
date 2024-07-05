@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/05 16:58:23 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/05 17:36:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,17 @@ int	add_var_env(char *av ,t_msh *msh)
 	int i;
 
 	i = 0;
-	new_env = ft_calloc(sizeof(char *), env_len(msh->my_env) + 2);
+	new_env = ft_calloc(sizeof(char *), env_len(msh->my_env) + 1);
+	printf("env_len = %d\n", env_len(msh->my_env) + 1);
 	while(msh->my_env[i])
 	{
 		new_env[i] = ft_strdup(msh->my_env[i]);
-		if(!new_env[i])
-			return (free_tab(new_env), 1);	
+		printf("%d %s\n", i , new_env[i]);
+		// if(!new_env[i])
+		// 	return (free_tab(new_env), 1);	
 		i++;
 	}
+	printf("%d\n", i);
 	new_env[i] = ft_strdup(av);
 	free_tab(msh->my_env);
 	msh->my_env = cpy_env(new_env);
@@ -108,7 +111,7 @@ int	ft_export(t_msh *msh)
 {
 	if(msh->cmd[0] && !msh->cmd[1])
 		env_print(msh);
-	if(msh->cmd[0] && msh->cmd[1])
+	if(/* msh->cmd[0] &&  */msh->cmd[1])
 		add_var_env(msh->cmd[1], msh);
 	return (0);
 }
