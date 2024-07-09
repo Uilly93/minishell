@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/05 17:36:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:33:28 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,58 @@ int	env_len(char **envp)
 	return (i);
 }
 
-char **cpy_env(char **envp)
+void	ft_addnode(t_env **lst, t_env *add)
+{
+	t_env *last_node;
+	
+	if (!lst || !add)
+		return ;
+	if (!*lst)
+		*lst = add;
+	else
+	{
+		last_node = ft_lastnode(()*lst);
+		last_node->next = add;
+		add->prev = last_node;
+	}
+}
+
+t_env *create_env_node(char **envp, int i)
+{
+	t_env *env;
+	char **tmp;
+	
+	env = ft_calloc(sizeof(t_env), 1);
+	if (!env)
+		return (NULL);
+	env->var = ft_strdup(envp[i]);
+	if(!env->var)
+		return (NULL);
+	return (env);
+}
+
+t_msh *parsing(char *line, char **envp)
+{
+	(void)envp;
+	t_env *env;
+	t_env *tmp;
+	char **splited;
+	int	i;
+
+	env = NULL;
+	i = 0;
+	splited = ft_split(line, '|');
+	while (envp[i])
+	{
+		tmp = create_env_node(envp, i);
+		ft_addnode(&env, tmp);
+		i++;
+	}
+	free_tab(splited);
+	return (env);
+}
+
+char **cpy_env(t_env *env, char **envp)
 {
 	int i;
 	char **cpy;
@@ -41,13 +92,28 @@ char **cpy_env(char **envp)
 	return (cpy);
 }
 
+int	env_in_list(char **env, t_msh *msh)
+{
+	t_msh *current;
+
+	current = ft_lastnode(msh);
+	while(current)
+	{
+		if (current->my_env)
+			free_tab(current->my_env);
+		current->my_env = cpy_env(env);
+		current = current->prev;
+	}
+	return (0);
+}
+
 int	add_var_env(char *av ,t_msh *msh)
 {
 	char **new_env;
 	int i;
 
 	i = 0;
-	new_env = ft_calloc(sizeof(char *), env_len(msh->my_env) + 1);
+	new_env = ft_calloc(sizeof(char *), env_len(msh->my_env) + 2);
 	printf("env_len = %d\n", env_len(msh->my_env) + 1);
 	while(msh->my_env[i])
 	{
@@ -57,12 +123,13 @@ int	add_var_env(char *av ,t_msh *msh)
 		// 	return (free_tab(new_env), 1);	
 		i++;
 	}
-	printf("%d\n", i);
+	// printf("%d\n", i);
 	new_env[i] = ft_strdup(av);
-	free_tab(msh->my_env);
-	msh->my_env = cpy_env(new_env);
-	if(!msh->my_env)
+	if(env_in_list(new_env, msh))
 		return (1);
+	for(int i = 0; msh->my_env[i]; i++)
+		printf("%s\n", msh->my_env[i]);
+	free_tab(new_env);
 	return (0);
 }
 

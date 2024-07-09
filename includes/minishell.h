@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/05 15:30:49 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:28:27 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,14 @@
 # include <readline/readline.h>
 # include <errno.h>
 # include <signal.h>
+
+typedef struct s_env
+{
+	char *name;
+	char *value;
+	char *var;
+	struct	s_env	*next;
+} t_env;
 
 typedef struct s_msh
 {
@@ -33,6 +41,7 @@ typedef struct s_msh
 	char			*outfile;
 	int				index;
 	int				pipefd[2];
+	struct s_env	*t_env;
 	struct s_msh	*next;
 	struct s_msh	*prev;
 }	t_msh;
@@ -44,7 +53,9 @@ int		ft_cd(char **arg, char **envp);
 int		ft_exit(t_msh *msh);
 int		get_pwd(char **arg, t_msh *msh);
 int		ft_export(t_msh *msh);
+int		free_env(t_msh *msh);
 // int		export_env(char *arg, char **envp);
+t_msh	*ft_lastnode(t_msh *lst);
 int		redirect_fd(t_msh *msh);
 int		which_fd(t_msh *msh);
 int		close_pipes(t_msh *msh);

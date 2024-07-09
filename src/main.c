@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/05 17:01:03 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:06:42 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,11 +319,13 @@ void	free_lst(t_msh *msh)
 	current = ft_lastnode(msh);
 	while (current)
 	{
+		// current->next->my_env = cpy_env(current->my_env);
 		free_tab(current->cmd);
 		free_tab(current->my_env);
 		if(current->hlimit)
 			free(current->hlimit);
 		close_files(current);
+		
 		next = current;
 		current = current->prev;
 		free(next);
@@ -425,7 +427,9 @@ int main(int ac, char **av, char **envp)
 	ft_bzero(&msh, sizeof(t_msh));
 	(void)ac;
 	(void)av;
-	// msh.my_env = cpy_env(envp);
+	msh.my_env = cpy_env(envp);
 	msh_loop(&msh, envp);
+	// free_env(&msh);
+	free_tab(msh.my_env);
 	return (0);
 }
