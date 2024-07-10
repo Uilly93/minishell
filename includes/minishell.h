@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/09 16:28:27 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/10 14:47:37 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@
 
 typedef struct s_env
 {
-	char *name;
-	char *value;
+	char *full_var;
+	char *var_name;
 	char *var;
+	// char **cpy; //sort and print;
 	struct	s_env	*next;
 } t_env;
 
@@ -41,7 +42,7 @@ typedef struct s_msh
 	char			*outfile;
 	int				index;
 	int				pipefd[2];
-	struct s_env	*t_env;
+	struct s_env	*env;
 	struct s_msh	*next;
 	struct s_msh	*prev;
 }	t_msh;
@@ -52,8 +53,9 @@ void	ft_echo(t_msh *msh);
 int		ft_cd(char **arg, char **envp);
 int		ft_exit(t_msh *msh);
 int		get_pwd(char **arg, t_msh *msh);
-int		ft_export(t_msh *msh);
-int		free_env(t_msh *msh);
+int		ft_export(t_msh *msh, t_env *env);
+int		free_env(t_env *env);
+t_env *env_into_list(char **envp);
 // int		export_env(char *arg, char **envp);
 t_msh	*ft_lastnode(t_msh *lst);
 int		redirect_fd(t_msh *msh);
@@ -69,7 +71,7 @@ char	*join_path_access(char *av, char **envp);
 char	**get_path(char **envp);
 void	ft_err(char *error);
 int		init_sigint();
-char	**cpy_env(char **envp);
+char	**get_env(t_env *env);
 void	signal_handler(int sig, siginfo_t *info, void *context);
 void	free_lst(t_msh *msh);
 

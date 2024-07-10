@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/09 16:06:42 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/10 15:27:55 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ int	close_pipes(t_msh *msh)
 	return (0);
 }
 
-int is_it_builtin(char **cmd, t_msh *msh, char **envp)
+int is_it_builtin(char **cmd, t_msh *msh, char **envp, t_env *env)
 {
 	(void)envp;
 	if (cmd[0] && ft_strcmp(cmd[0], "<<") == 0)
@@ -163,7 +163,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp)
 	if (cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
 		return (ft_exit(msh), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "export") == 0)
-		return (ft_export(msh), 1);
+		return (ft_export(msh, env), 1);
 	return (0);
 }
 
@@ -181,14 +181,14 @@ int	create_child(t_msh *msh, char **envp)
 		if (!path)
 		{
 			ft_err("msh: command not found");
-			return (free_lst(msh), exit(127), 1);
+			return (free_env(msh->env), free_lst(msh), exit(127), 1);
 		}
 		if (redirect_fd(msh))
 			return (free_lst(msh), free(path), exit(127), 1);
 		if (execve(path, msh->cmd, envp) == -1)
 		{
 			perror("msh");
-			return (free_lst(msh), free(msh), free(path), exit(127), 1);
+			return (free_env(msh->env), free_lst(msh), free(path), exit(127), 1);
 		}
 		free(path);
 	}
@@ -286,12 +286,12 @@ t_msh *cmd_node(char *line)
 	return (msh);
 }
 
-t_msh *parsing(char *line, char **envp)
+t_msh *parsing(char *line, t_env *env, char **envp)
 {
 	(void)envp;
-	t_msh *msh;
-	t_msh *tmp;
-	char **splited;
+	t_msh	*msh;
+	t_msh	*tmp;
+	char	**splited;
 	int	i;
 
 	msh = NULL;
@@ -300,7 +300,7 @@ t_msh *parsing(char *line, char **envp)
 	while (splited[i])
 	{
 		tmp = cmd_node(splited[i]);
-		tmp->my_env = cpy_env(envp);
+		tmp->env = env;
 		tmp->pipefd[1] = -1;
 		tmp->pipefd[0] = -1;
 		tmp->index = i + 1;
@@ -319,20 +319,17 @@ void	free_lst(t_msh *msh)
 	current = ft_lastnode(msh);
 	while (current)
 	{
-		// current->next->my_env = cpy_env(current->my_env);
 		free_tab(current->cmd);
-		free_tab(current->my_env);
 		if(current->hlimit)
 			free(current->hlimit);
 		close_files(current);
-		
 		next = current;
 		current = current->prev;
 		free(next);
 	}
 }
 
-int exec(t_msh *msh, char **envp)
+int exec(t_msh *msh, char **envp, t_env *env)
 {
 	t_msh *current;
 	t_msh *prev;
@@ -343,7 +340,7 @@ int exec(t_msh *msh, char **envp)
 		prev = current;
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
-		if (is_it_builtin(current->cmd, current, envp) == 0)
+		if (is_it_builtin(current->cmd, current, envp, env) == 0)
 			create_child(current, envp);
 		current = current->next;
 	}
@@ -398,7 +395,7 @@ int	init_sigint()
 	return (0);
 }
 
-int	msh_loop(t_msh *msh, char **envp)
+int	msh_loop(t_msh *msh, t_env *env, char **envp)
 {	
 	char *line;
 	char *prompt;
@@ -415,8 +412,8 @@ int	msh_loop(t_msh *msh, char **envp)
 			return (1);
 		if (ft_strlen(line))
 			add_history(line);
-		msh = parsing(line, envp);
-		exec(msh, envp);
+		msh = parsing(line, env, envp);
+		exec(msh, envp, env);
 	}
 	return (0);
 }
@@ -424,12 +421,12 @@ int	msh_loop(t_msh *msh, char **envp)
 int main(int ac, char **av, char **envp)
 {
 	t_msh msh;
+	t_env *env;
+	env = env_into_list(envp);
 	ft_bzero(&msh, sizeof(t_msh));
 	(void)ac;
 	(void)av;
-	msh.my_env = cpy_env(envp);
-	msh_loop(&msh, envp);
-	// free_env(&msh);
-	free_tab(msh.my_env);
+	msh_loop(&msh, env, envp);
+	free_env(env);
 	return (0);
 }
