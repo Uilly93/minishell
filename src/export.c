@@ -6,24 +6,30 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/10 16:32:15 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/11 17:34:28 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void test(t_env *env)
+int test(t_env *env)
 {
 	t_env *current = env;
 	int i = 0;
 
+	split_env(env);
 	while(current)
 	{
-		printf("%d = %s\n", i++, current->full_var);
+		// if(current->full_var != NULL)
+		// 	printf("%d = %s\n", i, current->full_var);
+		printf("%s=%s\n", current->var_name, current->var);
 		current = current->next;
+		i++;
 	}
+	return (0);
 }
 
 t_env	*ft_envlastnode(t_env *lst);
@@ -38,6 +44,8 @@ int	free_env(t_env *env)
 	{
 		prev = current;
 		free(current->full_var);
+		free(current->var);
+		free(current->var_name);
 		current = current->next;
 		free(prev);
 	}
@@ -105,91 +113,37 @@ t_env *env_into_list(char **envp)
 	while (envp[i])
 	{
 		tmp = create_env_node(envp, i);
-		// tmp->full_var = ft_strdup(envp[i]);
 		add_env_node(&env, tmp);
 		i++;
 	}
-	// test(env);
+	split_env(env);
 	return (env);
 }
-
-// t_env *cpy_env(t_env *env)
-// {
-// 	t_env *cpy;
-// 	t_env *tmp;
-// 	t_env *current;
-
-// 	cpy = NULL;
-// 	while(current)
-// 	{
-// 		tmp = create_env_node();
-// 		tmp->full_var = ft_strdup(current->full_var);
-// 		add_env_node(&cpy, tmp);	
-// 		current = current->next;
-		
-// 	}
-// }
 
 char **get_env(t_env *env)
 {
 	int i;
 	char **cpy;
+	char *tmp;
 	t_env *current;
 
 	current = env;
 	i = 0;
 	cpy = ft_calloc(sizeof(char *), env_len(env) + 1);
-	// printf("%d\n", env_len(env));
 	while(current)
 	{
-		cpy[i] = ft_strdup(current->full_var);
-		// printf("%s\n", cpy[i]);
+		tmp = ft_strjoin(current->var_name, "=");
+		if(!tmp)
+			return(free_tab(cpy), NULL);
+		cpy[i] = ft_strjoin(tmp, current->var);
+		free(tmp);
+		if(!cpy[i])
+			return(free_tab(cpy), NULL);
 		current = current->next;
 		i++;
 	}
 	return (cpy);
 }
-
-// int	env_in_list(char **env, t_msh *msh)
-// {
-// 	t_msh *current;
-
-// 	current = ft_lastnode(msh);
-// 	while(current)
-// 	{
-// 		if (current->my_env)
-// 			free_tab(current->my_env);
-// 		current->my_env = cpy_env(env);
-// 		current = current->prev;
-// 	}
-// 	return (0);
-// }
-
-// int	add_var_env(char *av ,t_env *env)
-// {
-// 	char **new_env;
-// 	int i;
-
-// 	i = 0;
-// 	new_env = ft_calloc(sizeof(char *), env_len(msh->my_env) + 2);
-// 	printf("env_len = %d\n", env_len(msh->my_env) + 1);
-// 	while(msh->my_env[i])
-// 	{
-// 		new_env[i] = ft_strdup(msh->my_env[i]);
-// 		printf("%d %s\n", i , new_env[i]);
-// 		// if(!new_env[i])
-// 		// 	return (free_tab(new_env), 1);	
-// 		i++;
-// 	}
-// 	// printf("%d\n", i);
-// 	new_env[i] = ft_strdup(av);
-// 	if(env_in_list(new_env, msh))
-// 		return (1);
-// 	for(int i = 0; msh->my_env[i]; i++)
-// 		printf("%s\n", msh->my_env[i]);
-// 	free_tab(new_env);
-// 	return (0);
-// }
 
 void	ft_swap_tab(char **a, char **b)
 {
@@ -200,9 +154,10 @@ void	ft_swap_tab(char **a, char **b)
 	*b = temp;
 }
 
-void	sort_print_env(char **tab, t_msh *msh, t_env *env)
+char	**sort_env(char **tab, t_env *env)
 {
 	int	i;
+	char **sorted;
 
 	i = 0;
 	while (i < env_len(env) - 1)
@@ -215,41 +170,132 @@ void	sort_print_env(char **tab, t_msh *msh, t_env *env)
 		else
 			i++;
 	}
+	sorted = ft_calloc(sizeof(char *), env_len(env) + 1);
+	if(!sorted)
+		return (NULL);
 	i = 0;
 	while(tab[i] != NULL)
-		ft_printf(which_fd(msh), "declare -x %s\n", tab[i++]);
+	{
+		sorted[i] = ft_strdup(tab[i]);
+		i++;
+	}
+	return(sorted);
+}
+
+int	print_export(char **sorted, t_msh *msh)
+{
+	char	*var;
+	char	*name;
+	int		i;
+
+	i = 0;
+	while(sorted[i])
+	{
+		name = get_var_name(sorted[i]);
+		if(!name)
+			return(1);
+		var = get_var(sorted[i]);
+		if(!var)
+			return(1);
+		ft_printf(which_fd(msh), "define -x %s=\"%s\"\n", name, var);
+		free(name);
+		free(var);
+		i++;
+	}
+	free_tab(sorted);
+	return (0);
 }
 
 int	env_print(t_msh *msh, t_env *env)
 {
 	char	**cpy;
+	char	**sorted;
 	
 	cpy = get_env(env);
 	if(!cpy)
 		return (1);
-	sort_print_env(cpy, msh ,env);
+	sorted = sort_env(cpy, env);
+	if(!sorted)
+		return(free_tab(cpy), 1);
+	print_export(sorted, msh);
 	free_tab(cpy);
 	return (0);
+}
+
+char *join_vars(char *av, char *var)
+{
+	// t_env	*current;
+	char	*add;
+	char	*tmp;
+
+	add = get_var(av);
+	printf("%s\n", add);
+	if(!add)
+		return (NULL);
+	tmp = ft_strdup(var);
+	printf("%s\n", var);
+	if(!tmp)
+		return (NULL);
+	free(var);
+	var = ft_strjoin(tmp, add);
+	if(!var)
+		return (NULL);
+	return (var);
+}
+
+bool	var_already_exist(char *av, t_env *env)
+{
+	t_env	*current;
+	const char	*var_name = get_var_name(av);
+
+	current = env;
+	while(current)
+	{
+		if(var_name && ft_strcmp((char *)var_name, current->var_name) == 0)
+		{
+			printf("%d\n", is_equal(av));
+			if(is_equal(av) == 2)
+			{
+				current->var = join_vars(av, current->var);
+				printf("        %s\n",current->var);
+				return (free((void*)var_name), false);
+			}
+			else
+			{
+				free(current->var);
+				return (current->var = get_var(av), free((void*)var_name), true);
+			}
+		}
+		current = current->next;
+	}
+	return (free((void*)var_name), false);
 }
 
 int	ft_export(t_msh *msh, t_env *env)
 {
 	t_env	*new_var;
-	
+	int		i;
+
+	i = 1;
 	if(msh->cmd[0] && !msh->cmd[1])
+		return(env_print(msh, env), 0);
+	while(msh->cmd[i])
 	{
-		// test(msh->env);
-		// printf("test\n");
-		env_print(msh, env);
-		return (0);
-	}
-	if(msh->cmd[0] && msh->cmd[1])
-	{
+		if(var_already_exist(msh->cmd[i], env))
+		{
+			i++;
+			continue ;
+		}
 		new_var = ft_calloc(sizeof(t_env), 1);
 		if(!new_var)
 			return (1);
-		new_var->full_var = ft_strdup(msh->cmd[1]);
+		if(msh->cmd[i] && is_equal(msh->cmd[i]))
+			new_var->set = true;
+		new_var->full_var = ft_strdup(msh->cmd[i]);
+		new_var->var_name = get_var_name(msh->cmd[i]);
+		new_var->var = get_var(msh->cmd[i]);
 		add_env_node(&env, new_var);
+		i++;
 	}
 	return (0);
 }
