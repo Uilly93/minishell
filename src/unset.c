@@ -6,24 +6,24 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/11 09:37:36 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/12 11:19:10 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	ft_unset(t_env *env, char *av)
+int	ft_unset(t_env *env, char **av)
 {
 	t_env	*current;
 
 	current = env;
-	if(!av)
-		return (0);
+	if(av[0] && !av[1])
+		return (1);
 	while(current)
 	{
-		if(av && ft_strcmp(av, current->var_name) == 0)
-			{
-				current->full_var = NULL;
-			}
+		if(av[1] && ft_strcmp(av[1], current->var_name) == 0)
+			current->set = false;
+		current = current->next;
 	}
+	return (0);
 }

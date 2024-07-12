@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 13:40:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/06/25 13:08:12 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/12 10:49:31 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,6 @@
 
 int	ft_is_c(char c, int fd)
 {
-	ft_putchar_fd(fd, c);
+	ft_putchar_fd(c, fd);
 	return (1);
 }
