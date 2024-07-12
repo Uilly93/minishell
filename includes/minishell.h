@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/12 10:22:07 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/12 14:56:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int is_equal(char *var);
 char *get_var_name(char *var);
 char *get_var(char *var);
 int		ft_env(t_env *env, t_msh *msh);
-int	ft_unset(t_env *env, char **av);
+int	ft_unset(t_env **env, char **av);
 // int		check_heredoc(t_msh *msh, char **av);
 void	here_doc(t_msh *msh, char **av);
 void	ft_echo(t_msh *msh);
