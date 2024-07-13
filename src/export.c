@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/14 00:11:18 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/14 00:24:17 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,8 @@ char *join_name_var(t_env *env)
 		return(NULL);
 	res = ft_strjoin(tmp, env->var);
 	free(tmp);
+	if(!res)
+		return(NULL);
 	return (res);
 }
 
@@ -171,8 +173,10 @@ void	ft_swap_tab(char **a, char **b)
 char	**sort_env(char **tab, t_env *env)
 {
 	int	i;
-	char **sorted;
+	const char **sorted = ft_calloc(sizeof(char *), env_len(env) + 1);
 
+	if (!sorted)
+		return (NULL);
 	i = 0;
 	while (i < env_len(env) - 1)
 	{
@@ -184,16 +188,15 @@ char	**sort_env(char **tab, t_env *env)
 		else
 			i++;
 	}
-	sorted = ft_calloc(sizeof(char *), env_len(env) + 1);
-	if (!sorted)
-		return (NULL);
 	i = 0;
 	while (tab[i] != NULL)
 	{
 		sorted[i] = ft_strdup(tab[i]);
+		if(!sorted[i])
+			return (free_tab((char **)sorted), NULL);
 		i++;
 	}
-	return(sorted);
+	return((char **)sorted);
 }
 
 int	print_line(char *line, int fd)
@@ -202,7 +205,7 @@ int	print_line(char *line, int fd)
 	const char	*name = get_var_name(line);
 
 	if(fd == -1)
-		return (perror("msh"), 1);
+		return (free((void*)name), free((void*)var), perror("msh"), 1);
 	if(!var)
 		return(1);
 	if(!name)
@@ -230,10 +233,9 @@ int	print_export(char **sorted, t_msh *msh)
 	while (sorted[i])
 	{
 		if(print_line(sorted[i], fd))
-			return (free_tab(sorted), 1);
+			return (1);
 		i++;
 	}
-	free_tab(sorted);
 	return (0);
 }
 
@@ -249,6 +251,7 @@ int	env_print(t_msh *msh, t_env *env)
 	if (!sorted)
 		return(free_tab(cpy), 1);
 	print_export(sorted, msh);
+	free_tab(sorted);
 	free_tab(cpy);
 	return (0);
 }
