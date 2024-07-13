@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/14 00:03:29 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/14 00:11:18 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,25 +122,33 @@ t_env *env_into_list(char **envp)
 	return (env);
 }
 
-char **get_env(t_env *env) // protect
+char *join_name_var(t_env *env)
+{
+	char	*tmp;
+	char	*res;
+	
+	tmp = ft_strjoin(env->var_name, "=");
+	if (!tmp)
+		return(NULL);
+	res = ft_strjoin(tmp, env->var);
+	free(tmp);
+	return (res);
+}
+
+char **get_env(t_env *env)
 {
 	int			i;
 	const char	**cpy = ft_calloc(sizeof(char *), env_len(env) + 1);
-	char		*tmp;
 	t_env		*current;
 
+	if(!cpy)
+		return (NULL);
 	current = env;
 	i = 0;
 	while (current)
 	{
 		if(is_equal(current->full_var))
-		{
-			tmp = ft_strjoin(current->var_name, "=");
-			if (!tmp)
-				return(free_tab((char **)cpy), NULL);
-			cpy[i] = ft_strjoin(tmp, current->var);
-			free(tmp);
-		}
+			cpy[i] = join_name_var(current);
 		else
 			cpy[i] = ft_strdup(current->var_name);
 		if (!cpy[i])
