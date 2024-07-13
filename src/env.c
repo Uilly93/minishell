@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/12 11:43:43 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 21:31:56 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <stdio.h>
 
 int is_equal(char *var)
 {
@@ -78,15 +79,17 @@ int	split_env(t_env *env)
 
 int ft_env(t_env *env, t_msh * msh)
 {
-	(void)msh;
 	t_env *current;
 	int i = 0;
+	const int	fd = which_fd(msh);
 
+	if(fd == -1)
+		return (perror("msh"), 1);
 	current = env;
 	while(current)
 	{
-		if(*current->var && current->set == true)
-			ft_printf(which_fd(msh), "%s=%s\n", current->var_name, current->var);
+		if((is_equal(current->full_var) && !*current->var) || *current->var)
+			ft_printf(fd, "%s=%s\n", current->var_name, current->var);
 		current = current->next;
 		i++;
 	}

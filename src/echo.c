@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/01 14:52:10 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 19:53:37 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,8 @@ static int handle_flag(char **prompt, int i, int j)
 
 void print_args(t_msh *msh, int j, int i, bool new_line)
 {
-	int fd;
+	const int	fd = which_fd(msh);
 	
-	fd = which_fd(msh);
 	if (fd == -1)
 	{
 		perror("msh");

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 19:27:19 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 20:55:41 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp, t_env *env)
 	if (cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
-		return (ft_exit(msh), 1);
+		return (ft_exit(msh, env), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "export") == 0)
 		return (ft_export(msh, env), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "env") == 0)

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 19:38:51 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 20:00:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	ft_unset(t_env **env, char **av);
 void	here_doc(t_msh *msh, char **av);
 void	ft_echo(t_msh *msh);
 int		ft_cd(char **arg, char **envp);
-int		ft_exit(t_msh *msh);
+int		ft_exit(t_msh *msh, t_env *env);
 int		get_pwd(char **arg, t_msh *msh);
 int		ft_export(t_msh *msh, t_env *env);
 int		free_env(t_env *env);

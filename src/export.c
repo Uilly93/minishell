@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 19:29:10 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 19:50:56 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,11 +186,14 @@ char	**sort_env(char **tab, t_env *env)
 
 int	print_export(char **sorted, t_msh *msh)
 {
-	char	*var;
-	char	*name;
-	int		i;
+	char		*var;
+	char		*name;
+	int			i;
+	const int	fd = which_fd(msh);
 
 	i = 0;
+	if(fd == -1)
+		return(perror("msh"), 1);
 	while (sorted[i])
 	{
 		name = get_var_name(sorted[i]);
@@ -200,7 +203,7 @@ int	print_export(char **sorted, t_msh *msh)
 		if (!var)
 			return(1);
 		if(*name)
-			ft_printf(which_fd(msh), "define -x %s=\"%s\"\n", name, var);
+			ft_printf(fd, "define -x %s=\"%s\"\n", name, var);
 		free(name);
 		free(var);
 		i++;
