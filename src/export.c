@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 19:50:56 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 22:50:48 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,28 +248,31 @@ char *join_vars(char *av, char *var)
 	return (var);
 }
 
-bool	var_already_exist(char *av, t_env *env)
+bool	var_already_exist(char *av, t_env **env)
 {
 	t_env		*current;
 	const char	*var_name = get_var_name(av);
+	const char	*var = get_var(av);
 
-	current = env;
+	current = *env;
 	while (current)
 	{
 		if (var_name && ft_strcmp((char *)var_name, current->var_name) == 0)
 		{
-			if(current->set == 0)
-				return (free((void*)var_name), false);
 			if (is_equal(av) == 2)
 				return (current->var = join_vars(av, current->var),
-					free((void*)var_name), true);
+					free((void*)var_name), free((void*)var), true);
+			else if(is_equal(av) == 1)
+			{
+			 	ft_del_node(env, (char *)var_name);
+				return(free((void*)var_name), free((void*)var), false);
+			}
 			else
-				return (free(current->var), current->var = get_var(av),
-					free((void*)var_name), true);
+				return (free((void*)var_name), free((void*)var), true);
 		}
 		current = current->next;
 	}
-	return (free((void*)var_name), false);
+	return (free((void*)var_name), free((void*)var), false);
 }
 
 int	ft_export(t_msh *msh, t_env *env)
@@ -277,26 +280,23 @@ int	ft_export(t_msh *msh, t_env *env)
 	t_env	*new_var;
 	int		i;
 
-	i = 1;
+	i = 0;
 	if (msh->cmd[0] && !msh->cmd[1])
 		return(env_print(msh, env), 0);
-	while (msh->cmd[i])
+	if(msh->cmd[0] && msh->cmd[1][0] == '=')
+		return (ft_printf(2, "bash: export: `%s': not a valid identifier",
+				msh->cmd[1]), 1);
+	while (msh->cmd[++i])
 	{
-		if (var_already_exist(msh->cmd[i], env))
-		{
-			i++;
+		if (var_already_exist(msh->cmd[i], &env))
 			continue ;
-		}
 		new_var = ft_calloc(sizeof(t_env), 1);
 		if (!new_var)
 			return (1);
-		// if (msh->cmd[i] && is_equal(msh->cmd[i]))
-		new_var->set = 1;
 		new_var->full_var = ft_strdup(msh->cmd[i]);
 		new_var->var_name = get_var_name(msh->cmd[i]);
 		new_var->var = get_var(msh->cmd[i]);
 		add_env_node(&env, new_var);
-		i++;
 	}
 	return (0);
 }
