@@ -3,7 +3,8 @@ CC = cc
 LIBFT = includes/libft/
 SRC_DIR = src
 OBJ_DIR = obj
-SRC_NAME = heredoc.c main.c echo.c cd.c pwd.c child.c exit.c export.c env.c unset.c
+SRC_NAME = heredoc.c main.c echo.c cd.c pwd.c\
+			child.c exit.c export.c env.c unset.c
 OBJS = $(addprefix $(OBJ_DIR)/,$(SRC_NAME:%.c=%.o))
 SRC = $(addprefix $(SRC_DIR)/,$(SRC_NAME))
 CFLAGS = -Wall -Wextra -Werror -g3

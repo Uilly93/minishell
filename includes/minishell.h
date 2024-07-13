@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/12 14:56:52 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 19:38:51 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ typedef struct s_env
 	char	*var_name;
 	char	*var;
 	int		set;
-	// char **cpy; //sort and print;
 	struct	s_env	*next;
 } t_env;
 

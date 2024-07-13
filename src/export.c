@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/12 14:58:57 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 19:29:10 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,6 @@ char **get_env(t_env *env)
 		if (!tmp)
 			return(free_tab(cpy), NULL);
 		cpy[i] = ft_strjoin(tmp, current->var);
-		printf("%d = %s\n", current->set, cpy[i]);
 		free(tmp);
 		if (!cpy[i])
 			return(free_tab(cpy), NULL);

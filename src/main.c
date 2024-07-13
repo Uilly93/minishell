@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/12 14:57:04 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/13 19:27:19 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,12 +336,12 @@ void	free_lst(t_msh *msh)
 int exec(t_msh *msh, char **envp, t_env *env)
 {
 	t_msh *current;
-	t_msh *prev;
+	// t_msh *prev;
 
 	current = msh;
 	while (current)
 	{
-		prev = current;
+		// prev = current;
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
 		if (is_it_builtin(current->cmd, current, envp, env) == 0)
