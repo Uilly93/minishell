@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 22:50:48 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/14 00:03:29 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,29 +122,33 @@ t_env *env_into_list(char **envp)
 	return (env);
 }
 
-char **get_env(t_env *env)
+char **get_env(t_env *env) // protect
 {
-	int i;
-	char **cpy;
-	char *tmp;
-	t_env *current;
+	int			i;
+	const char	**cpy = ft_calloc(sizeof(char *), env_len(env) + 1);
+	char		*tmp;
+	t_env		*current;
 
 	current = env;
 	i = 0;
-	cpy = ft_calloc(sizeof(char *), env_len(env) + 1);
 	while (current)
 	{
-		tmp = ft_strjoin(current->var_name, "=");
-		if (!tmp)
-			return(free_tab(cpy), NULL);
-		cpy[i] = ft_strjoin(tmp, current->var);
-		free(tmp);
+		if(is_equal(current->full_var))
+		{
+			tmp = ft_strjoin(current->var_name, "=");
+			if (!tmp)
+				return(free_tab((char **)cpy), NULL);
+			cpy[i] = ft_strjoin(tmp, current->var);
+			free(tmp);
+		}
+		else
+			cpy[i] = ft_strdup(current->var_name);
 		if (!cpy[i])
-			return(free_tab(cpy), NULL);
+			return(free_tab((char **)cpy), NULL);
 		current = current->next;
 		i++;
 	}
-	return (cpy);
+	return ((char **)cpy);
 }
 
 void	ft_swap_tab(char **a, char **b)
@@ -184,28 +188,41 @@ char	**sort_env(char **tab, t_env *env)
 	return(sorted);
 }
 
+int	print_line(char *line, int fd)
+{
+	const char	*var = get_var(line);
+	const char	*name = get_var_name(line);
+
+	if(fd == -1)
+		return (perror("msh"), 1);
+	if(!var)
+		return(1);
+	if(!name)
+		return (free((void*)var), 1);
+	if(is_equal(line) == 0)
+		ft_printf(fd, "define -x %s\n", line);
+	else
+	{
+		if(*name)
+			ft_printf(fd, "define -x %s=\"%s\"\n", name, var);
+	}
+	free((void*)name);
+	free((void*)var);
+	return (0);
+}
+
 int	print_export(char **sorted, t_msh *msh)
 {
-	char		*var;
-	char		*name;
 	int			i;
 	const int	fd = which_fd(msh);
 
-	i = 0;
 	if(fd == -1)
 		return(perror("msh"), 1);
+	i = 0;
 	while (sorted[i])
 	{
-		name = get_var_name(sorted[i]);
-		if (!name)
-			return(1);
-		var = get_var(sorted[i]);
-		if (!var)
-			return(1);
-		if(*name)
-			ft_printf(fd, "define -x %s=\"%s\"\n", name, var);
-		free(name);
-		free(var);
+		if(print_line(sorted[i], fd))
+			return (free_tab(sorted), 1);
 		i++;
 	}
 	free_tab(sorted);
