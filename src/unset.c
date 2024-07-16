@@ -6,11 +6,49 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/12 15:12:26 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:33:43 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+char **all_env(t_env *env)
+{
+	t_env *current;
+	int	i;
+	const char **up_env = ft_calloc(sizeof(char *), env_len(env) + 1);
+
+	if(!up_env)
+		return (NULL);
+	i = 0;
+	current = env;
+	while(current)
+	{
+		up_env[i] = ft_strdup(current->full_var);
+		if(!up_env)
+			return (free_tab((char **)up_env), NULL);
+		i++;
+		current = current->next;
+	}
+	return ((char **)up_env);
+}
+
+int	update_env(t_env *env)
+{
+	t_env *current;
+
+	current = env;
+	while(current)
+	{
+		if(current->full_env)
+			free_tab(current->full_env);
+		current->full_env = all_env(current);
+		if(!current->full_env)
+			return (1);
+		current = current->next;
+	}
+	return (0);
+}
 
 int	ft_del_node(t_env **head, char *av)
 {
@@ -26,6 +64,7 @@ int	ft_del_node(t_env **head, char *av)
 			free(current->var);
 			free(current->var_name);
 			free(current->full_var);
+			free_tab(current->full_env);
 			if (prev == NULL)
 				*head = current->next;
 			else
@@ -51,5 +90,6 @@ int	ft_unset(t_env **head, char **av)
 		ft_del_node(head, av[i]);
 		i++;
 	}
+	update_env(*head);
 	return (0);
 }

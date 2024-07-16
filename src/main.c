@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 20:55:41 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:23:20 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,14 @@ void	free_tab(char **tab)
 	while (tab[i])
 	{
 		if (tab[i])
+		{
 			ft_free(tab[i]);
+			tab[i] = NULL;
+		}
 		i++;
 	}
 	ft_free(tab);
+	tab = NULL;
 }
 
 
@@ -88,33 +92,36 @@ char *custom_prompt()
 	return(custom_prompt);
 }
 
-char	**get_path(char **envp)
+char	**get_path(t_env *env)
 {
-	int	i;
+	t_env	*current;
 
-	i = 0;
-	while (envp[i])
+	current = env;
+	if(!current)
+		return (NULL);
+	while(current)
 	{
-		if (ft_strncmp("PATH=", envp[i], 5) == 0)
-			return (ft_split(envp[i], ':'));
+		if (ft_strcmp("PATH", current->var_name) == 0)
+			return (ft_split(current->var, ':'));
 		else
-			i++;
+			current = current->next;
 	}
 	return (NULL);
 }
 
-char	*join_path_access(char *av, char **envp)
+char	*join_path_access(char *av, t_env *env)
 {
 	int		i;
 	char	**s;
 	char	*res;
 
-	i = 0;
-	res = NULL;
+	i = -1;
 	if (access(av, X_OK) == 0)
 		return (av);
-	s = get_path(envp);
-	while (s[i++])
+	s = get_path(env);
+	if(!s)
+		return (NULL);
+	while (s[++i])
 	{
 		res = ft_strjoin(s[i], "/");
 		if (!res)
@@ -149,15 +156,14 @@ int	close_pipes(t_msh *msh)
 	return (0);
 }
 
-int is_it_builtin(char **cmd, t_msh *msh, char **envp, t_env *env)
+int is_it_builtin(char **cmd, t_msh *msh, t_env *env)
 {
-	(void)envp;
 	if (cmd[0] && ft_strcmp(cmd[0], "<<") == 0)
 		return (here_doc(msh, cmd), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "echo") == 0)
 		return (ft_echo(msh), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "cd") == 0)
-		return (ft_cd(cmd, envp), 1);
+		return (ft_cd(cmd, env), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
 	if (cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
@@ -173,7 +179,7 @@ int is_it_builtin(char **cmd, t_msh *msh, char **envp, t_env *env)
 
 void	free_lst(t_msh *msh);
 
-int	create_child(t_msh *msh, char **envp)
+int	create_child(t_msh *msh)
 {
 	pid_t	child;
 	char	*path;
@@ -181,7 +187,7 @@ int	create_child(t_msh *msh, char **envp)
 	child = fork();
 	if (child == 0)
 	{
-		path = join_path_access(msh->cmd[0], envp);
+		path = join_path_access(msh->cmd[0], msh->env);
 		if (!path)
 		{
 			ft_err("msh: command not found");
@@ -189,7 +195,7 @@ int	create_child(t_msh *msh, char **envp)
 		}
 		if (redirect_fd(msh))
 			return (free_lst(msh), free(path), exit(127), 1);
-		if (execve(path, msh->cmd, envp) == -1)
+		if (execve(path, msh->cmd, msh->env->full_env) == -1)
 		{
 			perror("msh");
 			return (free_env(msh->env), free_lst(msh), free(path), exit(127), 1);
@@ -333,19 +339,17 @@ void	free_lst(t_msh *msh)
 	}
 }
 
-int exec(t_msh *msh, char **envp, t_env *env)
+int exec(t_msh *msh, t_env *env)
 {
 	t_msh *current;
-	// t_msh *prev;
 
 	current = msh;
 	while (current)
 	{
-		// prev = current;
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
-		if (is_it_builtin(current->cmd, current, envp, env) == 0)
-			create_child(current, envp);
+		if (is_it_builtin(current->cmd, current, env) == 0)
+			create_child(current);
 		current = current->next;
 	}
 	free_lst(msh);
@@ -399,6 +403,24 @@ int	init_sigint()
 	return (0);
 }
 
+// int	expend_var(char *var, t_env *env)
+// {
+// 	char *env_var;
+// 	int j;
+// 	int i;
+
+// 	j = 0;
+// 	i = 0;
+// 	while(var[i])
+// 	{
+// 		j++;
+// 		if(var[i++] == '&')
+// 		{
+// 			while
+// 		}
+// 	}
+// }
+
 int	msh_loop(t_msh *msh, t_env *env, char **envp)
 {	
 	char *line;
@@ -417,7 +439,8 @@ int	msh_loop(t_msh *msh, t_env *env, char **envp)
 		if (ft_strlen(line))
 			add_history(line);
 		msh = parsing(line, env, envp);
-		exec(msh, envp, env);
+		exec(msh, env);
+		// free_lst(msh);
 	}
 	return (0);
 }
@@ -426,6 +449,8 @@ int main(int ac, char **av, char **envp)
 {
 	t_msh msh;
 	t_env *env;
+	if(envp[0] == NULL)
+		return (1);
 	env = env_into_list(envp);
 	ft_bzero(&msh, sizeof(t_msh));
 	(void)ac;

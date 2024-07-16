@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/14 00:24:17 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:41:00 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,17 @@ int	free_env(t_env *env)
 	{
 		prev = current;
 		free(current->full_var);
+		current->full_var = NULL;
 		free(current->var);
+		current->var = NULL;
 		free(current->var_name);
+		current->var_name = NULL;
+		free_tab(current->full_env);
 		current = current->next;
 		free(prev);
+		prev = NULL;
 	}
+	env = NULL;
 	return (0);
 }
 
@@ -96,8 +102,6 @@ t_env *create_env_node(char **envp, int i)
 	env = ft_calloc(sizeof(t_env), 1);
 	if (!env)
 		return (NULL);
-	env->set = 1;
-	// printf("%d\n", env->set);
 	env->full_var = ft_strdup(envp[i]);
 	if (!env->full_var)
 		return (NULL);
@@ -110,6 +114,8 @@ t_env *env_into_list(char **envp)
 	t_env *tmp;
 	int	i;
 
+	if(!*envp)
+		return (NULL);
 	env = NULL;
 	i = 0;
 	while (envp[i])
@@ -118,6 +124,7 @@ t_env *env_into_list(char **envp)
 		add_env_node(&env, tmp);
 		i++;
 	}
+	update_env(env);
 	split_env(env);
 	return (env);
 }
@@ -326,5 +333,6 @@ int	ft_export(t_msh *msh, t_env *env)
 		new_var->var = get_var(msh->cmd[i]);
 		add_env_node(&env, new_var);
 	}
+	update_env(env);
 	return (0);
 }

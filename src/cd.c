@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/04 16:08:55 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:37:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,24 @@
 #include <string.h>
 #include <unistd.h>
 
-char *get_home(char **envp)
+char *get_home(t_env *env)
 {
-	int i;
-	char **tab;
 	char *res;
+	t_env *current;
 	
-	i = 0;
-	while(envp[i])
+	current = env;
+	while(current)
 	{
-		if(ft_strncmp(envp[i], "HOME=", 5) == 0)
+		if(ft_strcmp(current->var_name, "HOME") == 0)
 		{
-			tab = ft_split(envp[i], '=');
-			if(!tab)
-				return (NULL);
-			res = ft_strdup(tab[1]);
+			res = ft_strdup(current->var);
 			if(!res)
-				return (free_tab(tab), NULL);
-			free_tab(tab);
-			return (res);
+				return (NULL);
+			return(res);
 		}
-		i++;
+		current = current->next;
 	}
-	return (NULL);
+	return (ft_err("msh: cd: $HOME not set"), NULL);
 }
 
 void ft_err(char *error)
@@ -51,7 +46,6 @@ char *join_path(char *arg, char *pwd)
 	char *path;
 	
 	tmp = ft_strjoin(pwd, "/");
-	// free(pwd);
 	if (!tmp)
 		return (free(pwd), NULL);
 	path = ft_strjoin(tmp, arg);
@@ -74,7 +68,7 @@ int	err_and_chdir(char *path, char *arg)
 	return (0);
 }
 
-int	ft_cd(char **arg, char **envp)
+int	ft_cd(char **arg, t_env *env)
 {
 	char	*pwd;
 	char	*path;
@@ -87,7 +81,7 @@ int	ft_cd(char **arg, char **envp)
 		if(*arg)
 			path = join_path(*arg++, pwd);
 		else
-			path = get_home(envp);
+			path = get_home(env);
 		free(pwd);
 		if (!path)
 			return (1);

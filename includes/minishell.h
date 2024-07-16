@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 22:01:57 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:38:33 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 
 typedef struct s_env
 {
+	char	**full_env;
 	char	*full_var;
 	char	*var_name;
 	char	*var;
-	int		set;
 	struct	s_env	*next;
 } t_env;
 
@@ -52,13 +52,15 @@ int	split_env(t_env *env);
 int is_equal(char *var);
 char *get_var_name(char *var);
 char *get_var(char *var);
+int	env_len(t_env *env);
+int	update_env(t_env *env);
 int		ft_env(t_env *env, t_msh *msh);
 int	ft_unset(t_env **env, char **av);
 int	ft_del_node(t_env **head, char *av);
 // int		check_heredoc(t_msh *msh, char **av);
 void	here_doc(t_msh *msh, char **av);
 void	ft_echo(t_msh *msh);
-int		ft_cd(char **arg, char **envp);
+int		ft_cd(char **arg, t_env *env);
 int		ft_exit(t_msh *msh, t_env *env);
 int		get_pwd(char **arg, t_msh *msh);
 int		ft_export(t_msh *msh, t_env *env);
@@ -75,8 +77,8 @@ int		get_flags(t_msh *msh);
 int		redirect_fd_write(t_msh *msh, int *pipefd);
 int		ft_lstlen(t_msh *msh);
 void	ft_free(void *ptr);
-char	*join_path_access(char *av, char **envp);
-char	**get_path(char **envp);
+char	*join_path_access(char *av, t_env *env);
+char	**get_path(t_env *env);
 void	ft_err(char *error);
 int		init_sigint();
 char	**get_env(t_env *env);

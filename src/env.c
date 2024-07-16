@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/13 21:31:56 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/16 10:38:56 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ int	split_env(t_env *env)
 		current->var_name = get_var_name(current->full_var);
 		if (!current->var)
 			return (1);
-		current->set = true;
 		current = current->next;
 	}
 	return (0);
