@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/16 10:23:20 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/17 10:21:55 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,10 @@ char	*join_path_access(char *av, t_env *env)
 
 	i = -1;
 	if (access(av, X_OK) == 0)
-		return (av);
+	{
+		printf("%s\n", av);
+		return (ft_strdup(av));
+	}
 	s = get_path(env);
 	if(!s)
 		return (NULL);
@@ -185,9 +188,12 @@ int	create_child(t_msh *msh)
 	char	*path;
 
 	child = fork();
+	if(child == -1)
+		perror("msh");
 	if (child == 0)
 	{
 		path = join_path_access(msh->cmd[0], msh->env);
+		// ft_printf(1, "dfsdfs %s %s", msh->cmd[0], msh->env->full_env[0]);
 		if (!path)
 		{
 			ft_err("msh: command not found");
@@ -195,8 +201,10 @@ int	create_child(t_msh *msh)
 		}
 		if (redirect_fd(msh))
 			return (free_lst(msh), free(path), exit(127), 1);
-		if (execve(path, msh->cmd, msh->env->full_env) == -1)
+		if (execve(path, msh->cmd, NULL) == -1)
 		{
+			// ft_printf(1, "testwerwerwer");
+			// printf("test4");
 			perror("msh");
 			return (free_env(msh->env), free_lst(msh), free(path), exit(127), 1);
 		}
@@ -296,9 +304,8 @@ t_msh *cmd_node(char *line)
 	return (msh);
 }
 
-t_msh *parsing(char *line, t_env *env, char **envp)
+t_msh *parsing(char *line, t_env *env)
 {
-	(void)envp;
 	t_msh	*msh;
 	t_msh	*tmp;
 	char	**splited;
@@ -421,7 +428,7 @@ int	init_sigint()
 // 	}
 // }
 
-int	msh_loop(t_msh *msh, t_env *env, char **envp)
+int	msh_loop(t_msh *msh, t_env *env)
 {	
 	char *line;
 	char *prompt;
@@ -438,7 +445,7 @@ int	msh_loop(t_msh *msh, t_env *env, char **envp)
 			return (1);
 		if (ft_strlen(line))
 			add_history(line);
-		msh = parsing(line, env, envp);
+		msh = parsing(line, env);
 		exec(msh, env);
 		// free_lst(msh);
 	}
@@ -449,13 +456,13 @@ int main(int ac, char **av, char **envp)
 {
 	t_msh msh;
 	t_env *env;
-	if(envp[0] == NULL)
-		return (1);
+	// if(envp[0] == NULL)
+	// 	return (1);
 	env = env_into_list(envp);
 	ft_bzero(&msh, sizeof(t_msh));
 	(void)ac;
 	(void)av;
-	msh_loop(&msh, env, envp);
+	msh_loop(&msh, env);
 	free_env(env);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/16 10:33:43 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/17 10:21:10 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	update_env(t_env *env)
 	current = env;
 	while(current)
 	{
+		// printf("while");
 		if(current->full_env)
 			free_tab(current->full_env);
 		current->full_env = all_env(current);

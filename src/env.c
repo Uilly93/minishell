@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/16 10:38:56 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/17 11:32:17 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,17 @@
 int is_equal(char *var)
 {
 	int		i;
+	// int		plus_sign;
 
 	i = 0;
 	while (var[i])
 	{
 		if (var[i] == '+' || var[i] == '=')
 		{
-			if(var[i] == '+' && var[i+1] == '=')
+			if(var[i] == '+')
+				if(var[i + 1] && var[i + 1] != '=')
+					return (3);
+			if(var[i] == '+' && var[i + 1] && var[i + 1] == '=')
 				return(2);
 			return (1);	
 		}
@@ -36,7 +40,9 @@ char *get_var_name(char *var)
 	int	i;
 	
 	i = 0;
-	if (!is_equal(var))
+	// if(is_equal(var) == 3)
+	// 	return (NULL);
+	if (!is_equal(var) || is_equal(var) == 3)
 		return (ft_strdup(var));
 	while (var[i] != '=')
 		i++;
