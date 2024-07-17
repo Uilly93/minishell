@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/17 13:46:53 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/17 15:31:48 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,17 +211,17 @@ int	print_line(char *line, int fd)
 
 	if (fd == -1)
 		return (free((void *)name), free((void *)var), perror("msh"), 1);
-	if (!var)
-		return (1);
+	// if (!var)
+	// 	return (free((void *)name), 1);
 	if (!name)
 		return (free((void *)var), 1);
-	if (is_equal(line) == 0)
-		ft_printf(fd, "define -x %s\n", line);
-	else
-	{
-		if (*name)
-			ft_printf(fd, "define -x %s=\"%s\"\n", name, var);
-	}
+	// if (is_equal(line) == 0)
+	// 	ft_printf(fd, "define -x %s\n", line);
+	if(var && *var)
+		ft_printf(fd, "define -x %s=\"%s\"\n", name, var);
+	else if(!var)
+		ft_printf(fd, "define -x %s\n", name);
+		
 	free((void *)name);
 	free((void *)var);
 	return (0);
@@ -235,6 +235,8 @@ int	print_export(char **sorted, t_msh *msh)
 	if (fd == -1)
 		return (perror("msh"), 1);
 	i = 0;
+	// for(int i = 0; sorted[i]; i++)
+		// printf("%s\n", sorted[i]);
 	while (sorted[i])
 	{
 		if (print_line(sorted[i], fd))
@@ -266,6 +268,8 @@ char *join_vars(char *av, char *var)
 	char	*add;
 	char	*tmp;
 
+	if(!var)
+		return(get_var(av));
 	add = get_var(av);
 	if (!add)
 		return (NULL);
@@ -291,8 +295,12 @@ bool	update_var(char *av, t_env **env, const char *var, const char *var_name)
 		if (var_name && ft_strcmp((char *)var_name, current->var_name) == 0)
 		{
 			if (is_equal(av) == 2)
+			{
+				free(current->full_var);
+				current->full_var = ft_strdup(av);
 				return (current->var = join_vars(av, current->var),
 					free((void*)var_name), free((void*)var), true);
+			}
 			else if (is_equal(av) == 1)
 			{
 			 	ft_del_node(env, (char *)var_name);

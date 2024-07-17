@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/17 11:32:17 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/17 15:38:04 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char *get_var(char *var)
 
 	i = 0;
 	if (!is_equal(var))
-		return (ft_strdup(""));
+		return (NULL);
 	while (var[i] != '=')
 		i++;
 	return (ft_substr(var, i + 1, (ft_strlen(var) - i)));
@@ -93,7 +93,7 @@ int ft_env(t_env *env, t_msh * msh)
 	current = env;
 	while(current)
 	{
-		if((is_equal(current->full_var) && !*current->var) || *current->var)
+		if(current->var != NULL)
 			ft_printf(fd, "%s=%s\n", current->var_name, current->var);
 		current = current->next;
 		i++;
