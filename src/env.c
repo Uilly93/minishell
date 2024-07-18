@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/17 15:38:04 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/18 14:37:22 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ char *get_var(char *var)
 		return (NULL);
 	while (var[i] != '=')
 		i++;
-	return (ft_substr(var, i + 1, (ft_strlen(var) - i)));
+	if((size_t)i == ft_strlen(var))
+		return (NULL);
+	else
+		return (ft_substr(var, i + 1, (ft_strlen(var) - i)));
 }
 
 
@@ -71,12 +74,14 @@ int	split_env(t_env *env)
 	current = env;
 	while (current)
 	{
+		// if(current->var)
+		// free(current->var);
 		current->var = get_var(current->full_var);
-		if (!current->var)
-			return (1);
+		// if (!current->var)
+		// 	return (1);
 		current->var_name = get_var_name(current->full_var);
-		if (!current->var)
-			return (1);
+		// if (!current->var_name)
+		// 	return (1);
 		current = current->next;
 	}
 	return (0);
