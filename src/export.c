@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/18 15:27:38 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/22 16:48:53 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,12 +214,8 @@ int	print_line(char *line, int fd)
 
 	if (fd == -1)
 		return (free((void *)name), free((void *)var), perror("msh"), 1);
-	// if (!var)
-	// 	return (free((void *)name), 1);
 	if (!name)
 		return (free((void *)var), 1);
-	// if (is_equal(line) == 0)
-	// 	ft_printf(fd, "define -x %s\n", line);
 	if(var)
 		ft_printf(fd, "define -x %s=\"%s\"\n", name, var);
 	else
@@ -237,8 +233,6 @@ int	print_export(char **sorted, t_msh *msh)
 	if (fd == -1)
 		return (perror("msh"), 1);
 	i = 0;
-	// for(int i = 0; sorted[i]; i++)
-		// printf("%s\n", sorted[i]);
 	while (sorted[i])
 	{
 		if(print_line(sorted[i], fd))
@@ -320,60 +314,35 @@ bool	update_var(char *av, t_env **env, const char *var, const char *var_name)
 	return (free((void*)var_name), free((void*)var), false);
 }
 
-bool	check_format_var(char *var_name)
-{
-	int	i;
-
-	i = 0;
-	while (var_name[i])
-	{
-		if (var_name[i] == '+')
-			return (true);
-		i++;
-	}
-	return (false);
-}
-
 bool	var_already_exist(char *av, t_env **env)
 {
-	const char	*var_name = get_var_name(av);
-	char		*var;
+	char	*var_name;
+	char	*var;
 
-	if (check_format_var((char *)var_name))
-	{
-		(ft_printf(2, "msh: export: `%s': not a valid identifier\n",
-		var_name));
-		free((void*)var_name);
-		return (true);
-	}
+	var_name = get_var_name(av);
 	var = get_var(av);
 	return (update_var(av, env, var, var_name));
 }
 
 bool	check_errors(t_msh *msh, int i)
 {
-	int	j;
-	int k;
-	const char	*var_name = get_var_name(msh->cmd[i]);
 	
-	k = 0;
-	j = 0;
-	while(var_name[j] || (var_name[j] && var_name[j] != '='))
-	{
-		if (var_name[0] && !ft_isalpha(var_name[0]))
+	int j;
+	char	*var_name;
+	
+	j = 1;
+	if (msh->cmd[i][0] && !ft_isalpha(msh->cmd[i][0]))
 			return (ft_printf(2, "1 msh: export: `%s': not a valid identifier\n",
-					msh->cmd[i]), free((char *)var_name), true);
-		if(var_name[j] == '+' && var_name[j + 1] &&
-			var_name[j + 1] != '=')
-			return (ft_printf(2, "2 msh: export: `%s': not a valid identifier\n",
-				msh->cmd[i]), free((char *)var_name), true);
+					msh->cmd[i]), true);
+	var_name = get_var_name(msh->cmd[i]);
+	while (var_name[j])
+	{
+		if(var_name[j] && !ft_isalnum(var_name[j]))
+			return (ft_printf(2, "3 msh: export: `%s': not a valid identifier\n",
+				msh->cmd[i]), free(var_name), true);
 		j++;
 	}
-	while (++k < j)
-		if(var_name[k] && !ft_isalnum(var_name[k]))
-			return (ft_printf(2, "3 msh: export: `%s': not a valid identifier\n",
-				msh->cmd[i]), free((char *)var_name), true);
-	free((char *)var_name);
+	free(var_name);
 	return (false);
 }
 
@@ -397,7 +366,6 @@ int	ft_export(t_msh *msh, t_env *env)
 		new_var->full_var = ft_strdup(msh->cmd[i]);
 		new_var->var_name = get_var_name(msh->cmd[i]);
 		new_var->var = get_var(msh->cmd[i]);
-		// printf("%s %s %s\n",new_var->full_var, new_var->var_name, new_var->var);
 		add_env_node(&env, new_var);
 	}
 	update_env(env);
