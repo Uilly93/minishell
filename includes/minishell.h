@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/23 15:23:36 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 16:19:47 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ typedef struct s_msh
 int	split_env(t_env *env);
 int is_equal(char *var);
 char *get_key(char *var);
-char *get_var(char *var);
+char *get_value(char *var);
 int	env_len(t_env *env);
 int	update_env(t_env *env);
 int		ft_env(t_env *env, t_msh *msh);

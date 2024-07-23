@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 15:14:30 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/23 15:38:50 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 17:02:26 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ t_msh	*get_msh(char *line, t_env *env)
 
 int	main(void)
 {
-	char	*line;
-	t_env	*env;
-	t_msh	*msh;
+	char	*line = NULL;
+	t_env	*env = {0};
+	t_msh	*msh = {0};
 
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, sigquit_handler);

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 13:51:23 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/23 15:37:17 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 17:03:57 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,13 @@
 void	fill_value(t_token *token, char *line, int *i)
 {
 	char	*key;
-	char	*value;
-	char	*tmp;
+	char	*value = NULL;
+	char	*tmp = NULL;
+	// token->word = NULL;
 	int		k;
 
 	(*i)++;
-	key = malloc(word_len(line, *i) + 1);
+	key = ft_calloc(sizeof(char), word_len(line, *i) + 1);
 	if (!key)
 		return ;
 	k = 0;
@@ -49,7 +50,7 @@ void	fill_word(t_token *token, char *line, int *i)
 	int	j;
 
 	token->id = WORD;
-	token->word = malloc(word_len(line, *i) + 1);
+	token->word = ft_calloc(sizeof(char), word_len(line, *i) + 1);
 	if (!token->word)
 		return ;
 	j = 0;
@@ -79,7 +80,7 @@ void	fill_quote(t_token *token, char *line, int *i)
 	len = 0;
 	while (line[j] && line[j++] != '\'')
 		len++;
-	token->word = malloc(len + 1);
+	token->word = ft_calloc(sizeof(char), len + 1);
 	if (!token->word)
 		return ;
 	j = 0;
@@ -104,7 +105,7 @@ void	fill_doublequote(t_token *token, char *line, int *i)
 	len = 0;
 	while (line[j] && line[j++] != '"')
 		len++;
-	token->word = malloc(len + 1);
+	token->word = ft_calloc(sizeof(char), len + 1);
 	if (!token->word)
 		return ;
 	j = 0;
@@ -147,8 +148,8 @@ void	fill_token(t_token *token, char *line, int *i)
 
 t_token	*lexing(char *line, t_env *env)
 {
-	t_token	*token;
-	t_token	*add;
+	t_token	*token = {0};
+	t_token	*add = {0};
 	int		i;
 
 	token = NULL;

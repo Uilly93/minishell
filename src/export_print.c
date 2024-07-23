@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 08:53:08 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/23 15:23:22 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 16:20:00 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	**sort_env(char **tab, t_env *env)
 
 int	print_line(char *line, int fd)
 {
-	const char	*var = get_var(line);
+	const char	*var = get_value(line);
 	const char	*key = get_key(line);
 
 	if (fd == -1)
@@ -91,7 +91,7 @@ char *join_vars(char *av, char *var)
 	char	*add;
 	char	*tmp;
 
-	add = get_var(av);
+	add = get_value(av);
 	if (!var)
 		return (add);
 	tmp = ft_strdup(var);

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 09:07:38 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/23 15:24:52 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 16:20:12 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char *join_vars(char *av, char *value)
 	char	*add;
 	char	*tmp;
 
-	add = get_var(av);
+	add = get_value(av);
 	if (!value)
 		return (add);
 	tmp = ft_strdup(value);

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/23 15:25:41 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 16:20:22 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ char	**sort_env(char **tab, t_env *env)
 
 int	print_line(char *line, int fd)
 {
-	const char	*value = get_var(line);
+	const char	*value = get_value(line);
 	const char	*name = get_key(line);
 
 	if (fd == -1)
@@ -230,7 +230,7 @@ char *join_vars(char *av, char *value)
 	char	*add;
 	char	*tmp;
 
-	add = get_var(av);
+	add = get_value(av);
 	if (!value)
 		return (add);
 	tmp = ft_strdup(value);
@@ -305,7 +305,7 @@ bool	var_already_exist(char *av, t_env **env)
 	char	*value;
 
 	key = get_key(av);
-	value = get_var(av);
+	value = get_value(av);
 	return (update_var(av, env, value, key));
 }
 
@@ -349,7 +349,7 @@ int	ft_export(t_msh *msh, t_env *env)
 			return (1);
 		new_var->full_var = ft_strdup(msh->cmd[i]);
 		new_var->key = get_key(msh->cmd[i]);
-		new_var->value = get_var(msh->cmd[i]);
+		new_var->value = get_value(msh->cmd[i]);
 		add_env_node(&env, new_var);
 	}
 	update_env(env);

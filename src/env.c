@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/23 15:24:20 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 16:19:29 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*get_key(char *value)
 	return (ft_strdup(value));
 }
 
-char	*get_var(char *value)
+char	*get_value(char *value)
 {
 	int		i;
 
@@ -76,7 +76,7 @@ int	split_env(t_env *env)
 	current = env;
 	while (current)
 	{
-		current->value = get_var(current->full_var);
+		current->value = get_value(current->full_var);
 		current->key = get_key(current->full_var);
 		current = current->next;
 	}
