@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/17 15:25:45 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 15:26:48 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,10 @@ int	ft_del_node(t_env **head, char *av)
 	prev = NULL;
 	while (current)
 	{
-		if(av && ft_strcmp(av, current->var_name) == 0)
+		if(av && ft_strcmp(av, current->key) == 0)
 		{
-			free(current->var);
-			free(current->var_name);
+			free(current->value);
+			free(current->key);
 			free(current->full_var);
 			free_tab(current->full_env);
 			if (prev == NULL)

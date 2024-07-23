@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/16 13:09:00 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 15:23:41 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ char *get_home(t_env *env)
 	current = env;
 	while(current)
 	{
-		if (ft_strcmp(current->var_name, "HOME") == 0)
+		if (ft_strcmp(current->key, "HOME") == 0)
 		{
-			res = ft_strdup(current->var);
+			res = ft_strdup(current->value);
 			if (!res)
 				return (NULL);
 			return(res);

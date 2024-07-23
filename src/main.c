@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/17 10:21:55 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 15:26:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,8 @@ char	**get_path(t_env *env)
 		return (NULL);
 	while(current)
 	{
-		if (ft_strcmp("PATH", current->var_name) == 0)
-			return (ft_split(current->var, ':'));
+		if (ft_strcmp("PATH", current->key) == 0)
+			return (ft_split(current->value, ':'));
 		else
 			current = current->next;
 	}

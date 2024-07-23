@@ -2,12 +2,6 @@
 	ignore_readline_leaks
 	Memcheck:Leak
 	...
-	obj:*/libreadline.so*
-}
-{
-	ignore_readline_leaks
-	Memcheck:Leak
-	...
 	obj:*/usr/bin/ls*
 }
 {
@@ -21,4 +15,10 @@
 	Memcheck:Leak
 	...
 	obj:*/usr/bin/cat*
+}
+{
+	ignore_readline_leaks
+	Memcheck:Leak
+	...
+	obj:*/libreadline.so*
 }

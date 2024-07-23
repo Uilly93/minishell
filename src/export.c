@@ -6,32 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/22 16:48:53 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/23 15:25:41 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <ctype.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-// int test(t_env *env)
-// {
-// 	t_env	*current = env;
-// 	int i = 0;
-
-// 	split_env(env);
-// 	while (current)
-// 	{
-// 		printf("%s=%s\n", current->var_name, current->var);
-// 		current = current->next;
-// 		i++;
-// 	}
-// 	return (0);
-// }
-
-t_env	*ft_envlastnode(t_env *lst);
+//------------------env_manage.c--------------------
 
 int	free_env(t_env *env)
 {
@@ -42,16 +23,12 @@ int	free_env(t_env *env)
 	while (current)
 	{
 		prev = current;
-		free(current->var);
-		// current->var = NULL;
+		free(current->value);
 		free(current->full_var);
-		// current->full_var = NULL;
-		free(current->var_name);
-		// current->var_name = NULL;
+		free(current->key);
 		free_tab(current->full_env);
 		current = current->next;
 		free(prev);
-		// prev = NULL;
 	}
 	env = NULL;
 	return (0);
@@ -107,6 +84,8 @@ t_env	*create_env_node(char **envp, int i)
 	return (env);
 }
 
+//------------------env_create.c------------------
+
 t_env	*env_into_list(char **envp)
 {
 	t_env	*env;
@@ -133,12 +112,12 @@ char *join_name_var(t_env *env)
 	char	*tmp;
 	char	*res;
 
-	if(!env->var)
-		return (ft_strjoin(env->var_name, "="));
-	tmp = ft_strjoin(env->var_name, "=");
+	if (!env->value)
+		return (ft_strjoin(env->key, "="));
+	tmp = ft_strjoin(env->key, "=");
 	if (!tmp)
 		return (NULL);
-	res = ft_strjoin(tmp, env->var);
+	res = ft_strjoin(tmp, env->value);
 	free(tmp);
 	if (!res)
 		return (NULL);
@@ -160,7 +139,7 @@ char **get_env(t_env *env)
 		if (is_equal(current->full_var))
 			cpy[i] = join_name_var(current);
 		else
-			cpy[i] = ft_strdup(current->var_name);
+			cpy[i] = ft_strdup(current->key);
 		if (!cpy[i])
 			return (free_tab((char **)cpy), NULL);
 		current = current->next;
@@ -168,6 +147,8 @@ char **get_env(t_env *env)
 	}
 	return ((char **)cpy);
 }
+
+// -----------------------export_print.c---------------------------
 
 void	ft_swap_tab(char **a, char **b)
 {
@@ -209,19 +190,19 @@ char	**sort_env(char **tab, t_env *env)
 
 int	print_line(char *line, int fd)
 {
-	const char	*var = get_var(line);
-	const char	*name = get_var_name(line);
+	const char	*value = get_var(line);
+	const char	*name = get_key(line);
 
 	if (fd == -1)
-		return (free((void *)name), free((void *)var), perror("msh"), 1);
+		return (free((void *)name), free((void *)value), perror("msh"), 1);
 	if (!name)
-		return (free((void *)var), 1);
-	if(var)
-		ft_printf(fd, "define -x %s=\"%s\"\n", name, var);
+		return (free((void *)value), 1);
+	if (value)
+		ft_printf(fd, "define -x %s=\"%s\"\n", name, value);
 	else
 		ft_printf(fd, "define -x %s\n", name);
 	free((void *)name);
-	free((void *)var);
+	free((void *)value);
 	return (0);
 }
 
@@ -235,13 +216,47 @@ int	print_export(char **sorted, t_msh *msh)
 	i = 0;
 	while (sorted[i])
 	{
-		if(print_line(sorted[i], fd))
+		if (print_line(sorted[i], fd))
 			return (1);
 		i++;
 	}
-	// free_tab(sorted);
 	return (0);
 }
+
+//---------------------export_utils.c-----------------------------------
+
+char *join_vars(char *av, char *value)
+{
+	char	*add;
+	char	*tmp;
+
+	add = get_var(av);
+	if (!value)
+		return (add);
+	tmp = ft_strdup(value);
+	if (!tmp)
+		return (free(add), NULL);
+	free(value);
+	value = ft_strjoin(tmp, add);
+	free(add);
+	free(tmp);
+	if (!value)
+		return (NULL);
+	return (value);
+}
+
+
+bool	update_it(char *av, t_env *current, const char *v, const char *v_name)
+{
+		free(current->full_var);
+		current->full_var = ft_strdup(av);
+		current->value = join_vars(av, current->value);
+		free((void*)v_name);
+		free((void*)v);
+		return (true);
+}
+
+// -----------------export.c-----------------
 
 int	export_print(t_msh *msh, t_env *env)
 {
@@ -260,89 +275,58 @@ int	export_print(t_msh *msh, t_env *env)
 	return (0);
 }
 
-char *join_vars(char *av, char *var)
-{
-	char	*add;
-	char	*tmp;
-
-	add = get_var(av);
-	if(!var)
-		return(add);
-	tmp = ft_strdup(var);
-	if (!tmp)
-		return (free(add), NULL);
-	free(var);
-	var = ft_strjoin(tmp, add);
-	free(add);
-	free(tmp);
-	if (!var)
-		return (NULL);
-	return (var);
-}
-
-bool	update(char *av, t_env *current, const char *var, const char *var_name)
-{
-		free(current->full_var);
-		current->full_var = ft_strdup(av);
-		current->var = join_vars(av, current->var);
-		free((void*)var_name);
-		free((void*)var);
-		return (true);
-}
-
-bool	update_var(char *av, t_env **env, const char *var, const char *var_name)
+bool	update_var(char *av, t_env **env, const char *value, const char *key)
 {
 	t_env	*current;
 
 	current = *env;
 	while (current)
 	{
-		if (var_name && ft_strcmp((char *)var_name, current->var_name) == 0)
+		if (key && ft_strcmp((char *)key, current->key) == 0)
 		{
 			if (is_equal(av) == 2)
-				return (update(av, current, var, var_name));
+				return (update_it(av, current, value, key));
 			else if (is_equal(av) == 1)
 			{
-			 	ft_del_node(env, (char *)var_name);
-				return (free((void*)var_name), free((void*)var), false);
+			 	ft_del_node(env, (char *)key);
+				return (free((void*)key), free((void*)value), false);
 			}
 			else
-				return (free((void*)var_name), free((void*)var), true);
+				return (free((void*)key), free((void*)value), true);
 		}
 		current = current->next;
 	}
-	return (free((void*)var_name), free((void*)var), false);
+	return (free((void*)key), free((void*)value), false);
 }
 
 bool	var_already_exist(char *av, t_env **env)
 {
-	char	*var_name;
-	char	*var;
+	char	*key;
+	char	*value;
 
-	var_name = get_var_name(av);
-	var = get_var(av);
-	return (update_var(av, env, var, var_name));
+	key = get_key(av);
+	value = get_var(av);
+	return (update_var(av, env, value, key));
 }
 
 bool	check_errors(t_msh *msh, int i)
 {
-	
-	int j;
-	char	*var_name;
-	
+	int		j;
+	char	*key;
+
 	j = 1;
 	if (msh->cmd[i][0] && !ft_isalpha(msh->cmd[i][0]))
 			return (ft_printf(2, "1 msh: export: `%s': not a valid identifier\n",
 					msh->cmd[i]), true);
-	var_name = get_var_name(msh->cmd[i]);
-	while (var_name[j])
+	key = get_key(msh->cmd[i]);
+	while (key[j])
 	{
-		if(var_name[j] && !ft_isalnum(var_name[j]))
+		if (key[j] && !ft_isalnum(key[j]))
 			return (ft_printf(2, "3 msh: export: `%s': not a valid identifier\n",
-				msh->cmd[i]), free(var_name), true);
+				msh->cmd[i]), free(key), true);
 		j++;
 	}
-	free(var_name);
+	free(key);
 	return (false);
 }
 
@@ -364,8 +348,8 @@ int	ft_export(t_msh *msh, t_env *env)
 		if (!new_var)
 			return (1);
 		new_var->full_var = ft_strdup(msh->cmd[i]);
-		new_var->var_name = get_var_name(msh->cmd[i]);
-		new_var->var = get_var(msh->cmd[i]);
+		new_var->key = get_key(msh->cmd[i]);
+		new_var->value = get_var(msh->cmd[i]);
 		add_env_node(&env, new_var);
 	}
 	update_env(env);
