@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 13:24:26 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/24 14:35:44 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/24 15:57:20 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,11 @@ t_msh	*create_msh(int index, t_env *env)
 	if (!msh)
 		return (NULL);
 	msh->env = env;
+	msh->pipefd[0] = -1;
+	msh->pipefd[1] = -1;
 	msh->index = index + 1;
-	msh->cmd = NULL;
-	msh->infile = NULL;
-	msh->outfile = NULL;
-	msh->here_doc = 0;
-	msh->append = 0;
 	msh->in = -1;
 	msh->out = -1;
-	msh->next = NULL;
-	msh->prev = NULL;
 	return (msh);
 }
 

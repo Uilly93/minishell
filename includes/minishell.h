@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 14:03:11 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/24 15:18:06 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_msh
 	struct s_msh	*prev;
 }	t_msh;
 
-void	ft_addnode(t_msh **lst, t_msh *add);
+// void	ft_addnode(t_msh **lst, t_msh *add);
 int	split_env(t_env *env);
 int is_equal(char *var);
 char *get_key_env(char *var);

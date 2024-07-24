@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 14:04:22 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/24 15:52:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,9 +198,9 @@ int	print_line(char *line, int fd)
 	if (!name)
 		return (free((void *)value), 1);
 	if (value)
-		ft_printf(fd, "define -x %s=\"%s\"\n", name, value);
+		ft_printf(fd, "declare -x %s=\"%s\"\n", name, value);
 	else
-		ft_printf(fd, "define -x %s\n", name);
+		ft_printf(fd, "declare -x %s\n", name);
 	free((void *)name);
 	free((void *)value);
 	return (0);

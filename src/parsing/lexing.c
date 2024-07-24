@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 13:51:23 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/24 14:24:12 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/24 16:24:16 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,8 @@ char	*get_value_parsing(t_env *env, char *key)
 void	fill_value(t_token *token, char *line, int *i)
 {
 	char	*key;
-	char	*value = NULL;
-	char	*tmp = NULL;
-	// token->word = NULL;
+	char	*value;
+	char	*tmp;
 	int		k;
 
 	(*i)++;
@@ -157,15 +156,18 @@ void	fill_token(t_token *token, char *line, int *i)
 	else if (line[*i] == '>')
 		token->id = BIGGER;
 	else if (line[*i] == '|')
-		token->id = PIPE;
+	{
+		if((size_t)*i != ft_strlen(line))
+			token->id = PIPE;
+	}
 	else
 		fill_word(token, line, i);
 }
 
 t_token	*lexing(char *line, t_env *env)
 {
-	t_token	*token = {0};
-	t_token	*add = {0};
+	t_token	*token;
+	t_token	*add;
 	int		i;
 
 	token = NULL;

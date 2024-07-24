@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 14:02:41 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/24 14:24:08 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/24 16:15:11 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	fill_smaller(t_msh *msh, t_token **token)
 	*token = (*token)->next;
 	if (!*token)
 	{
-		printf("msh: parse error\n");
+		printf("msh: parsing error\n");
 		return ;
 	}
 	if ((*token)->id == SMALLER)
@@ -44,13 +44,13 @@ void	fill_smaller(t_msh *msh, t_token **token)
 	}
 	if (!*token)
 	{
-		printf("msh: parse error\n");
+		printf("msh: parsing error\n");
 		return ;
 	}
 	if ((*token)->id == WORD)
 		msh->infile = ft_strdup((*token)->word);
 	else
-		printf("msh: parse error\n");
+		printf("msh: parsing error\n");
 	*token = (*token)->next;
 }
 
@@ -59,7 +59,7 @@ void	fill_bigger(t_msh *msh, t_token **token)
 	*token = (*token)->next;
 	if (!*token)
 	{
-		printf("msh: parse error\n");
+		printf("msh: parsing error\n");
 		return ;
 	}
 	if ((*token)->id == BIGGER)
@@ -69,13 +69,13 @@ void	fill_bigger(t_msh *msh, t_token **token)
 	}
 	if (!*token)
 	{
-		printf("msh: parse error\n");
+		printf("msh: parsing error\n");
 		return ;
 	}
 	if ((*token)->id == WORD)
 		msh->outfile = ft_strdup((*token)->word);
 	else
-		printf("msh: parse error\n");
+		printf("msh: parsing error\n");
 	*token = (*token)->next;
 }
 
@@ -110,10 +110,15 @@ t_msh	*parsing(t_token *token, t_env *env)
 	while (token)
 	{
 		add = create_msh(++i, env);
-		fill_msh(add, &token);
-		if (!add)
+		if(!add)
 			return (NULL);
-		ft_addnode(&msh, add);
+		fill_msh(add, &token);
+		if (!add->cmd)
+		{
+			free_msh(&msh);
+			return (NULL);
+		}
+		msh_add_back(&msh, add);
 	}
 	return (msh);
 }
@@ -123,7 +128,7 @@ t_msh	*get_msh(char *line, t_env *env)
 	t_msh	*msh;
 	
 	token = lexing(line, env);
-	// free(line);
+	free(line);
 	if (!token)
 		return (NULL);
 	msh = parsing(token, env);

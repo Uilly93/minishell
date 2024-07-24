@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 14:45:40 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/24 16:19:23 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,18 +191,15 @@ int	create_child(t_msh *msh)
 	if (child == 0)
 	{
 		path = join_path_access(msh->cmd[0], msh->env);
-		// ft_printf(1, "dfsdfs %s %s", msh->cmd[0], msh->env->full_env[0]);
 		if (!path)
 		{
-			ft_err("msh: command not found");
+			ft_printf(2, "msh: %s: command not found\n", msh->cmd[0]);
 			return (free_env(msh->env), free_lst(msh), exit(127), 1);
 		}
 		if (redirect_fd(msh))
 			return (free_lst(msh), free(path), exit(127), 1);
 		if (execve(path, msh->cmd, NULL) == -1)
 		{
-			// ft_printf(1, "testwerwerwer");
-			// printf("test4");
 			perror("msh");
 			return (free_env(msh->env), free_lst(msh), free(path), exit(127), 1);
 		}
@@ -463,7 +460,7 @@ int	msh_loop(t_msh *msh, t_env *env)
 	char *line;
 	char *prompt;
 
-	// init_sigint();
+	init_sigint();
 	while (1)
 	{
 		prompt = custom_prompt();
@@ -473,11 +470,12 @@ int	msh_loop(t_msh *msh, t_env *env)
 		free(prompt);
 		if (!line)
 			break ;
-		if (ft_strlen(line))
-			add_history(line);
+		if (!ft_strlen(line))
+			continue ;
+		add_history(line);
 		msh = get_msh(line, env);
-		execute(msh);
 		// msh = my_parsing(line, env);
+		// execute(msh);
 		// print_msh(msh);
 		exec(msh, env);
 		// free_lst(msh);
@@ -485,16 +483,16 @@ int	msh_loop(t_msh *msh, t_env *env)
 	return (0);
 }
 
-int main(int ac, char **av, char **envp)
+int main(void)
 {
 	t_msh msh;
 	t_env *env;
+	extern char **environ;
 	// if(envp[0] == NULL)
 	// 	return (1);
-	env = env_into_list(envp);
+	// ft_bzero(env, sizeof(t_env));
+	env = env_into_list(environ);
 	ft_bzero(&msh, sizeof(t_msh));
-	(void)ac;
-	(void)av;
 	msh_loop(&msh, env);
 	free_env(env);
 	return (0);
