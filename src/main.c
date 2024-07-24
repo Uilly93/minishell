@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/23 15:26:21 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/24 14:45:40 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+// #include "../includes/parsing.h"
 // #include <bits/types/siginfo_t.h>
 #include <readline/chardefs.h>
 #include <readline/readline.h>
@@ -117,10 +118,7 @@ char	*join_path_access(char *av, t_env *env)
 
 	i = -1;
 	if (access(av, X_OK) == 0)
-	{
-		printf("%s\n", av);
 		return (ft_strdup(av));
-	}
 	s = get_path(env);
 	if(!s)
 		return (NULL);
@@ -295,7 +293,7 @@ t_msh *cmd_node(char *line)
 		return (NULL);
 	msh->in = -1;
 	msh->out = -1;
-	msh->out_appen = 0;
+	msh->append = 0;
 	// msh->infile = "/tmp/heredoc_1";
 	// msh->outfile = "outfile";
 	msh->cmd = ft_split(line, ' ');
@@ -304,7 +302,7 @@ t_msh *cmd_node(char *line)
 	return (msh);
 }
 
-t_msh *parsing(char *line, t_env *env)
+t_msh *my_parsing(char *line, t_env *env)
 {
 	t_msh	*msh;
 	t_msh	*tmp;
@@ -362,7 +360,6 @@ int exec(t_msh *msh, t_env *env)
 	free_lst(msh);
 	while (wait(NULL) > 0)
 		;
-	
 	return (0);
 }
 
@@ -427,13 +424,46 @@ int	init_sigint()
 // 		}
 // 	}
 // }
+void print_msh(t_msh *msh)
+{
+	t_msh *current = msh;
+
+	while (current)
+	{
+		for(int i = 0;current->cmd[i]; i++)
+			ft_printf(1, "%s ", current->cmd[i]);
+		ft_printf(1, "%s %s %d", current->infile, current->outfile, current->index);
+	}
+}
+
+void	execute(t_msh *msh)
+{
+	t_msh	*current;
+
+	current = msh;
+	while (current)
+	{
+		printf("index: %d\n", current->index);
+		if (current->cmd)
+		{
+			int	i = -1;
+			while (current->cmd[++i])
+				printf("cmd[%d]: %s\n", i, current->cmd[i]);
+		}
+		if (current->infile)
+			printf("infile: %s\n", current->infile);
+		if (current->outfile)
+			printf("outfile: %s\n", current->outfile);
+		current = current->next;
+	}
+}
 
 int	msh_loop(t_msh *msh, t_env *env)
 {	
 	char *line;
 	char *prompt;
 
-	init_sigint();
+	// init_sigint();
 	while (1)
 	{
 		prompt = custom_prompt();
@@ -442,10 +472,13 @@ int	msh_loop(t_msh *msh, t_env *env)
 		line = readline(prompt);
 		free(prompt);
 		if (!line)
-			return (1);
+			break ;
 		if (ft_strlen(line))
 			add_history(line);
-		msh = parsing(line, env);
+		msh = get_msh(line, env);
+		execute(msh);
+		// msh = my_parsing(line, env);
+		// print_msh(msh);
 		exec(msh, env);
 		// free_lst(msh);
 	}

@@ -2,6 +2,15 @@ minishell
 obj
 includes/libft/*.o
 includes/libft/*.a
+includes/libft/*.d
+src/*.d
+src/*.o
+src/parsing/*.d
+src/parsing/*.o
+src/exec/*.d
+src/exec/*.o
+src/builtins/*.d
+src/builtins/*.o
 Shelldivers
 out
 test

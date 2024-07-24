@@ -1,39 +1,43 @@
 NAME = minishell
 CC = cc
+
 LIBFT = includes/libft/
-SRC_DIR = src
-BUILTINS_DIR = src/builtins
-OBJ_DIR = obj
-SRC_NAME = heredoc.c main.c echo.c cd.c pwd.c\
-			child.c exit.c export.c env.c unset.c
-OBJS = $(addprefix $(OBJ_DIR)/,$(SRC_NAME:%.c=%.o))
-# SRC = $(addprefix $(SRC_DIR)/,$(SRC_NAME))
-CFLAGS = -Wall -Wextra -Werror -g3
-RM = rm -rf
+CFLAGS = -Wall -Wextra -Werror -g3 -Iincludes -Isrc -MMD
 
-all: libft $(NAME)
+SRCS = \
+	src/main.c \
+	src/exec/child.c src/exec/heredoc.c \
+	src/parsing/parsing.c src/parsing/parsing_utils.c \
+	src/parsing/lexing.c src/parsing/lexing_utils.c \
+	src/builtins/echo.c src/builtins/cd.c src/builtins/pwd.c \
+	src/builtins/exit.c src/builtins/export.c \
+	src/builtins/env.c src/builtins/unset.c
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
+OBJS = $(SRCS:.c=.o)
+DEPS = $(OBJS:.o=.d)
 
-$(NAME): $(OBJS)
+all: $(NAME)
+
+$(NAME): $(OBJS) $(LIBFT)libft.a
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) -L$(LIBFT) -lft -lreadline
 
+-include $(DEPS)
+
+$(LIBFT)libft.a:
+	make -C $(LIBFT)
+
+obj/%.o: src/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
-	$(RM) $(OBJ_DIR)
-	cd $(LIBFT) && make clean
+	make -C $(LIBFT) clean
+	rm -f $(OBJS) $(DEPS)
 
 fclean: clean
-	$(RM) $(NAME)
-	cd $(LIBFT) && make fclean
+	make -C $(LIBFT) fclean
+	rm -f $(NAME)
 
 re: fclean all
-
-valgrind: all
-	valgrind --trace-children --track-fds  
-
-libft:
-	$(MAKE) -C $(LIBFT)
 
 .PHONY: all clean fclean re libft
