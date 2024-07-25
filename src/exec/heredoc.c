@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 08:47:32 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 09:27:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,25 +24,27 @@
 
 int	check_heredoc(t_msh *msh, char **av)
 {
-	char *filename;
-	char *index;
+	(void)av;
+	// char *filename;
+	// char *index;
 	
-		if (ft_strcmp(av[0], "<<") == 0 && av[1])
+		if (msh->here_doc != -1)
 		{
-			index = ft_itoa(msh->index);
-			if(!index)
-				return (1);
-			filename = ft_strjoin("/tmp/heredoc_", index);
-			free(index);
-			if(!filename)
-				return (1);
-			unlink(filename);
-			msh->hlimit = ft_strdup(av[1]);
-			if (!msh->hlimit)
-				return(free(filename),1);
-			msh->in = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			unlink(filename);
-			free(filename);
+			
+			// index = ft_itoa(msh->index);
+			// if(!index)
+				// return (1);
+			// filename = ft_strjoin("/tmp/heredoc_", index);
+			// free(index);
+			// if(!filename)
+			// 	return (1);
+			// unlink(filename);
+			// msh->hlimit = ft_strdup(av[1]);
+			// if (!msh->hlimit)
+			// 	return(1);
+			// unlink(filename);
+			// free(filename);
+			msh->in = open(msh->infile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 			if(msh->in == -1)
 				return (perror("msh"), 1);
 		}

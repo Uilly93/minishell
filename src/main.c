@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 16:19:23 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 09:29:35 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,6 +331,10 @@ void	free_lst(t_msh *msh)
 	current = ft_lastnode(msh);
 	while (current)
 	{
+		if(current->outfile || *current->outfile)
+			free(current->outfile);
+		if(current->infile || *current->infile)
+			free(current->infile);
 		free_tab(current->cmd);
 		if(current->hlimit)
 			free(current->hlimit);
@@ -475,7 +479,7 @@ int	msh_loop(t_msh *msh, t_env *env)
 		add_history(line);
 		msh = get_msh(line, env);
 		// msh = my_parsing(line, env);
-		// execute(msh);
+		execute(msh);
 		// print_msh(msh);
 		exec(msh, env);
 		// free_lst(msh);

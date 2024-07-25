@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 14:02:41 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/24 16:15:11 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 11:38:23 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ void	fill_smaller(t_msh *msh, t_token **token)
 		return ;
 	}
 	if ((*token)->id == WORD)
+	{
+		ft_printf(1, "%s\n", (*token)->word);
 		msh->infile = ft_strdup((*token)->word);
+	}
 	else
 		printf("msh: parsing error\n");
 	*token = (*token)->next;
