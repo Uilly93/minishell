@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 15:18:06 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 15:55:26 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ typedef struct s_env
 
 typedef struct s_token
 {
-	int		id;
+	int			id;
 	char		*word;
 	t_env		*env;
 	struct s_token	*next;

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 13:51:23 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/25 08:54:20 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 16:09:25 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ t_token	*lexing(char *line, t_env *env)
 	i = -1;
 	while (line[++i])
 	{
+		printf("%c\n", line[i]);
 		add = create_token(env);
 		fill_token(add, line, &i);
 		token_add_back(&token, add);
