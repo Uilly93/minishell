@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/25 09:29:35 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 14:49:11 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,7 @@ int	create_child(t_msh *msh)
 			return (free_env(msh->env), free_lst(msh), exit(127), 1);
 		}
 		if (redirect_fd(msh))
-			return (free_lst(msh), free(path), exit(127), 1);
+			return (free_env(msh->env), free_lst(msh), free(path), exit(127), 1);
 		if (execve(path, msh->cmd, NULL) == -1)
 		{
 			perror("msh");
@@ -331,9 +331,9 @@ void	free_lst(t_msh *msh)
 	current = ft_lastnode(msh);
 	while (current)
 	{
-		if(current->outfile || *current->outfile)
+		if(current->outfile)
 			free(current->outfile);
-		if(current->infile || *current->infile)
+		if(current->infile)
 			free(current->infile);
 		free_tab(current->cmd);
 		if(current->hlimit)

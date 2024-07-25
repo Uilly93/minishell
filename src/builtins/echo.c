@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 08:42:44 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 13:53:50 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	which_fd(t_msh *msh)
 		return (1);
 }
 
-static int handle_flag(char **prompt, int i, int j)
+static int	handle_flag(char **prompt, int i, int j)
 {
 	while (prompt[i][j])
 	{
@@ -37,13 +37,13 @@ static int handle_flag(char **prompt, int i, int j)
 			return (0);
 		j++;
 	}
-		return (1);
+	return (1);
 }
 
-void print_args(t_msh *msh, int j, int i, bool new_line)
+void	print_args(t_msh *msh, int j, int i, bool new_line)
 {
 	const int	fd = which_fd(msh);
-	
+
 	if (fd == -1)
 	{
 		perror("msh");
@@ -52,16 +52,18 @@ void print_args(t_msh *msh, int j, int i, bool new_line)
 	if (msh->cmd[i] == NULL)
 		return ;
 	while (msh->cmd[j++] && msh->cmd[i] != NULL)
+	{
 		if (msh->cmd[i + 1] == NULL)
 			ft_printf(fd, "%s", msh->cmd[i++]);
 		else
 			ft_printf(fd, "%s ", msh->cmd[i++]);
+	}
 	if (new_line == true)
 		ft_printf(fd, "\n");
 	close_files(msh);
 }
 
-void ft_echo(t_msh *msh)
+void	ft_echo(t_msh *msh)
 {
 	int		i;
 	int		j;
@@ -79,7 +81,7 @@ void ft_echo(t_msh *msh)
 			while (ft_strncmp(msh->cmd[i], "-n", 2) == 0)
 			{
 				if (handle_flag(msh->cmd, i, j) == 0)
-					break;
+					break ;
 				new_line = false;
 				i++;
 				if (msh->cmd[i] == NULL)

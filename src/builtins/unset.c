@@ -6,26 +6,26 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 08:42:59 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 13:57:39 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char **all_env(t_env *env)
+char	**all_env(t_env *env)
 {
-	t_env *current;
-	int	i;
-	const char **up_env = ft_calloc(sizeof(char *), env_len(env) + 1);
+	t_env		*current;
+	int			i;
+	const char	**up_env = ft_calloc(sizeof(char *), env_len(env) + 1);
 
-	if(!up_env)
+	if (!up_env)
 		return (NULL);
 	i = 0;
 	current = env;
-	while(current)
+	while (current)
 	{
 		up_env[i] = ft_strdup(current->full_var);
-		if(!up_env)
+		if (!up_env)
 			return (free_tab((char **)up_env), NULL);
 		i++;
 		current = current->next;
@@ -35,16 +35,15 @@ char **all_env(t_env *env)
 
 int	update_env(t_env *env)
 {
-	t_env *current;
+	t_env	*current;
 
 	current = env;
-	while(current)
+	while (current)
 	{
-		// printf("while");
-		if(current->full_env)
+		if (current->full_env)
 			free_tab(current->full_env);
 		current->full_env = all_env(current);
-		if(!current->full_env)
+		if (!current->full_env)
 			return (1);
 		current = current->next;
 	}
@@ -60,7 +59,7 @@ int	ft_del_node(t_env **head, char *av)
 	prev = NULL;
 	while (current)
 	{
-		if(av && ft_strcmp(av, current->key) == 0)
+		if (av && ft_strcmp(av, current->key) == 0)
 		{
 			free(current->value);
 			free(current->key);
@@ -81,12 +80,12 @@ int	ft_del_node(t_env **head, char *av)
 
 int	ft_unset(t_env **head, char **av)
 {
-	int i;
+	int	i;
 
 	i = 1;
-	if(av[0] && !av[1])
+	if (av[0] && !av[1])
 		return (0);
-	while(av[i])
+	while (av[i])
 	{
 		ft_del_node(head, av[i]);
 		i++;

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 08:42:42 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/25 13:51:54 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,36 +15,36 @@
 #include <string.h>
 #include <unistd.h>
 
-char *get_home(t_env *env)
+char	*get_home(t_env *env)
 {
-	char *res;
-	t_env *current;
-	
+	char	*res;
+	t_env	*current;
+
 	current = env;
-	while(current)
+	while (current)
 	{
 		if (ft_strcmp(current->key, "HOME") == 0)
 		{
 			res = ft_strdup(current->value);
 			if (!res)
 				return (NULL);
-			return(res);
+			return (res);
 		}
 		current = current->next;
 	}
 	return (ft_err("msh: cd: $HOME not set"), NULL);
 }
 
-void ft_err(char *error)
+void	ft_err(char *error)
 {
 	ft_printf(2, BOLD_RED"%s\n"RESET, error);
 }
 
-char *join_path(char *arg, char *pwd)
+char	*join_path(char *arg, char *pwd)
 {
-	char *tmp;
-	char *path;
-	
+	char	*tmp;
+	char	*path;
+
 	tmp = ft_strjoin(pwd, "/");
 	if (!tmp)
 		return (free(pwd), NULL);
@@ -57,7 +57,6 @@ char *join_path(char *arg, char *pwd)
 
 int	err_and_chdir(char *path, char *arg)
 {
-
 	if (!path)
 		return (1);
 	if (arg)
