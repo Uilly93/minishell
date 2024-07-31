@@ -6,23 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/25 14:49:11 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 09:23:33 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-// #include "../includes/parsing.h"
-// #include <bits/types/siginfo_t.h>
-#include <readline/chardefs.h>
-#include <readline/readline.h>
-#include <readline/rltypedefs.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <unistd.h>
-#include <readline/history.h>
 
 
 void	ft_free(void *ptr)
@@ -425,17 +413,17 @@ int	init_sigint()
 // 		}
 // 	}
 // }
-void print_msh(t_msh *msh)
-{
-	t_msh *current = msh;
+// void print_msh(t_msh *msh)
+// {
+// 	t_msh *current = msh;
 
-	while (current)
-	{
-		for(int i = 0;current->cmd[i]; i++)
-			ft_printf(1, "%s ", current->cmd[i]);
-		ft_printf(1, "%s %s %d", current->infile, current->outfile, current->index);
-	}
-}
+// 	while (current)
+// 	{
+// 		for(int i = 0;current->cmd[i]; i++)
+// 			ft_printf(1, "%s ", current->cmd[i]);
+// 		ft_printf(1, "%s %s %d", current->infile, current->outfile, current->index);
+// 	}
+// }
 
 void	execute(t_msh *msh)
 {

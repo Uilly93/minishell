@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 09:58:14 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 09:23:57 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,21 +73,16 @@ int	redirect_fd(t_msh *msh)
 {
 	if (msh->index != 1 && msh->infile == NULL)
 	{
-		// printf("test1");
 		if (dup2(msh->prev->pipefd[0], STDIN_FILENO) == -1)
 			return (close_pipes(msh), 1);	
 	}
 	if (msh->next != NULL && msh->outfile == NULL)
 	{
-		// printf("test2");
 		if (dup2(msh->pipefd[1], STDOUT_FILENO) == -1)
 			return (close_pipes(msh), 1);
 	}
 	if (open_fd(msh))
-	{
-		// printf("test1");
 		return (close_files(msh), 1);
-	}
 	close_files(msh);
 	close_pipes(msh);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/25 15:55:26 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 09:23:30 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <readline/readline.h>
 # include <errno.h>
 # include <signal.h>
-// # include "parsing.h"
+# include <readline/history.h>
 
 # define WORD 1
 # define SMALLER 2
