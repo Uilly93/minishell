@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/25 09:27:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 14:12:54 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,31 +44,35 @@ int	check_heredoc(t_msh *msh, char **av)
 			// 	return(1);
 			// unlink(filename);
 			// free(filename);
-			msh->in = open(msh->infile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-			if(msh->in == -1)
-				return (perror("msh"), 1);
 		}
 	return (0);
 }
 
-void	here_doc(t_msh *msh, char **av)
+int	here_doc(t_msh *msh)
 {
-	char	*line;
-
-	if (*av && check_heredoc(msh, av) == 0)
+	char		*line;
+	const char	*cpy = ft_strdup(msh->infile);
+	
+	if (msh->here_doc == 0)
+		return (0);
+	free(msh->infile);
+	msh->infile = ft_strjoin("/tmp/", cpy);
+	msh->in = open(msh->infile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if(msh->in == -1)
+		return (perror("msh"), 1);
+	line = readline(MAGENTA"msh_heredoc> "RESET);
+	while (line)
 	{
-		line = readline(MAGENTA"msh_heredoc> "RESET);
-		while (line)
+		if (!line || ft_strcmp(line, (char *)cpy) == 0)
 		{
-			if (!line || ft_strcmp(line, msh->hlimit) == 0)
-			{
-				free(line);
-				return ;
-			}
-			ft_putendl_fd(line, msh->in);
+			free((void *)cpy);
 			free(line);
-			line = readline(MAGENTA"msh_heredoc> "RESET);
+			return (0);
 		}
+		ft_putendl_fd(line, msh->in);
 		free(line);
+		line = readline(MAGENTA"msh_heredoc> "RESET);
 	}
+	free(line);
+	return (0);
 }

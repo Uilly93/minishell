@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 09:23:57 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 14:59:18 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	get_flags(t_msh *msh)
 
 
 int	close_files(t_msh *msh)
-{
+{	
 	if (msh->in != -1)
 		close(msh->in);
 	if (msh->out != -1)
@@ -42,7 +42,7 @@ int	close_files(t_msh *msh)
 	return (0);
 }
 
-int open_fd(t_msh *msh)
+int dup_in_fd(t_msh *msh)
 {
 	if (msh->infile != NULL)
 	{
@@ -53,7 +53,7 @@ int open_fd(t_msh *msh)
 				return (close_pipes(msh), close_files(msh), 1);
 		}
 		else
-			return (perror("msh: "), close_pipes(msh), close_files(msh), 1);
+			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 	}
 	if (msh->outfile != NULL)
 	{
@@ -64,7 +64,7 @@ int open_fd(t_msh *msh)
 				return (close_pipes(msh), close_files(msh), 1);
 		}
 		else
-			return (perror("msh: "), close_pipes(msh), close_files(msh), 1);
+			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 	}
 	return (0);
 }
@@ -81,9 +81,8 @@ int	redirect_fd(t_msh *msh)
 		if (dup2(msh->pipefd[1], STDOUT_FILENO) == -1)
 			return (close_pipes(msh), 1);
 	}
-	if (open_fd(msh))
+	if (dup_in_fd(msh))
 		return (close_files(msh), 1);
-	close_files(msh);
 	close_pipes(msh);
 	return (0);
 }

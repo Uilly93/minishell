@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 09:23:33 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 14:39:20 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <unistd.h>
 
 
 void	ft_free(void *ptr)
@@ -24,17 +25,20 @@ void	free_tab(char **tab)
 	int i;
 
 	i = 0;
-	while (tab[i])
+	if (tab)
 	{
-		if (tab[i])
+		while (tab[i])
 		{
-			ft_free(tab[i]);
-			tab[i] = NULL;
+			if (tab[i])
+			{
+				ft_free(tab[i]);
+				tab[i] = NULL;
+			}
+			i++;
 		}
-		i++;
+		ft_free(tab);
+		tab = NULL;
 	}
-	ft_free(tab);
-	tab = NULL;
 }
 
 
@@ -68,12 +72,15 @@ char *pwd_prompt()
 
 char *custom_prompt()
 {
+	// t_msh *msh;
+	// char *exit_code = ft_itoa(msh->exit_code);
 	char *tmp;
 	char *custom_prompt;
 	
 	tmp = pwd_prompt();
 	if(!tmp)
 		return (NULL);
+	// custom_prompt = ft_strjoin(BOLD_GREEN(exit_code)BOLD_BLUE, tmp);
 	custom_prompt = ft_strjoin(BOLD_GREEN"➜  "BOLD_BLUE, tmp);
 	free(tmp);
 	if(!custom_prompt)
@@ -147,21 +154,19 @@ int	close_pipes(t_msh *msh)
 
 int is_it_builtin(char **cmd, t_msh *msh, t_env *env)
 {
-	if (cmd[0] && ft_strcmp(cmd[0], "<<") == 0)
-		return (here_doc(msh, cmd), 1);
-	if (cmd[0] && ft_strcmp(cmd[0], "echo") == 0)
+	if (cmd && cmd[0] && ft_strcmp(cmd[0], "echo") == 0)
 		return (ft_echo(msh), 1);
-	if (cmd[0] && ft_strcmp(cmd[0], "cd") == 0)
+	if (cmd && cmd[0] && ft_strcmp(cmd[0], "cd") == 0)
 		return (ft_cd(cmd, env), 1);
-	if (cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
+	if (cmd && cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
-	if (cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
+	if (cmd && cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
 		return (ft_exit(msh, env), 1);
-	if (cmd[0] && ft_strcmp(cmd[0], "export") == 0)
+	if (cmd && cmd[0] && ft_strcmp(cmd[0], "export") == 0)
 		return (ft_export(msh, env), 1);
-	if (cmd[0] && ft_strcmp(cmd[0], "env") == 0)
+	if (cmd && cmd[0] && ft_strcmp(cmd[0], "env") == 0)
 		return (ft_env(env, msh), 1);
-	if (cmd[0] && ft_strcmp(cmd[0], "unset") == 0)
+	if (cmd && cmd[0] && ft_strcmp(cmd[0], "unset") == 0)
 		return (ft_unset(&env, cmd), 1);
 	return (0);
 }
@@ -319,6 +324,7 @@ void	free_lst(t_msh *msh)
 	current = ft_lastnode(msh);
 	while (current)
 	{
+		close_files(current);
 		if(current->outfile)
 			free(current->outfile);
 		if(current->infile)
@@ -326,11 +332,31 @@ void	free_lst(t_msh *msh)
 		free_tab(current->cmd);
 		if(current->hlimit)
 			free(current->hlimit);
-		close_files(current);
 		next = current;
 		current = current->prev;
 		free(next);
 	}
+}
+int	check_and_open(t_msh *msh)
+{
+	if(msh->here_doc == 1 && msh->infile != NULL)
+		here_doc(msh);
+	if (msh->infile != NULL && msh->here_doc == 0)
+	{
+		msh->in = open(msh->infile, O_RDONLY, 0644);
+		ft_printf(1 ,"in, index : %d, file : %d\n", msh->index, msh->in);
+		if (msh->in == -1)
+			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
+	}
+	if (msh->outfile != NULL)
+	{
+		msh->out = open(msh->outfile, get_flags(msh), 0644);
+		ft_printf(1 ,"out, index : %d, file : %d\n", msh->index, msh->out);
+		if (msh->out == -1)
+			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
+	}
+	close_files(msh);
+	return (0);
 }
 
 int exec(t_msh *msh, t_env *env)
@@ -340,15 +366,20 @@ int exec(t_msh *msh, t_env *env)
 	current = msh;
 	while (current)
 	{
+		check_and_open(current);
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
-		if (is_it_builtin(current->cmd, current, env) == 0)
-			create_child(current);
+		if(current->cmd)
+		{
+			if (is_it_builtin(current->cmd, current, env) == 0)
+				create_child(current);
+		}
 		current = current->next;
 	}
 	free_lst(msh);
-	while (wait(NULL) > 0)
-		;
+	while (1)
+		if (wait(NULL) < 0)
+			break ;
 	return (0);
 }
 
@@ -396,35 +427,6 @@ int	init_sigint()
 	return (0);
 }
 
-// int	expend_var(char *var, t_env *env)
-// {
-// 	char *env_var;
-// 	int j;
-// 	int i;
-
-// 	j = 0;
-// 	i = 0;
-// 	while(var[i])
-// 	{
-// 		j++;
-// 		if(var[i++] == '&')
-// 		{
-// 			while
-// 		}
-// 	}
-// }
-// void print_msh(t_msh *msh)
-// {
-// 	t_msh *current = msh;
-
-// 	while (current)
-// 	{
-// 		for(int i = 0;current->cmd[i]; i++)
-// 			ft_printf(1, "%s ", current->cmd[i]);
-// 		ft_printf(1, "%s %s %d", current->infile, current->outfile, current->index);
-// 	}
-// }
-
 void	execute(t_msh *msh)
 {
 	t_msh	*current;
@@ -466,11 +468,8 @@ int	msh_loop(t_msh *msh, t_env *env)
 			continue ;
 		add_history(line);
 		msh = get_msh(line, env);
-		// msh = my_parsing(line, env);
 		execute(msh);
-		// print_msh(msh);
 		exec(msh, env);
-		// free_lst(msh);
 	}
 	return (0);
 }

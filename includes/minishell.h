@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 09:23:30 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 09:41:32 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int		ft_env(t_env *env, t_msh *msh);
 int	ft_unset(t_env **env, char **av);
 int	ft_del_node(t_env **head, char *av);
 // int		check_heredoc(t_msh *msh, char **av);
-void	here_doc(t_msh *msh, char **av);
+int	here_doc(t_msh *msh);
 void	ft_echo(t_msh *msh);
 int		ft_cd(char **arg, t_env *env);
 int		ft_exit(t_msh *msh, t_env *env);
