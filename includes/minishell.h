@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 09:41:32 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:01:41 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,26 +62,23 @@ typedef struct s_msh
 	struct s_msh	*prev;
 }	t_msh;
 
-// void	ft_addnode(t_msh **lst, t_msh *add);
-int	split_env(t_env *env);
-int is_equal(char *var);
-char *get_key_env(char *var);
-char *get_value_env(char *var);
-int	env_len(t_env *env);
-int	update_env(t_env *env);
+int		split_env(t_env *env);
+int 	is_equal(char *var);
+char 	*get_key_env(char *var);
+char 	*get_value_env(char *var);
+int		env_len(t_env *env);
+int		update_env(t_env *env);
 int		ft_env(t_env *env, t_msh *msh);
-int	ft_unset(t_env **env, char **av);
-int	ft_del_node(t_env **head, char *av);
-// int		check_heredoc(t_msh *msh, char **av);
-int	here_doc(t_msh *msh);
+int		ft_unset(t_env **env, char **av);
+int		ft_del_node(t_env **head, char *av);
+int		here_doc(t_msh *msh);
 void	ft_echo(t_msh *msh);
 int		ft_cd(char **arg, t_env *env);
 int		ft_exit(t_msh *msh, t_env *env);
 int		get_pwd(char **arg, t_msh *msh);
 int		ft_export(t_msh *msh, t_env *env);
 int		free_env(t_env *env);
-t_env *env_into_list(char **envp);
-// int		export_env(char *arg, char **envp);
+t_env 	*env_into_list(char **envp);
 t_msh	*ft_lastnode(t_msh *lst);
 int		redirect_fd(t_msh *msh);
 int		which_fd(t_msh *msh);
@@ -104,9 +101,6 @@ t_env	*create_env(char *key, char *value);
 void	split_key_value(char *str, char **key, char **value);
 void	env_add_back(t_env **env, t_env *add);
 t_msh	*get_msh(char *line, t_env *env);
-// void	free_env(t_env **env);
-// t_env	*get_env(void);
-// char    *get_value_parsing(t_env *env, char *key);
 
 t_token	*create_token(t_env *env);
 int		is_whitespace(char c);
@@ -130,7 +124,6 @@ void	fill_smaller(t_msh *msh, t_token **token);
 void	fill_bigger(t_msh *msh, t_token **token);
 void	fill_msh(t_msh *msh, t_token **token);
 t_msh	*parsing(t_token *token, t_env *env);
-// char	*get_value(char *value);
 
 int		array_size(char **array);
 void	free_array(char **array);

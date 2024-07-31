@@ -6,12 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 14:06:06 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:00:55 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdio.h>
 
 int	is_equal(char *value)
 {

@@ -6,14 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/25 13:51:54 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:00:47 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 
 char	*get_home(t_env *env)
 {

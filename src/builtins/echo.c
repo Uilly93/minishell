@@ -6,13 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 09:21:53 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/07/31 15:00:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdio.h>
-#include <unistd.h>
 
 int	which_fd(t_msh *msh)
 {
