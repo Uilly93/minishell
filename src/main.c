@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/01 10:59:16 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/01 16:37:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,10 +362,8 @@ int exec(t_msh *msh, t_env *env)
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
 		if(current->cmd)
-		{
 			if (is_it_builtin(current->cmd, current, env) == 0)
 				create_child(current);
-		}
 		current = current->next;
 	}
 	free_lst(msh);

@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/01 10:19:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/01 11:48:24 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <unistd.h>
 
 int	get_flags(t_msh *msh)
 {
@@ -78,6 +79,8 @@ int	redirect_fd(t_msh *msh)
 	}
 	if (dup_in_fd(msh))
 		return (close_files(msh), 1);
+	if(msh->here_doc == 1)
+		unlink(msh->infile);
 	close_pipes(msh);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 15:00:52 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/01 16:10:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ void	print_args(t_msh *msh, int i, bool new_line)
 	}
 	if (new_line == true)
 		ft_printf(fd, "\n");
-	close_files(msh);
 }
 
 void	ft_echo(t_msh *msh)
