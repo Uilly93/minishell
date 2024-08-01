@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 15:00:31 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/01 10:19:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,18 @@
 
 int	get_flags(t_msh *msh)
 {
-	int flags;
-	
+	int	flags;
+
 	flags = O_WRONLY | O_CREAT;
 	if (msh->append == true)
-    	flags |= O_APPEND;
+		flags |= O_APPEND;
 	else
 		flags |= O_TRUNC;
 	return (flags);
 }
 
-
 int	close_files(t_msh *msh)
-{	
+{
 	if (msh->in != -1)
 		close(msh->in);
 	if (msh->out != -1)
@@ -38,7 +37,7 @@ int	close_files(t_msh *msh)
 	return (0);
 }
 
-int dup_in_fd(t_msh *msh)
+int	dup_in_fd(t_msh *msh)
 {
 	if (msh->infile != NULL)
 	{
@@ -70,7 +69,7 @@ int	redirect_fd(t_msh *msh)
 	if (msh->index != 1 && msh->infile == NULL)
 	{
 		if (dup2(msh->prev->pipefd[0], STDIN_FILENO) == -1)
-			return (close_pipes(msh), 1);	
+			return (close_pipes(msh), 1);
 	}
 	if (msh->next != NULL && msh->outfile == NULL)
 	{

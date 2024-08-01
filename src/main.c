@@ -6,19 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 14:39:20 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/01 10:59:16 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <unistd.h>
 
-
-void	ft_free(void *ptr)
-{
-	if (ptr)
-		free(ptr);
-}
 
 void	free_tab(char **tab)
 {
@@ -31,12 +25,12 @@ void	free_tab(char **tab)
 		{
 			if (tab[i])
 			{
-				ft_free(tab[i]);
+				free(tab[i]);
 				tab[i] = NULL;
 			}
 			i++;
 		}
-		ft_free(tab);
+		free(tab);
 		tab = NULL;
 	}
 }
@@ -214,21 +208,21 @@ t_msh	*ft_lastnode(t_msh *lst)
 	return (current);
 }
 
-void	ft_addnode(t_msh **lst, t_msh *add)
-{
-	t_msh *last_node;
+// void	ft_addnode(t_msh **lst, t_msh *add)
+// {
+// 	t_msh *last_node;
 	
-	if (!lst || !add)
-		return ;
-	if (!*lst)
-		*lst = add;
-	else
-	{
-		last_node = ft_lastnode(*lst);
-		last_node->next = add;
-		add->prev = last_node;
-	}
-}
+// 	if (!lst || !add)
+// 		return ;
+// 	if (!*lst)
+// 		*lst = add;
+// 	else
+// 	{
+// 		last_node = ft_lastnode(*lst);
+// 		last_node->next = add;
+// 		add->prev = last_node;
+// 	}
+// }
 
 int	ft_lstlen(t_msh *msh)
 {
@@ -247,74 +241,74 @@ int	ft_lstlen(t_msh *msh)
 	return (i);
 }
 
-void	print_node(t_msh *msh) // testing
-{
-	t_msh *current;
+// void	print_node(t_msh *msh) // testing
+// {
+// 	t_msh *current;
 
-	current = msh;
-	int i = 1;
-	int j = 0;
-	printf("-----------------------------------------\n");
-	printf("lst size = %d\n", ft_lstlen(msh));
-	while (current)
-	{
-		printf("cmd %d = ", current->index);
-		j = 0;
-		while (current->cmd[j])
-		{
-			printf("%s ", current->cmd[j]);
-			j++;
-		}
-		printf("\n");
-		current = current->next;
-		if (current == NULL)
-			break ;
-		i++;
-	}
-	printf("-----------------------------------------\n");
-}
+// 	current = msh;
+// 	int i = 1;
+// 	int j = 0;
+// 	printf("-----------------------------------------\n");
+// 	printf("lst size = %d\n", ft_lstlen(msh));
+// 	while (current)
+// 	{
+// 		printf("cmd %d = ", current->index);
+// 		j = 0;
+// 		while (current->cmd[j])
+// 		{
+// 			printf("%s ", current->cmd[j]);
+// 			j++;
+// 		}
+// 		printf("\n");
+// 		current = current->next;
+// 		if (current == NULL)
+// 			break ;
+// 		i++;
+// 	}
+// 	printf("-----------------------------------------\n");
+// }
  
-t_msh *cmd_node(char *line)
-{
-	t_msh *msh;
+// t_msh *cmd_node(char *line)
+// {
+// 	t_msh *msh;
 	
-	msh = ft_calloc(sizeof(t_msh), 1);
-	if (!msh)
-		return (NULL);
-	msh->in = -1;
-	msh->out = -1;
-	msh->append = 0;
-	// msh->infile = "/tmp/heredoc_1";
-	// msh->outfile = "outfile";
-	msh->cmd = ft_split(line, ' ');
-	if (!msh->cmd)
-		return (NULL);
-	return (msh);
-}
+// 	msh = ft_calloc(sizeof(t_msh), 1);
+// 	if (!msh)
+// 		return (NULL);
+// 	msh->in = -1;
+// 	msh->out = -1;
+// 	msh->append = 0;
+// 	// msh->infile = "/tmp/heredoc_1";
+// 	// msh->outfile = "outfile";
+// 	msh->cmd = ft_split(line, ' ');
+// 	if (!msh->cmd)
+// 		return (NULL);
+// 	return (msh);
+// }
 
-t_msh *my_parsing(char *line, t_env *env)
-{
-	t_msh	*msh;
-	t_msh	*tmp;
-	char	**splited;
-	int	i;
+// t_msh *my_parsing(char *line, t_env *env)
+// {
+// 	t_msh	*msh;
+// 	t_msh	*tmp;
+// 	char	**splited;
+// 	int	i;
 
-	msh = NULL;
-	i = 0;
-	splited = ft_split(line, '|');
-	while (splited[i])
-	{
-		tmp = cmd_node(splited[i]);
-		tmp->env = env;
-		tmp->pipefd[1] = -1;
-		tmp->pipefd[0] = -1;
-		tmp->index = i + 1;
-		ft_addnode(&msh, tmp);
-		i++;
-	}
-	free_tab(splited);
-	return (msh);
-}
+// 	msh = NULL;
+// 	i = 0;
+// 	splited = ft_split(line, '|');
+// 	while (splited[i])
+// 	{
+// 		tmp = cmd_node(splited[i]);
+// 		tmp->env = env;
+// 		tmp->pipefd[1] = -1;
+// 		tmp->pipefd[0] = -1;
+// 		tmp->index = i + 1;
+// 		ft_addnode(&msh, tmp);
+// 		i++;
+// 	}
+// 	free_tab(splited);
+// 	return (msh);
+// }
 
 void	free_lst(t_msh *msh)
 {
@@ -343,15 +337,13 @@ int	check_and_open(t_msh *msh)
 		here_doc(msh);
 	if (msh->infile != NULL && msh->here_doc == 0)
 	{
-		msh->in = open(msh->infile, O_RDONLY, 0644);
-		ft_printf(1 ,"in, index : %d, file : %d\n", msh->index, msh->in);
+		msh->in = open(msh->infile, O_WRONLY, 0644);
 		if (msh->in == -1)
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 	}
 	if (msh->outfile != NULL)
 	{
 		msh->out = open(msh->outfile, get_flags(msh), 0644);
-		ft_printf(1 ,"out, index : %d, file : %d\n", msh->index, msh->out);
 		if (msh->out == -1)
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 	}
@@ -382,6 +374,7 @@ int exec(t_msh *msh, t_env *env)
 			break ;
 	return (0);
 }
+// --------------------signals---------------------------
 
 void signal_handler(int sig, siginfo_t *info, void *context)
 {
@@ -427,27 +420,27 @@ int	init_sigint()
 	return (0);
 }
 
-void	execute(t_msh *msh)
-{
-	t_msh	*current;
+// void	execute(t_msh *msh)
+// {
+// 	t_msh	*current;
 
-	current = msh;
-	while (current)
-	{
-		printf("index: %d\n", current->index);
-		if (current->cmd)
-		{
-			int	i = -1;
-			while (current->cmd[++i])
-				printf("cmd[%d]: %s\n", i, current->cmd[i]);
-		}
-		if (current->infile)
-			printf("infile: %s\n", current->infile);
-		if (current->outfile)
-			printf("outfile: %s\n", current->outfile);
-		current = current->next;
-	}
-}
+// 	current = msh;
+// 	while (current)
+// 	{
+// 		printf("index: %d\n", current->index);
+// 		if (current->cmd)
+// 		{
+// 			int	i = -1;
+// 			while (current->cmd[++i])
+// 				printf("cmd[%d]: %s\n", i, current->cmd[i]);
+// 		}
+// 		if (current->infile)
+// 			printf("infile: %s\n", current->infile);
+// 		if (current->outfile)
+// 			printf("outfile: %s\n", current->outfile);
+// 		current = current->next;
+// 	}
+// }
 
 int	msh_loop(t_msh *msh, t_env *env)
 {	
@@ -468,7 +461,7 @@ int	msh_loop(t_msh *msh, t_env *env)
 			continue ;
 		add_history(line);
 		msh = get_msh(line, env);
-		execute(msh);
+		// execute(msh);
 		exec(msh, env);
 	}
 	return (0);
@@ -479,9 +472,7 @@ int main(void)
 	t_msh msh;
 	t_env *env;
 	extern char **environ;
-	// if(envp[0] == NULL)
-	// 	return (1);
-	// ft_bzero(env, sizeof(t_env));
+
 	env = env_into_list(environ);
 	ft_bzero(&msh, sizeof(t_msh));
 	msh_loop(&msh, env);
