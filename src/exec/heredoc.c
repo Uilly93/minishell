@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/01 11:48:09 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/05 08:49:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	here_doc(t_msh *msh)
 	msh->in = open(msh->infile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (msh->in == -1)
 		return (perror("msh"), free((void *)cpy), 1);
-	if(!msh->cmd)
+	if (!msh->cmd)
 		unlink(msh->infile);
 	line = readline(MAGENTA"msh_heredoc> "RESET);
 	while (line)

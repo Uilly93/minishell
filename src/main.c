@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/01 16:37:49 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/05 09:34:38 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,27 +418,28 @@ int	init_sigint()
 	return (0);
 }
 
-// void	execute(t_msh *msh)
-// {
-// 	t_msh	*current;
+void	execute(t_msh *msh)
+{
+	t_msh	*current;
 
-// 	current = msh;
-// 	while (current)
-// 	{
-// 		printf("index: %d\n", current->index);
-// 		if (current->cmd)
-// 		{
-// 			int	i = -1;
-// 			while (current->cmd[++i])
-// 				printf("cmd[%d]: %s\n", i, current->cmd[i]);
-// 		}
-// 		if (current->infile)
-// 			printf("infile: %s\n", current->infile);
-// 		if (current->outfile)
-// 			printf("outfile: %s\n", current->outfile);
-// 		current = current->next;
-// 	}
-// }
+	current = msh;
+	while (current)
+	{
+		printf("index: %d\n", current->index);
+		if (current->cmd)
+		{
+			int	i = -1;
+			while (current->cmd[++i])
+				printf("cmd[%d]: %s\n", i, current->cmd[i]);
+		}
+		printf("heredoc: %d\n", current->here_doc);
+		if (current->infile)
+			printf("infile: %s\n", current->infile);
+		if (current->outfile)
+			printf("outfile: %s\n", current->outfile);
+		current = current->next;
+	}
+}
 
 int	msh_loop(t_msh *msh, t_env *env)
 {	

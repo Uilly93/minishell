@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/25 13:57:39 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/05 11:34:22 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ char	**all_env(t_env *env)
 	return ((char **)up_env);
 }
 
-int	update_env(t_env *env)
+int	update_env(t_env **env)
 {
 	t_env	*current;
 
-	current = env;
+	current = *env;
 	while (current)
 	{
 		if (current->full_env)
@@ -66,7 +66,7 @@ int	ft_del_node(t_env **head, char *av)
 			free(current->full_var);
 			free_tab(current->full_env);
 			if (prev == NULL)
-				*head = current->next;
+				(*head) = current->next;
 			else
 				prev->next = current->next;
 			free(current);
@@ -88,8 +88,8 @@ int	ft_unset(t_env **head, char **av)
 	while (av[i])
 	{
 		ft_del_node(head, av[i]);
+		update_env(head);
 		i++;
 	}
-	update_env(*head);
 	return (0);
 }

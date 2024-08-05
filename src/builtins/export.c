@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 15:52:21 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/05 11:35:14 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ t_env	*env_into_list(char **envp)
 		add_env_node(&env, tmp);
 		i++;
 	}
-	update_env(env);
+	update_env(&env);
 	split_env(env);
 	return (env);
 }
@@ -245,7 +245,6 @@ char *join_vars(char *av, char *value)
 	return (value);
 }
 
-
 bool	update_it(char *av, t_env *current, const char *v, const char *v_name)
 {
 		free(current->full_var);
@@ -352,6 +351,6 @@ int	ft_export(t_msh *msh, t_env *env)
 		new_var->value = get_value_env(msh->cmd[i]);
 		add_env_node(&env, new_var);
 	}
-	update_env(env);
+	update_env(&env);
 	return (0);
 }
