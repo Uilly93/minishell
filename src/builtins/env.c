@@ -6,12 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/05 11:48:34 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 16:26:43 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <unistd.h>
 
 int	is_equal(char *value)
 {
@@ -69,11 +68,11 @@ char	*get_value_env(char *value)
 		return (ft_substr(value, i + 1, (ft_strlen(value) - i)));
 }
 
-int	split_env(t_env *env)
+int	split_env(t_env **env)
 {
 	t_env	*current;
 
-	current = env;
+	current = *env;
 	while (current)
 	{
 		current->value = get_value_env(current->full_var);
@@ -83,7 +82,7 @@ int	split_env(t_env *env)
 	return (0);
 }
 
-int	ft_env(t_env *env, t_msh *msh)
+int	ft_env(t_env **env, t_msh *msh)
 {
 	t_env		*current;
 	int			i;
@@ -92,7 +91,7 @@ int	ft_env(t_env *env, t_msh *msh)
 	i = 0;
 	if (fd == -1)
 		return (perror("msh"), 1);
-	current = env;
+	current = *env;
 	while (current)
 	{
 		if (current->value != NULL)

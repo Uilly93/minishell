@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 15:00:47 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 14:09:55 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	err_and_chdir(char *path, char *arg)
 	return (0);
 }
 
-int	ft_cd(char **arg, t_env *env)
+int	ft_cd(char **arg, t_env **env)
 {
 	char	*pwd;
 	char	*path;
@@ -77,7 +77,7 @@ int	ft_cd(char **arg, t_env *env)
 		if (*arg)
 			path = join_path(*arg++, pwd);
 		else
-			path = get_home(env);
+			path = get_home(*env);
 		free(pwd);
 		if (!path)
 			return (1);

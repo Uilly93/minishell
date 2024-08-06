@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/05 11:00:18 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 15:33:47 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,22 +62,22 @@ typedef struct s_msh
 	struct s_msh	*prev;
 }	t_msh;
 
-int		split_env(t_env *env);
+int		split_env(t_env **env);
 int 	is_equal(char *var);
 char 	*get_key_env(char *var);
 char 	*get_value_env(char *var);
 int		env_len(t_env *env);
 int		update_env(t_env **env);
-int		ft_env(t_env *env, t_msh *msh);
+int		ft_env(t_env **env, t_msh *msh);
 int		ft_unset(t_env **env, char **av);
 int		ft_del_node(t_env **head, char *av);
 int		here_doc(t_msh *msh);
 void	ft_echo(t_msh *msh);
-int		ft_cd(char **arg, t_env *env);
-int		ft_exit(t_msh *msh, t_env *env);
+int		ft_cd(char **arg, t_env **env);
+int		ft_exit(t_msh *msh, t_env **env);
 int		get_pwd(char **arg, t_msh *msh);
-int		ft_export(t_msh *msh, t_env *env);
-int		free_env(t_env *env);
+int		ft_export(t_msh *msh, t_env **env);
+int		free_env(t_env **env);
 t_env 	*env_into_list(char **envp);
 t_msh	*ft_lastnode(t_msh *lst);
 int		redirect_fd(t_msh *msh);
@@ -88,7 +88,7 @@ void	free_tab(char **tab);
 int		get_flags(t_msh *msh);
 int		redirect_fd_write(t_msh *msh, int *pipefd);
 int		ft_lstlen(t_msh *msh);
-void	ft_free(void *ptr);
+void	ft_free(void *pointer);
 char	*join_path_access(char *av, t_env *env);
 char	**get_path(t_env *env);
 void	ft_err(char *error);

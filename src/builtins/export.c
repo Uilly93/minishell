@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/05 11:35:14 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 15:33:56 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 //------------------env_manage.c--------------------
 
-int	free_env(t_env *env)
+int	free_env(t_env **env)
 {
 	t_env	*current;
 	t_env	*prev;
 
-	current = env;
+	current = *env;
 	while (current)
 	{
 		prev = current;
@@ -103,7 +103,7 @@ t_env	*env_into_list(char **envp)
 		i++;
 	}
 	update_env(&env);
-	split_env(env);
+	split_env(&env);
 	return (env);
 }
 
@@ -329,19 +329,19 @@ bool	check_errors(t_msh *msh, int i)
 	return (false);
 }
 
-int	ft_export(t_msh *msh, t_env *env)
+int	ft_export(t_msh *msh, t_env **env)
 {
 	t_env	*new_var;
 	int		i;
 
 	i = 0;
 	if (msh->cmd[0] && !msh->cmd[1])
-		return (export_print(msh, env), 0);
+		return (export_print(msh, *env), 0);
 	while (msh->cmd[++i])
 	{
 		if (check_errors(msh, i))
 			continue ;
-		if (var_already_exist(msh->cmd[i], &env))
+		if (var_already_exist(msh->cmd[i], env))
 			continue ;
 		new_var = ft_calloc(sizeof(t_env), 1);
 		if (!new_var)
@@ -349,8 +349,8 @@ int	ft_export(t_msh *msh, t_env *env)
 		new_var->full_var = ft_strdup(msh->cmd[i]);
 		new_var->key = get_key_env(msh->cmd[i]);
 		new_var->value = get_value_env(msh->cmd[i]);
-		add_env_node(&env, new_var);
+		add_env_node(env, new_var);
 	}
-	update_env(&env);
+	update_env(env);
 	return (0);
 }

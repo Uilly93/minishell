@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 14:00:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/31 15:00:58 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 15:05:53 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ long	ft_atol(char *s)
 	return (nbr);
 }
 
-int	ft_exit(t_msh *msh, t_env *env)
+int	ft_exit(t_msh *msh, t_env **env)
 {
 	long	exit_code;
 
