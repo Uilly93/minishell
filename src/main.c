@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/06 16:19:25 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 17:51:24 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <signal.h>
 #include <unistd.h>
 
 
@@ -334,7 +335,8 @@ void	free_lst(t_msh *msh)
 int	check_and_open(t_msh *msh)
 {
 	if(msh->here_doc == 1 && msh->infile != NULL)
-		here_doc(msh);
+		if(here_doc(msh)== SIGINT)
+			return (1);
 	if (msh->infile != NULL && msh->here_doc == 0)
 	{
 		msh->in = open(msh->infile, O_WRONLY, 0644);
@@ -358,7 +360,11 @@ int exec(t_msh *msh, t_env **env)
 	current = msh;
 	while (current)
 	{
-		check_and_open(current);
+		if(check_and_open(current) == 1)
+		{
+			current = current->next;
+			continue ;
+		}
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
 		if(current->cmd)
@@ -384,11 +390,10 @@ void signal_handler(int sig, siginfo_t *info, void *context)
 		rl_on_new_line();
 		rl_redisplay();
 		rl_done = true;
+		g_last_sig = SIGINT;
 	}
 	else if(sig == SIGQUIT)
-	{
-		;
-	}
+		g_last_sig = SIGQUIT;
 }
 
 void void_func(void)
@@ -396,7 +401,7 @@ void void_func(void)
 	return ;
 }
 
-int	init_sigint()
+int	init_sigint() // cpy this for CTRL + '\'
 {
 	struct sigaction sa;
     sa.sa_sigaction = signal_handler;
@@ -410,7 +415,7 @@ int	init_sigint()
         perror("sigaction failed for SIGINT");
         return (1);
     }
-	sa.sa_handler = SIG_IGN;
+	sa.sa_handler = SIG_IGN; // change this
     if (sigaction(SIGQUIT, &sa, NULL) == -1) {
         perror("sigaction failed for SIGQUIT");
         return (1);
@@ -467,11 +472,14 @@ int	msh_loop(t_msh *msh, t_env **env)
 	return (0);
 }
 
+int	g_last_sig;
+
 int main(void)
 {
 	t_msh msh;
 	t_env *env;
 	extern char **environ;
+
 
 	env = env_into_list(environ);
 	ft_bzero(&msh, sizeof(t_msh));

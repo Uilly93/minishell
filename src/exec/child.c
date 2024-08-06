@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/05 08:48:44 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 17:39:12 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	close_files(t_msh *msh)
 
 int	dup_in_fd(t_msh *msh)
 {
-	if (msh->infile != NULL)
+	if (msh->infile)
 	{
 		msh->in = open(msh->infile, O_RDONLY, 0644);
 		if (msh->in != -1)
@@ -49,7 +49,7 @@ int	dup_in_fd(t_msh *msh)
 				return (close_pipes(msh), close_files(msh), 1);
 		}
 		else
-			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
+			return (perror("mshsdfgsdfg"), close_pipes(msh), close_files(msh), 1);
 	}
 	if (msh->outfile != NULL)
 	{

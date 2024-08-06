@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/06 15:33:47 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/06 17:15:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ typedef struct s_msh
 	struct s_msh	*next;
 	struct s_msh	*prev;
 }	t_msh;
+
+extern	int	g_last_sig;
 
 int		split_env(t_env **env);
 int 	is_equal(char *var);
