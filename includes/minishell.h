@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 13:12:06 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/07 16:40:03 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@
 
 typedef struct s_env
 {
+	int		ex_code;
 	char	**full_env;
 	char	*full_var;
 	char	*key;
 	char	*value;
-	int		ex_code;
 	struct	s_env	*next;
 } t_env;
 
@@ -46,7 +46,7 @@ typedef struct s_token
 
 typedef struct s_msh
 {
-	char 			*hlimit;
+	// char 			*hlimit;
 	// char			**prompt;
 	int				here_doc;
 	char			**cmd;

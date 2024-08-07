@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/06 15:33:56 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/07 15:58:31 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	free_env(t_env **env)
 		current = current->next;
 		free(prev);
 	}
-	env = NULL;
+	free(env);
 	return (0);
 }
 
@@ -85,6 +85,16 @@ t_env	*create_env_node(char **envp, int i)
 }
 
 //------------------env_create.c------------------
+t_env	*no_env(char *full_var)
+{
+	t_env	*tmp;
+
+	tmp = ft_calloc(sizeof(t_env), 1);
+		if(!tmp)
+			return (NULL);
+	tmp->full_var = ft_strdup(full_var);
+	return (tmp);
+}
 
 t_env	*env_into_list(char **envp)
 {
@@ -92,15 +102,21 @@ t_env	*env_into_list(char **envp)
 	t_env	*tmp;
 	int		i;
 
-	if (!*envp)
-		return (NULL);
 	env = NULL;
 	i = 0;
-	while (envp[i])
+	if (!envp || !*envp)
 	{
-		tmp = create_env_node(envp, i);
+		tmp = no_env("_=/usr/bin/env");
 		add_env_node(&env, tmp);
-		i++;
+	}
+	else
+	{
+		while (envp[i])
+		{
+			tmp = create_env_node(envp, i);
+			add_env_node(&env, tmp);
+			i++;
+		}
 	}
 	update_env(&env);
 	split_env(&env);

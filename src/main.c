@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 13:42:18 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/07 16:58:00 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,16 @@ char *pwd_prompt()
 	return (new_line);
 }
 
-char *color_exit_prompt(t_env *env)
+char *color_exit_prompt(t_env **env)
 {
-	char *exit_code = ft_itoa(env->ex_code);
+	// (void)env;
+	// ft_printf(1, "test\n");
+	char *exit_code = ft_itoa((*env)->ex_code);
 	char *res;
 	
-	if(env->ex_code != 0)
+	if(!exit_code)
+		return NULL;
+	if((*env)->ex_code != 0)
 		res = ft_strjoin(BOLD_RED, exit_code);
 	else
 		res = ft_strjoin(BOLD_GREEN, exit_code);
@@ -80,9 +84,9 @@ char *color_exit_prompt(t_env *env)
 	return (exit_code);
 }
 
-char *custom_prompt(t_env *env)
+char *custom_prompt(t_env **env)
 {
-	(void)env;
+	// (void)env;
 	char *tmp;
 	char *custom_prompt;
 	const char	*color_exit = color_exit_prompt(env);
@@ -185,6 +189,8 @@ int is_it_builtin(char **cmd, t_msh *msh, t_env **env)
 
 void	free_lst(t_msh *msh);
 
+
+
 int	create_child(t_msh *msh, t_env **env)
 {
 	pid_t	child;
@@ -200,6 +206,7 @@ int	create_child(t_msh *msh, t_env **env)
 		if (!path)
 		{
 			ft_printf(2, "msh: %s: command not found\n", msh->cmd[0]);
+			(*env)->ex_code = 127;
 			return (free_env(env), free_lst(msh), exit(127), 1);
 		}
 		if (redirect_fd(msh))
@@ -209,9 +216,8 @@ int	create_child(t_msh *msh, t_env **env)
 			perror("msh");
 			return (free_env(env), free_lst(msh), free(path), exit(127), 1);
 		}
-		free(path);
 	}
-	return (0);
+	return ((*env)->ex_code = 0 ,0);
 }
 
 
@@ -337,14 +343,15 @@ void	free_lst(t_msh *msh)
 	current = ft_lastnode(msh);
 	while (current)
 	{
+		// env->ex_code = 0;
 		close_files(current);
 		if(current->outfile)
 			free(current->outfile);
 		if(current->infile)
 			free(current->infile);
 		free_tab(current->cmd);
-		if(current->hlimit)
-			free(current->hlimit);
+		// if(current->hlimit)
+		// 	free(current->hlimit);
 		next = current;
 		current = current->prev;
 		free(next);
@@ -379,7 +386,6 @@ int exec(t_msh *msh, t_env **env)
 	while (current)
 	{
 		// setup_child_signals();
-		// (*env)->ex_code = 130;
 		if(check_and_open(current) != 0)
 		{
 			current = current->next;
@@ -390,6 +396,7 @@ int exec(t_msh *msh, t_env **env)
 		if(current->cmd)
 			if (is_it_builtin(current->cmd, current, env) == 0)
 				create_child(current, env);
+		// (*env)->ex_code = 0;
 		current = current->next;
 	}
 	free_lst(msh);
@@ -470,7 +477,7 @@ int	msh_loop(t_msh *msh, t_env **env)
 	{
 		g_last_sig = 0;
 		init_sigint();
-		prompt = custom_prompt(*env);
+		prompt = custom_prompt(env);
 		if (!prompt)
 			return (free_env(env), printf(RESET), 1);
 		line = readline(prompt);
@@ -484,7 +491,6 @@ int	msh_loop(t_msh *msh, t_env **env)
 			exec(msh, env);
 		}
 	}
-	free_env(env);
 	return (0);
 }
 
@@ -493,11 +499,12 @@ int	g_last_sig;
 int main(void)
 {
 	t_msh msh;
-	t_env *env;
+	t_env **env = ft_calloc(sizeof(t_env **), 1);
 	extern char **environ;
 
-	env = env_into_list(environ);
+	*env = env_into_list(environ);
 	ft_bzero(&msh, sizeof(t_msh));
-	msh_loop(&msh, &env);
+	msh_loop(&msh, env);
+	free_env(env);
 	return (0);
 }

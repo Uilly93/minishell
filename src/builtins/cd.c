@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/06 14:09:55 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/07 17:06:38 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ int	err_and_chdir(char *path, char *arg)
 {
 	if (!path)
 		return (1);
+	if (path[0] == ' ')
+		return (ft_err("msh: cd: $HOME not set"), free(path), 1);
 	if (arg)
 		return (ft_err("msh: cd: too many arguments"), free(path), 1);
 	if (chdir(path) == -1)

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/06 16:26:43 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/07 14:43:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ char	*get_key_env(char *value)
 	int	i;
 
 	i = 0;
+	if(!value)
+		return (NULL);
 	if (!is_equal(value) || is_equal(value) == 3)
 		return (ft_strdup(value));
 	while ((size_t)i < ft_strlen(value))
