@@ -5,7 +5,7 @@ LIBFT = includes/libft/
 CFLAGS = -Wall -Wextra -Werror -g3 -Iincludes -Isrc -MMD
 
 SRCS = src/main.c \
-	src/exec/child.c src/exec/heredoc.c \
+	src/exec/child.c src/exec/heredoc.c src/exec/signal.c \
 	src/parsing/get_msh.c src/parsing/parsing_utils.c \
 	src/parsing/fill_token.c src/parsing/token_utils.c \
 	src/parsing/fill_msh.c src/parsing/msh_utils.c \

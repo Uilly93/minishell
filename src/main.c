@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/06 17:51:24 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/07 13:42:18 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,18 +65,35 @@ char *pwd_prompt()
 	return (new_line);
 }
 
-char *custom_prompt()
+char *color_exit_prompt(t_env *env)
 {
-	// t_msh *msh;
-	// char *exit_code = ft_itoa(msh->exit_code);
+	char *exit_code = ft_itoa(env->ex_code);
+	char *res;
+	
+	if(env->ex_code != 0)
+		res = ft_strjoin(BOLD_RED, exit_code);
+	else
+		res = ft_strjoin(BOLD_GREEN, exit_code);
+	free(exit_code);
+	exit_code = ft_strjoin(res, RESET" "BOLD_BLUE);
+	free(res);
+	return (exit_code);
+}
+
+char *custom_prompt(t_env *env)
+{
+	(void)env;
 	char *tmp;
 	char *custom_prompt;
+	const char	*color_exit = color_exit_prompt(env);
 	
+	if(!color_exit)
+		return (NULL);
 	tmp = pwd_prompt();
 	if(!tmp)
 		return (NULL);
-	// custom_prompt = ft_strjoin(BOLD_GREEN(exit_code)BOLD_BLUE, tmp);
-	custom_prompt = ft_strjoin(BOLD_GREEN"➜  "BOLD_BLUE, tmp);
+	custom_prompt = ft_strjoin(color_exit, tmp);
+	free((void *)color_exit);
 	free(tmp);
 	if(!custom_prompt)
 		return (NULL);
@@ -178,6 +195,7 @@ int	create_child(t_msh *msh, t_env **env)
 		perror("msh");
 	if (child == 0)
 	{
+		setup_child_signals();
 		path = join_path_access(msh->cmd[0], msh->env);
 		if (!path)
 		{
@@ -336,7 +354,7 @@ int	check_and_open(t_msh *msh)
 {
 	if(msh->here_doc == 1 && msh->infile != NULL)
 		if(here_doc(msh)== SIGINT)
-			return (1);
+			return (SIGINT);
 	if (msh->infile != NULL && msh->here_doc == 0)
 	{
 		msh->in = open(msh->infile, O_WRONLY, 0644);
@@ -360,7 +378,9 @@ int exec(t_msh *msh, t_env **env)
 	current = msh;
 	while (current)
 	{
-		if(check_and_open(current) == 1)
+		// setup_child_signals();
+		// (*env)->ex_code = 130;
+		if(check_and_open(current) != 0)
 		{
 			current = current->next;
 			continue ;
@@ -382,18 +402,11 @@ int exec(t_msh *msh, t_env **env)
 
 void signal_handler(int sig, siginfo_t *info, void *context)
 {
+	(void)sig;
 	(void)info;
 	(void)context;
-	if(sig == SIGINT)
-	{
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-		rl_done = true;
-		g_last_sig = SIGINT;
-	}
-	else if(sig == SIGQUIT)
-		g_last_sig = SIGQUIT;
+	g_last_sig = SIGINT;
+	rl_done = true;
 }
 
 void void_func(void)
@@ -401,9 +414,10 @@ void void_func(void)
 	return ;
 }
 
-int	init_sigint() // cpy this for CTRL + '\'
+int	init_sigint()
 {
 	struct sigaction sa;
+	
     sa.sa_sigaction = signal_handler;
     sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
@@ -416,7 +430,8 @@ int	init_sigint() // cpy this for CTRL + '\'
         return (1);
     }
 	sa.sa_handler = SIG_IGN; // change this
-    if (sigaction(SIGQUIT, &sa, NULL) == -1) {
+    if (sigaction(SIGQUIT, &sa, NULL) == -1)
+	{
         perror("sigaction failed for SIGQUIT");
         return (1);
     }
@@ -451,22 +466,23 @@ int	msh_loop(t_msh *msh, t_env **env)
 	char *line;
 	char *prompt;
 
-	init_sigint();
 	while (1)
 	{
-		prompt = custom_prompt();
+		g_last_sig = 0;
+		init_sigint();
+		prompt = custom_prompt(*env);
 		if (!prompt)
 			return (free_env(env), printf(RESET), 1);
 		line = readline(prompt);
 		free(prompt);
 		if (!line)
 			break ;
-		if (!ft_strlen(line))
-			continue ;
-		add_history(line);
-		msh = get_msh(line, *env);
-		// execute(msh);
-		exec(msh, env);
+		if (g_last_sig != SIGINT || !ft_strlen(line))
+		{
+			add_history(line);
+			msh = get_msh(line, *env);
+			exec(msh, env);
+		}
 	}
 	free_env(env);
 	return (0);
@@ -479,7 +495,6 @@ int main(void)
 	t_msh msh;
 	t_env *env;
 	extern char **environ;
-
 
 	env = env_into_list(environ);
 	ft_bzero(&msh, sizeof(t_msh));
