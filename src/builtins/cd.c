@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 15:30:42 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 17:52:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,19 @@ char	*get_home(t_env *env)
 	t_env	*current;
 
 	current = env;
+	res = NULL;
 	while (current)
 	{
-		if (ft_strcmp(current->key, "HOME") == 0)
-		{
-			res = ft_strdup(current->value);
-			if (!res)
-				return (NULL);
-			return (res);
-		}
+			if (current->key && ft_strcmp(current->key, "HOME") == 0)
+			{
+				if(current->value)
+					res = ft_strdup(current->value);
+				else
+				 	break ;
+				if (!res)
+					return (NULL);
+				return (res);
+			}
 		current = current->next;
 	}
 	return (ft_err("msh: cd: $HOME not set"), NULL);
@@ -62,7 +66,7 @@ int	err_and_chdir(char *path, char **arg)
 	if (arg && arg[0])
 		return (ft_err("msh: cd: too many arguments"), free(path), 1);
 	if (chdir(path) == -1)
-		return (ft_err("msh: cd: No such file or directory"), free(path), 1);
+		return (perror("msh: cd"), free(path), 1);
 	free(path);
 	return (0);
 }
@@ -75,7 +79,7 @@ int	ft_cd(char **arg, t_env **env)
 	path = NULL;
 	if (*arg && ft_strcmp(*arg++, "cd") == 0)
 	{
-		if(chdir(*arg) != -1)
+		if(*arg && chdir(*arg) != -1)
 			return (set_excode(env, 0), 0);
 		pwd = getcwd(NULL, 0);
 		if (!pwd)

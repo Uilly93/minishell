@@ -6,12 +6,14 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 13:50:42 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 18:42:40 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <signal.h>
+#include <stdio.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 void	set_excode(t_env **env, int code)
@@ -198,7 +200,18 @@ int is_it_builtin(char **cmd, t_msh *msh, t_env **env)
 
 void	free_lst(t_msh *msh);
 
-
+int	check_exec(char *cmd)
+{
+	if(ft_strlen(cmd) >= 2 && ft_strncmp(cmd, "./", 2) == 0)
+	{
+		if(access(cmd, F_OK) != 0)
+			return (1);
+		// else if(access(cmd, X_OK) == 0)
+			
+			
+	}
+	return (0);
+}
 
 int	create_child(t_msh *msh, t_env **env)
 {
@@ -212,11 +225,8 @@ int	create_child(t_msh *msh, t_env **env)
 	{
 		path = join_path_access(msh->cmd[0], msh->env);
 		if (!path)
-		{
-			ft_printf(2, "msh: %s: command not found\n", msh->cmd[0]);
-			set_excode(env, 127);
-			return (free_env(env), free_lst(msh), exit(127), 127);
-		}
+			return (ft_printf(2, "msh: %s: command not found\n", msh->cmd[0]),
+				free_env(env), free_lst(msh), exit(127), 127);
 		if (redirect_fd(msh))
 			return (free_env(env), free_lst(msh), free(path), exit(127), 1);
 		if (execve(path, msh->cmd, NULL) == -1)
@@ -383,6 +393,41 @@ int	check_and_open(t_msh *msh)
 	return (0);
 }
 
+
+void wait_pids(t_env **env)
+{
+    int	w_pid;
+    int	status;
+
+    while (1)
+    {
+        w_pid = wait(&status);
+        if (w_pid < 0)
+        {
+            if (errno == ECHILD)
+                return;
+            set_excode(env, 1);
+            return;
+        }
+        if (WIFEXITED(status))
+            set_excode(env, WEXITSTATUS(status));
+        else if (WIFSIGNALED(status))
+            set_excode(env, 128 + WTERMSIG(status));
+    }
+}
+
+int	init_pipe(t_msh *msh, t_env **env)
+{
+	if (ft_lstlen(msh) > 1 || msh != ft_lastnode(msh))
+		if(pipe(msh->pipefd) == -1)
+		{
+			perror("msh: pipe:");
+			set_excode(env, 129);
+			return (1);
+		}
+	return (0);
+}
+
 int exec(t_msh *msh, t_env **env)
 {
 	t_msh *current;
@@ -396,8 +441,8 @@ int exec(t_msh *msh, t_env **env)
 			current = current->next;
 			continue ;
 		}
-		if (ft_lstlen(msh) > 1)
-			pipe(current->pipefd);
+		if (init_pipe(current, env))
+			break ;
 		setup_exec_signals();
 		if(current->cmd)
 			if (is_it_builtin(current->cmd, current, env) == 0)
@@ -405,9 +450,7 @@ int exec(t_msh *msh, t_env **env)
 		current = current->next;
 	}
 	free_lst(msh);
-	while (1)
-		if (wait(NULL) < 0)
-			break ;
+	wait_pids(env);
 	return (0);
 }
 // --------------------signals---------------------------
@@ -498,9 +541,10 @@ int	msh_loop(t_msh *msh, t_env **env)
 		free(prompt);
 		if (!line)
 			break ;
-		if (g_last_sig != SIGINT || !ft_strlen(line))
+		if (g_last_sig != SIGINT)
 		{
-			add_history(line);
+			if(ft_strlen(line))
+				add_history(line);
 			msh = get_msh(line, *env);
 			// execute(msh);
 			exec(msh, env);
@@ -511,15 +555,17 @@ int	msh_loop(t_msh *msh, t_env **env)
 
 int	g_last_sig;
 
-int main(void)
+int main(int ac, char **av, char **envp)
 {
+	(void)ac;
+	(void)av;
 	t_msh msh;
 	t_env **env = ft_calloc(sizeof(t_env **), 1);
-	extern char **environ;
+	// extern char **environ;
 
 	if(!env)
 		return (1);
-	*env = env_into_list(environ);
+	*env = env_into_list(envp);
 	if(!*env)
 		return (1);
 	ft_bzero(&msh, sizeof(t_msh));

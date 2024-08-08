@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 09:18:39 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 17:04:34 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	dup_in_fd(t_msh *msh)
 		if (msh->in != -1)
 		{
 			if (dup2(msh->in, STDIN_FILENO) == -1)
-				return (close_pipes(msh), close_files(msh), 1);
+				return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 		}
 		else
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
@@ -57,7 +57,7 @@ int	dup_in_fd(t_msh *msh)
 		if (msh->out != -1)
 		{
 			if (dup2(msh->out, STDOUT_FILENO) == -1)
-				return (close_pipes(msh), close_files(msh), 1);
+				return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 		}
 		else
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
