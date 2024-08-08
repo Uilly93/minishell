@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 16:58:00 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:50:42 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,17 @@
 #include <signal.h>
 #include <unistd.h>
 
+void	set_excode(t_env **env, int code)
+{
+	t_env *current;
+
+	current = *env;
+	while (current)
+	{
+		current->ex_code = code;
+		current = current->next;
+	}
+}
 
 void	free_tab(char **tab)
 {
@@ -67,8 +78,6 @@ char *pwd_prompt()
 
 char *color_exit_prompt(t_env **env)
 {
-	// (void)env;
-	// ft_printf(1, "test\n");
 	char *exit_code = ft_itoa((*env)->ex_code);
 	char *res;
 	
@@ -171,19 +180,19 @@ int	close_pipes(t_msh *msh)
 int is_it_builtin(char **cmd, t_msh *msh, t_env **env)
 {
 	if (cmd && cmd[0] && ft_strcmp(cmd[0], "echo") == 0)
-		return (ft_echo(msh), 1);
+		return (set_excode(&msh->env, 0), ft_echo(msh), 1);
 	if (cmd && cmd[0] && ft_strcmp(cmd[0], "cd") == 0)
 		return (ft_cd(cmd, env), 1);
 	if (cmd && cmd[0] && ft_strcmp(cmd[0], "pwd") == 0)
 		return (get_pwd(cmd, msh), 1);
 	if (cmd && cmd[0] && ft_strcmp(cmd[0], "exit") == 0)
-		return (ft_exit(msh, env), 1);
+		return (set_excode(env, ft_exit(msh, env)), 1);
 	if (cmd && cmd[0] && ft_strcmp(cmd[0], "export") == 0)
 		return (ft_export(msh, env), 1);
 	if (cmd && cmd[0] && ft_strcmp(cmd[0], "env") == 0)
-		return (ft_env(env, msh), 1);
+		return (set_excode(env, ft_env(env, msh)), 1);
 	if (cmd && cmd[0] && ft_strcmp(cmd[0], "unset") == 0)
-		return (ft_unset(env, cmd), 1);
+		return (set_excode(env, ft_unset(env, cmd)), 1);
 	return (0);
 }
 
@@ -201,13 +210,12 @@ int	create_child(t_msh *msh, t_env **env)
 		perror("msh");
 	if (child == 0)
 	{
-		setup_child_signals();
 		path = join_path_access(msh->cmd[0], msh->env);
 		if (!path)
 		{
 			ft_printf(2, "msh: %s: command not found\n", msh->cmd[0]);
-			(*env)->ex_code = 127;
-			return (free_env(env), free_lst(msh), exit(127), 1);
+			set_excode(env, 127);
+			return (free_env(env), free_lst(msh), exit(127), 127);
 		}
 		if (redirect_fd(msh))
 			return (free_env(env), free_lst(msh), free(path), exit(127), 1);
@@ -217,7 +225,7 @@ int	create_child(t_msh *msh, t_env **env)
 			return (free_env(env), free_lst(msh), free(path), exit(127), 1);
 		}
 	}
-	return ((*env)->ex_code = 0 ,0);
+	return (0);
 }
 
 
@@ -343,15 +351,12 @@ void	free_lst(t_msh *msh)
 	current = ft_lastnode(msh);
 	while (current)
 	{
-		// env->ex_code = 0;
 		close_files(current);
 		if(current->outfile)
 			free(current->outfile);
 		if(current->infile)
 			free(current->infile);
 		free_tab(current->cmd);
-		// if(current->hlimit)
-		// 	free(current->hlimit);
 		next = current;
 		current = current->prev;
 		free(next);
@@ -385,18 +390,18 @@ int exec(t_msh *msh, t_env **env)
 	current = msh;
 	while (current)
 	{
-		// setup_child_signals();
 		if(check_and_open(current) != 0)
 		{
+			set_excode(env, 1);
 			current = current->next;
 			continue ;
 		}
 		if (ft_lstlen(msh) > 1)
 			pipe(current->pipefd);
+		setup_exec_signals();
 		if(current->cmd)
 			if (is_it_builtin(current->cmd, current, env) == 0)
-				create_child(current, env);
-		// (*env)->ex_code = 0;
+				set_excode(env, create_child(current, env));
 		current = current->next;
 	}
 	free_lst(msh);
@@ -468,6 +473,15 @@ void	execute(t_msh *msh)
 	}
 }
 
+void	set_global(t_env **env)
+{
+	if(g_last_sig == SIGQUIT)
+		set_excode(env, 131);
+	if(g_last_sig == SIGINT)
+		set_excode(env, 130);
+	g_last_sig = 0;
+}
+
 int	msh_loop(t_msh *msh, t_env **env)
 {	
 	char *line;
@@ -475,7 +489,7 @@ int	msh_loop(t_msh *msh, t_env **env)
 
 	while (1)
 	{
-		g_last_sig = 0;
+		set_global(env);
 		init_sigint();
 		prompt = custom_prompt(env);
 		if (!prompt)
@@ -488,6 +502,7 @@ int	msh_loop(t_msh *msh, t_env **env)
 		{
 			add_history(line);
 			msh = get_msh(line, *env);
+			// execute(msh);
 			exec(msh, env);
 		}
 	}
@@ -502,7 +517,11 @@ int main(void)
 	t_env **env = ft_calloc(sizeof(t_env **), 1);
 	extern char **environ;
 
+	if(!env)
+		return (1);
 	*env = env_into_list(environ);
+	if(!*env)
+		return (1);
 	ft_bzero(&msh, sizeof(t_msh));
 	msh_loop(&msh, env);
 	free_env(env);

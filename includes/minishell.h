@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 16:40:03 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 11:37:26 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,11 @@ typedef struct s_msh
 
 extern	int	g_last_sig;
 
-
-void	setup_child_signals();
+void	set_excode(t_env **env, int code);
+void	add_underscore(t_env *env);
+void	add_env_node(t_env **lst, t_env *add);
+t_env	*no_env(char *full_var);
+void	setup_exec_signals();
 int		split_env(t_env **env);
 int 	is_equal(char *var);
 char 	*get_key_env(char *var);

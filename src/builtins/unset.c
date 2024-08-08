@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 15:16:34 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:34:09 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,13 @@ int	ft_del_node(t_env **head, char *av)
 			else
 				prev->next = current->next;
 			free(current);
+			set_excode(head, 1);
 			return (1);
 		}
 		prev = current;
 		current = current->next;
 	}
-	return (0);
+	return (set_excode(head, 1), 0);
 }
 
 int	ft_unset(t_env **head, char **av)
@@ -84,9 +85,15 @@ int	ft_unset(t_env **head, char **av)
 
 	i = 1;
 	if (av[0] && !av[1])
+	{
+		set_excode(head, 0);
 		return (0);
+	}
 	if(ft_strcmp(av[1], "_") == 0)
+	{
+		set_excode(head, 0);
 		return (0);
+	}
 	while (av[i])
 	{
 		ft_del_node(head, av[i]);

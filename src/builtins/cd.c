@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 17:06:38 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 15:30:42 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <unistd.h>
 
 char	*get_home(t_env *env)
 {
@@ -34,7 +35,7 @@ char	*get_home(t_env *env)
 
 void	ft_err(char *error)
 {
-	ft_printf(2, BOLD_RED"%s\n"RESET, error);
+	ft_printf(2, "%s\n", error);
 }
 
 char	*join_path(char *arg, char *pwd)
@@ -52,13 +53,13 @@ char	*join_path(char *arg, char *pwd)
 	return (path);
 }
 
-int	err_and_chdir(char *path, char *arg)
+int	err_and_chdir(char *path, char **arg)
 {
 	if (!path)
 		return (1);
-	if (path[0] == ' ')
+	if (!*path)
 		return (ft_err("msh: cd: $HOME not set"), free(path), 1);
-	if (arg)
+	if (arg && arg[0])
 		return (ft_err("msh: cd: too many arguments"), free(path), 1);
 	if (chdir(path) == -1)
 		return (ft_err("msh: cd: No such file or directory"), free(path), 1);
@@ -71,19 +72,22 @@ int	ft_cd(char **arg, t_env **env)
 	char	*pwd;
 	char	*path;
 
+	path = NULL;
 	if (*arg && ft_strcmp(*arg++, "cd") == 0)
 	{
+		if(chdir(*arg) != -1)
+			return (set_excode(env, 0), 0);
 		pwd = getcwd(NULL, 0);
 		if (!pwd)
-			return (1);
-		if (*arg)
+			return (set_excode(env, 1), 1);
+		if (*arg && **arg)
 			path = join_path(*arg++, pwd);
 		else
 			path = get_home(*env);
 		free(pwd);
 		if (!path)
-			return (1);
-		err_and_chdir(path, *arg);
+			return (set_excode(env, 1), 1);
+		set_excode(env, err_and_chdir(path, arg));
 	}
 	return (0);
 }

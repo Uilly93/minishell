@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 15:58:31 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:31:49 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ t_env	*no_env(char *full_var)
 	return (tmp);
 }
 
+
 t_env	*env_into_list(char **envp)
 {
 	t_env	*env;
@@ -118,6 +119,7 @@ t_env	*env_into_list(char **envp)
 			i++;
 		}
 	}
+	add_underscore(env);
 	update_env(&env);
 	split_env(&env);
 	return (env);
@@ -287,6 +289,7 @@ int	export_print(t_msh *msh, t_env *env)
 	print_export(sorted, msh);
 	free_tab(sorted);
 	free_tab(cpy);
+	set_excode(&env, 0);
 	return (0);
 }
 
@@ -331,13 +334,13 @@ bool	check_errors(t_msh *msh, int i)
 
 	j = 1;
 	if (msh->cmd[i][0] && !ft_isalpha(msh->cmd[i][0]))
-			return (ft_printf(2, "1 msh: export: `%s': not a valid identifier\n",
+			return (ft_printf(2, "msh: export: `%s': not a valid identifier\n",
 					msh->cmd[i]), true);
 	key = get_key_env(msh->cmd[i]);
 	while (key[j])
 	{
 		if (key[j] && !ft_isalnum(key[j]))
-			return (ft_printf(2, "3 msh: export: `%s': not a valid identifier\n",
+			return (ft_printf(2, "msh: export: `%s': not a valid identifier\n",
 				msh->cmd[i]), free(key), true);
 		j++;
 	}
@@ -356,17 +359,20 @@ int	ft_export(t_msh *msh, t_env **env)
 	while (msh->cmd[++i])
 	{
 		if (check_errors(msh, i))
+		{
+			set_excode(env, 1);
 			continue ;
+		}
 		if (var_already_exist(msh->cmd[i], env))
 			continue ;
 		new_var = ft_calloc(sizeof(t_env), 1);
 		if (!new_var)
-			return (1);
+			return (set_excode(env, 1), 1);
 		new_var->full_var = ft_strdup(msh->cmd[i]);
 		new_var->key = get_key_env(msh->cmd[i]);
 		new_var->value = get_value_env(msh->cmd[i]);
 		add_env_node(env, new_var);
+		set_excode(env, 0);
 	}
-	update_env(env);
-	return (0);
+	return (update_env(env), 0);
 }

@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/07 14:43:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/08 13:36:09 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <stdbool.h>
 
 int	is_equal(char *value)
 {
@@ -70,6 +71,28 @@ char	*get_value_env(char *value)
 		return (ft_substr(value, i + 1, (ft_strlen(value) - i)));
 }
 
+void	add_underscore(t_env *env)
+{
+	t_env	*current;
+	t_env	*tmp;
+	bool	found;
+
+	found = false;
+	current = env;
+	while (current)
+	{
+		if(ft_strcmp(current->full_var, "_=/usr/bin/env") == 0)
+			found = true;
+		current = current->next;
+	}
+	if (found == false)
+	{
+		tmp = no_env("_=/usr/bin/env");
+		add_env_node(&env, tmp);
+		return ;
+	}
+}
+
 int	split_env(t_env **env)
 {
 	t_env	*current;
@@ -101,5 +124,5 @@ int	ft_env(t_env **env, t_msh *msh)
 		current = current->next;
 		i++;
 	}
-	return (0);
+	return (set_excode(env, 1), 0);
 }
