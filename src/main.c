@@ -6,17 +6,19 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 11:13:45 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 14:45:53 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <asm-generic/errno-base.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdio.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#include <readline/readline.h>
+// #include <asm-generic/errno-base.h>
+// #include <errno.h>
+// #include <readline/readline.h>
+// #include <signal.h>
+// #include <stdio.h>
+// #include <sys/wait.h>
+// #include <unistd.h>
 
 void	set_excode(t_env **env, int code)
 {
@@ -99,16 +101,21 @@ char *color_exit_prompt(t_env **env)
 
 char *custom_prompt(t_env **env)
 {
-	// (void)env;
 	char *tmp;
 	char *custom_prompt;
 	const char	*color_exit = color_exit_prompt(env);
+	char 		*emergency_prompt;
 	
 	if(!color_exit)
 		return (NULL);
 	tmp = pwd_prompt();
 	if(!tmp)
-		return (NULL);
+	{
+		emergency_prompt = ft_strjoin(color_exit,
+							BOLD_RED"Emergency Prompt> "RESET);
+		free((void *)color_exit);
+		return (emergency_prompt);
+	}
 	custom_prompt = ft_strjoin(color_exit, tmp);
 	free((void *)color_exit);
 	free(tmp);
@@ -235,7 +242,7 @@ int	create_child(t_msh *msh, t_env **env)
 	child = fork();
 	if(child == -1)
 		perror("msh");
-	if (child == 0)
+	else if (child == 0)
 	{
 		check_exec(msh->cmd[0], msh, env);
 		path = join_path_access(msh->cmd[0], msh->env);
@@ -244,10 +251,11 @@ int	create_child(t_msh *msh, t_env **env)
 				free_env(env), free_lst(msh), exit(127), 127);
 		if (redirect_fd(msh))
 			return (free_env(env), free_lst(msh), free(path), exit(127), 1);
-		if (execve(path, msh->cmd, NULL) == -1)
+		ft_printf(2, "test\n");
+		if (execve(path, msh->cmd, (*env)->full_env) == -1)
 		{
 			perror("msh");
-			return (free_env(env), free_lst(msh), free(path), exit(126), 1);
+			return (/* free_env(env), free_lst(msh),  */free(path), exit(126), 1);
 		}
 	}
 	return (0);
@@ -320,6 +328,7 @@ int	check_and_open(t_msh *msh)
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 	}
 	close_files(msh);
+	set_excode(&msh->env, 0);
 	return (0);
 }
 
@@ -331,6 +340,7 @@ void wait_pids(t_env **env)
 
     while (1)
     {
+		// ft_printf(1, "test");
         w_pid = wait(&status);
         if (w_pid < 0)
         {
@@ -373,12 +383,10 @@ int exec(t_msh *msh, t_env **env)
 		}
 		if (init_pipe(current, env))
 			break ;
+		setup_exec_signals();
 		if(current->cmd)
-		{
-			setup_exec_signals();
 			if (is_it_builtin(current->cmd, current, env) == 0)
 				create_child(current, env);	
-		}
 		current = current->next;
 	}
 	free_lst(msh);
@@ -465,21 +473,21 @@ int	msh_loop(t_msh *msh, t_env **env)
 
 	while (1)
 	{
+		init_sigint();
 		set_global(env);
 		prompt = custom_prompt(env);
 		if (!prompt)
-			return (printf(RESET), 1);
-		line = readline(prompt);
+			line = readline("Prompt not generated> ");
+		else
+			line = readline(prompt);
 		free(prompt);
 		if (!line)
 			return ((*env)->ex_code);
 		if (g_last_sig != SIGINT)
-		{
 			if(ft_strlen(line))
 				add_history(line);
-			msh = get_msh(line, *env);
-			exec(msh, env);
-		}
+		msh = get_msh(line, *env);
+		exec(msh, env);
 	}
 	return (0);
 }
@@ -491,17 +499,15 @@ int	g_last_sig;
 int main(void)
 {
 	t_msh msh;
-	t_env **env = ft_calloc(sizeof(t_env **), 1);
+	t_env **env;
 	extern char **environ;
 	int			last_exit_code;
 
-	if(!env)
-		return (1);
-	*env = env_into_list(environ);
-	if(!*env)
+	env = NULL;
+	env = env_into_list(environ);
+	if(!env || !*env)
 		return (1);
 	ft_bzero(&msh, sizeof(t_msh));
-	init_sigint();
 	msh_loop(&msh, env);
 	last_exit_code = (*env)->ex_code;
 	free_env(env);

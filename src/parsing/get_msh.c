@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:33:18 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/05 09:18:33 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 13:10:05 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,6 @@ t_msh	*parsing(t_token *token, t_env *env)
 		if (!add)
 			return (NULL);
 		fill_msh(add, &token);
-		// if (!add->cmd)
-		// {
-		// 	free_msh(&add);
-		// 	free_msh(&msh);
-		// 	return (NULL);
-		// }
 		msh_add_back(&msh, add);
 	}
 	return (msh);

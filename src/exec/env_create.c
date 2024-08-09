@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_creat.c                                        :+:      :+:    :+:   */
+/*   env_create.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 11:22:27 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 11:22:44 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 14:41:48 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,20 @@ t_env	*no_env(char *full_var)
 	t_env	*tmp;
 
 	tmp = ft_calloc(sizeof(t_env), 1);
-		if(!tmp)
-			return (NULL);
+	if (!tmp)
+		return (NULL);
 	tmp->full_var = ft_strdup(full_var);
 	return (tmp);
 }
 
-void	add_underscore(t_env *env)
+void	add_underscore(t_env **env)
 {
 	t_env	*current;
 	t_env	*tmp;
 	bool	found;
 
 	found = false;
-	current = env;
+	current = *env;
 	while (current)
 	{
 		if (ft_strcmp(current->full_var, "_=/usr/bin/env") == 0)
@@ -40,40 +40,40 @@ void	add_underscore(t_env *env)
 	if (found == false)
 	{
 		tmp = no_env("_=/usr/bin/env");
-		add_env_node(&env, tmp);
+		add_env_node(env, tmp);
 		return ;
 	}
 }
 
-t_env	*env_into_list(char **envp)
+t_env	**env_into_list(char **envp)
 {
-	t_env	*env;
+	t_env	**env;
 	t_env	*tmp;
 	int		i;
 
-	env = NULL;
+	env = ft_calloc(sizeof(t_env **), 1);
 	i = 0;
 	if (!envp || !*envp)
 	{
 		tmp = no_env("_=/usr/bin/env");
-		add_env_node(&env, tmp);
+		add_env_node(env, tmp);
 	}
 	else
 	{
 		while (envp[i])
 		{
 			tmp = create_env_node(envp, i);
-			add_env_node(&env, tmp);
+			add_env_node(env, tmp);
 			i++;
 		}
 	}
 	add_underscore(env);
-	update_env(&env);
-	split_env(&env);
+	update_env(env);
+	split_env(env);
 	return (env);
 }
 
-char *join_name_var(t_env *env)
+char	*join_name_var(t_env *env)
 {
 	char	*tmp;
 	char	*res;
@@ -90,7 +90,7 @@ char *join_name_var(t_env *env)
 	return (res);
 }
 
-char **get_env(t_env *env)
+char	**get_env(t_env *env)
 {
 	int			i;
 	const char	**cpy = ft_calloc(sizeof(char *), env_len(env) + 1);

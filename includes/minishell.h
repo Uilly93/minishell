@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 11:24:51 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 13:45:04 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,12 @@ typedef struct s_msh
 
 extern	int	g_last_sig;
 
-int	print_export(char **sorted, t_msh *msh);
+bool	update_it(char *av, t_env *current, const char *v, const char *v_name);
+int		print_export(char **sorted, t_msh *msh);
 char	**sort_env(char **tab, t_env *env);
 t_env	*create_env_node(char **envp, int i);
 void	set_excode(t_env **env, int code);
-void	add_underscore(t_env *env);
+void	add_underscore(t_env **env);
 void	add_env_node(t_env **lst, t_env *add);
 t_env	*no_env(char *full_var);
 void	setup_exec_signals();
@@ -89,7 +90,7 @@ int		ft_exit(t_msh *msh, t_env **env);
 int		get_pwd(char **arg, t_msh *msh);
 int		ft_export(t_msh *msh, t_env **env);
 int		free_env(t_env **env);
-t_env 	*env_into_list(char **envp);
+t_env 	**env_into_list(char **envp);
 t_msh	*ft_lastnode(t_msh *lst);
 int		redirect_fd(t_msh *msh);
 int		which_fd(t_msh *msh);
