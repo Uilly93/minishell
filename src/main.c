@@ -6,11 +6,13 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 18:42:40 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 11:13:45 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <asm-generic/errno-base.h>
+#include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <sys/wait.h>
@@ -200,17 +202,29 @@ int is_it_builtin(char **cmd, t_msh *msh, t_env **env)
 
 void	free_lst(t_msh *msh);
 
-int	check_exec(char *cmd)
+int check_exec(char *cmd, t_msh *msh, t_env **env)
 {
-	if(ft_strlen(cmd) >= 2 && ft_strncmp(cmd, "./", 2) == 0)
-	{
-		if(access(cmd, F_OK) != 0)
-			return (1);
-		// else if(access(cmd, X_OK) == 0)
-			
-			
-	}
-	return (0);
+    if (ft_strlen(cmd) >= 2 && ft_strncmp(cmd, "./", 2) == 0)
+    {
+        if (access(cmd, F_OK) != 0)
+        {
+            ft_printf(2, "msh: %s: No such file or directory\n", cmd);
+			free_env(env);
+			free_lst(msh);
+            exit(127);
+        }
+        else if (access(cmd, X_OK) != 0)
+        {
+			if(errno == EISDIR)
+				ft_printf(2, "msh: %s: Is a directory\n", cmd);
+			else
+            	ft_printf(2, "msh: %s: Permission denied\n", cmd);
+			free_env(env);
+			free_lst(msh);
+            exit(126);
+        }
+    }
+    return (0);
 }
 
 int	create_child(t_msh *msh, t_env **env)
@@ -223,6 +237,7 @@ int	create_child(t_msh *msh, t_env **env)
 		perror("msh");
 	if (child == 0)
 	{
+		check_exec(msh->cmd[0], msh, env);
 		path = join_path_access(msh->cmd[0], msh->env);
 		if (!path)
 			return (ft_printf(2, "msh: %s: command not found\n", msh->cmd[0]),
@@ -232,7 +247,7 @@ int	create_child(t_msh *msh, t_env **env)
 		if (execve(path, msh->cmd, NULL) == -1)
 		{
 			perror("msh");
-			return (free_env(env), free_lst(msh), free(path), exit(127), 1);
+			return (free_env(env), free_lst(msh), free(path), exit(126), 1);
 		}
 	}
 	return (0);
@@ -251,22 +266,6 @@ t_msh	*ft_lastnode(t_msh *lst)
 	return (current);
 }
 
-// void	ft_addnode(t_msh **lst, t_msh *add)
-// {
-// 	t_msh *last_node;
-	
-// 	if (!lst || !add)
-// 		return ;
-// 	if (!*lst)
-// 		*lst = add;
-// 	else
-// 	{
-// 		last_node = ft_lastnode(*lst);
-// 		last_node->next = add;
-// 		add->prev = last_node;
-// 	}
-// }
-
 int	ft_lstlen(t_msh *msh)
 {
 	t_msh	*current;
@@ -283,75 +282,6 @@ int	ft_lstlen(t_msh *msh)
 	}
 	return (i);
 }
-
-// void	print_node(t_msh *msh) // testing
-// {
-// 	t_msh *current;
-
-// 	current = msh;
-// 	int i = 1;
-// 	int j = 0;
-// 	printf("-----------------------------------------\n");
-// 	printf("lst size = %d\n", ft_lstlen(msh));
-// 	while (current)
-// 	{
-// 		printf("cmd %d = ", current->index);
-// 		j = 0;
-// 		while (current->cmd[j])
-// 		{
-// 			printf("%s ", current->cmd[j]);
-// 			j++;
-// 		}
-// 		printf("\n");
-// 		current = current->next;
-// 		if (current == NULL)
-// 			break ;
-// 		i++;
-// 	}
-// 	printf("-----------------------------------------\n");
-// }
- 
-// t_msh *cmd_node(char *line)
-// {
-// 	t_msh *msh;
-	
-// 	msh = ft_calloc(sizeof(t_msh), 1);
-// 	if (!msh)
-// 		return (NULL);
-// 	msh->in = -1;
-// 	msh->out = -1;
-// 	msh->append = 0;
-// 	// msh->infile = "/tmp/heredoc_1";
-// 	// msh->outfile = "outfile";
-// 	msh->cmd = ft_split(line, ' ');
-// 	if (!msh->cmd)
-// 		return (NULL);
-// 	return (msh);
-// }
-
-// t_msh *my_parsing(char *line, t_env *env)
-// {
-// 	t_msh	*msh;
-// 	t_msh	*tmp;
-// 	char	**splited;
-// 	int	i;
-
-// 	msh = NULL;
-// 	i = 0;
-// 	splited = ft_split(line, '|');
-// 	while (splited[i])
-// 	{
-// 		tmp = cmd_node(splited[i]);
-// 		tmp->env = env;
-// 		tmp->pipefd[1] = -1;
-// 		tmp->pipefd[0] = -1;
-// 		tmp->index = i + 1;
-// 		ft_addnode(&msh, tmp);
-// 		i++;
-// 	}
-// 	free_tab(splited);
-// 	return (msh);
-// }
 
 void	free_lst(t_msh *msh)
 {
@@ -443,10 +373,12 @@ int exec(t_msh *msh, t_env **env)
 		}
 		if (init_pipe(current, env))
 			break ;
-		setup_exec_signals();
 		if(current->cmd)
+		{
+			setup_exec_signals();
 			if (is_it_builtin(current->cmd, current, env) == 0)
-				set_excode(env, create_child(current, env));
+				create_child(current, env);	
+		}
 		current = current->next;
 	}
 	free_lst(msh);
@@ -523,6 +455,7 @@ void	set_global(t_env **env)
 	if(g_last_sig == SIGINT)
 		set_excode(env, 130);
 	g_last_sig = 0;
+	init_sigint();
 }
 
 int	msh_loop(t_msh *msh, t_env **env)
@@ -533,43 +466,44 @@ int	msh_loop(t_msh *msh, t_env **env)
 	while (1)
 	{
 		set_global(env);
-		init_sigint();
 		prompt = custom_prompt(env);
 		if (!prompt)
-			return (free_env(env), printf(RESET), 1);
+			return (printf(RESET), 1);
 		line = readline(prompt);
 		free(prompt);
 		if (!line)
-			break ;
+			return ((*env)->ex_code);
 		if (g_last_sig != SIGINT)
 		{
 			if(ft_strlen(line))
 				add_history(line);
 			msh = get_msh(line, *env);
-			// execute(msh);
 			exec(msh, env);
 		}
 	}
 	return (0);
 }
 
+////////////////////////main.c//////////////////////////
+
 int	g_last_sig;
 
-int main(int ac, char **av, char **envp)
+int main(void)
 {
-	(void)ac;
-	(void)av;
 	t_msh msh;
 	t_env **env = ft_calloc(sizeof(t_env **), 1);
-	// extern char **environ;
+	extern char **environ;
+	int			last_exit_code;
 
 	if(!env)
 		return (1);
-	*env = env_into_list(envp);
+	*env = env_into_list(environ);
 	if(!*env)
 		return (1);
 	ft_bzero(&msh, sizeof(t_msh));
+	init_sigint();
 	msh_loop(&msh, env);
+	last_exit_code = (*env)->ex_code;
 	free_env(env);
-	return (0);
+	return (last_exit_code);
 }

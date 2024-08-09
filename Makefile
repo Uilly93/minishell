@@ -6,11 +6,12 @@ CFLAGS = -Wall -Wextra -Werror -g3 -Iincludes -Isrc -MMD
 
 SRCS = src/main.c \
 	src/exec/child.c src/exec/heredoc.c src/exec/signal.c \
+	src/exec/env_create.c src/exec/env_manage.c \
 	src/parsing/get_msh.c src/parsing/parsing_utils.c \
 	src/parsing/fill_token.c src/parsing/token_utils.c \
 	src/parsing/fill_msh.c src/parsing/msh_utils.c \
 	src/builtins/echo.c src/builtins/cd.c src/builtins/pwd.c \
-	src/builtins/exit.c src/builtins/export.c \
+	src/builtins/exit.c src/builtins/export.c src/builtins/export_print.c \
 	src/builtins/env.c src/builtins/unset.c
 
 OBJS = $(SRCS:.c=.o)

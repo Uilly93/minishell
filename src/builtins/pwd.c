@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 09:43:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 13:35:39 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 11:14:30 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_free(void *pointer)
 {
-	if(pointer)
+	if (pointer)
 	{
 		free(pointer);
 		pointer = NULL;

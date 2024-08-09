@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 11:37:26 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 11:24:51 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,9 @@ typedef struct s_msh
 
 extern	int	g_last_sig;
 
+int	print_export(char **sorted, t_msh *msh);
+char	**sort_env(char **tab, t_env *env);
+t_env	*create_env_node(char **envp, int i);
 void	set_excode(t_env **env, int code);
 void	add_underscore(t_env *env);
 void	add_env_node(t_env **lst, t_env *add);

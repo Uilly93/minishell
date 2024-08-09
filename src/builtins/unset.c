@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 09:24:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 13:34:09 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 11:16:13 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	ft_unset(t_env **head, char **av)
 		set_excode(head, 0);
 		return (0);
 	}
-	if(ft_strcmp(av[1], "_") == 0)
+	if (ft_strcmp(av[1], "_") == 0)
 	{
 		set_excode(head, 0);
 		return (0);

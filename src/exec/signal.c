@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 09:10:45 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 10:34:06 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 10:11:40 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,17 @@ void exec_signal_handler(int sig, siginfo_t *info, void *context)
 {
 	(void)info;
 	(void)context;
-	g_last_sig = sig;
 	if (sig == SIGQUIT)
 	{
+		g_last_sig = sig;
 		write(2, "Quit (core dumped)\n", 19);
+		rl_done = true;
+		// exit(1);
+	}
+	if (sig == SIGINT)
+	{
+		g_last_sig = sig;
+		// write(2, "Quit (core dumped)\n", 19);
 		// rl_done = true;
 		// exit(1);
 	}
@@ -87,4 +94,11 @@ void setup_exec_signals()
 		perror("sigaction failed for SIGQUIT");
 		return;
 	}
+	// sa.sa_handler = SIG_DFL; // change this
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+	{
+		perror("sigaction failed for SIGQUIT");
+		return;
+	}
+	// sa.sa_handler = SIG_IGN; // change this
 }
