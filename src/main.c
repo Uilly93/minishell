@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 14:45:53 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 16:06:59 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,11 +251,10 @@ int	create_child(t_msh *msh, t_env **env)
 				free_env(env), free_lst(msh), exit(127), 127);
 		if (redirect_fd(msh))
 			return (free_env(env), free_lst(msh), free(path), exit(127), 1);
-		ft_printf(2, "test\n");
 		if (execve(path, msh->cmd, (*env)->full_env) == -1)
 		{
 			perror("msh");
-			return (/* free_env(env), free_lst(msh),  */free(path), exit(126), 1);
+			return (free(path), exit(126), 1);
 		}
 	}
 	return (0);
@@ -347,7 +346,7 @@ void wait_pids(t_env **env)
             if (errno == ECHILD)
                 return;
             set_excode(env, 1);
-            return;
+            // return;
         }
         if (WIFEXITED(status))
             set_excode(env, WEXITSTATUS(status));
@@ -390,7 +389,7 @@ int exec(t_msh *msh, t_env **env)
 		current = current->next;
 	}
 	free_lst(msh);
-	wait_pids(env);
+	// wait_pids(env);
 	return (0);
 }
 // --------------------signals---------------------------
@@ -400,8 +399,9 @@ void signal_handler(int sig, siginfo_t *info, void *context)
 	(void)sig;
 	(void)info;
 	(void)context;
-	g_last_sig = SIGINT;
 	rl_done = true;
+	// rl_redisplay();
+	g_last_sig = SIGINT;
 }
 
 void void_func(void)
@@ -473,7 +473,6 @@ int	msh_loop(t_msh *msh, t_env **env)
 
 	while (1)
 	{
-		init_sigint();
 		set_global(env);
 		prompt = custom_prompt(env);
 		if (!prompt)
@@ -483,11 +482,15 @@ int	msh_loop(t_msh *msh, t_env **env)
 		free(prompt);
 		if (!line)
 			return ((*env)->ex_code);
-		if (g_last_sig != SIGINT)
-			if(ft_strlen(line))
-				add_history(line);
-		msh = get_msh(line, *env);
-		exec(msh, env);
+		if (g_last_sig != SIGINT && ft_strlen(line))
+		{
+			add_history(line);
+			msh = get_msh(line, *env);
+			exec(msh, env);
+		}
+		wait_pids(env);
+		// else
+		// 	setup_exec_signals();
 	}
 	return (0);
 }

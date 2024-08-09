@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 09:10:45 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 13:08:54 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 16:12:43 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,6 @@ void	exec_signal_handler(int sig, siginfo_t *info, void *context)
 		g_last_sig = sig;
 		write(2, "Quit (core dumped)\n", 19);
 		rl_done = true;
-	}
-	if (sig == SIGINT)
-	{
-		g_last_sig = sig;
 	}
 }
 
