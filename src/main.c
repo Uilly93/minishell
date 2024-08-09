@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 16:51:07 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 17:59:43 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ char *custom_prompt(t_env **env)
 	custom_prompt = ft_strjoin(color_exit, tmp);
 	free((void *)color_exit);
 	free(tmp);
-	if(!custom_prompt)
+	if(!custom_prompt && !*custom_prompt)
 		return (NULL);
 	return(custom_prompt);
 }
