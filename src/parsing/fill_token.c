@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:36:44 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/08 18:04:59 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 17:08:24 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,10 @@ void	fill_value(t_token *token, char *line, int *i)
 		key[k++] = line[*i];
 		(*i)++;
 	}
-	key[k] = 0;
 	if (!ft_strlen(key))
 		value = ft_strdup("$");
+	if(key && !ft_strcmp(key, "?"))
+		value = ((char *)ft_itoa(token->env->ex_code));
 	else
 		value = ft_strdup(get_env_value(token->env, key));
 	free(key);

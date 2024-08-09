@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 16:06:59 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/09 16:51:07 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,19 +339,15 @@ void wait_pids(t_env **env)
 
     while (1)
     {
-		// ft_printf(1, "test");
         w_pid = wait(&status);
         if (w_pid < 0)
         {
             if (errno == ECHILD)
-                return;
+                return ;
             set_excode(env, 1);
-            // return;
         }
         if (WIFEXITED(status))
             set_excode(env, WEXITSTATUS(status));
-        else if (WIFSIGNALED(status))
-            set_excode(env, 128 + WTERMSIG(status));
     }
 }
 
@@ -389,7 +385,6 @@ int exec(t_msh *msh, t_env **env)
 		current = current->next;
 	}
 	free_lst(msh);
-	// wait_pids(env);
 	return (0);
 }
 // --------------------signals---------------------------
@@ -489,8 +484,6 @@ int	msh_loop(t_msh *msh, t_env **env)
 			exec(msh, env);
 		}
 		wait_pids(env);
-		// else
-		// 	setup_exec_signals();
 	}
 	return (0);
 }
