@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:18:38 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/10 17:00:33 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 17:07:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int	check_and_open(t_msh *msh)
 			set_excode(&msh->env, 1);
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 		}
-		set_excode(&msh->env, 1);
+		set_excode(&msh->env, 0);
 	}
 	if (msh->outfile != NULL)
 	{
@@ -94,7 +94,7 @@ int	check_and_open(t_msh *msh)
 			set_excode(&msh->env, 1);
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 		}
-		set_excode(&msh->env, 1);
+		set_excode(&msh->env, 0);
 	}
 	close_files(msh);
 	return (0);
