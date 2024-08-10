@@ -6,11 +6,48 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 09:10:45 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 16:12:43 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 13:00:03 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void	signal_handler(int sig, siginfo_t *info, void *context)
+{
+	(void)sig;
+	(void)info;
+	(void)context;
+	rl_done = true;
+	g_last_sig = SIGINT;
+}
+
+void	null_func(void)
+{
+	return ;
+}
+
+int	init_sigint(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_sigaction = signal_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_SIGINFO;
+	rl_event_hook = (void *)null_func;
+	sa.sa_flags = 0;
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+	{
+		perror("sigaction failed for SIGINT");
+		return (1);
+	}
+	sa.sa_handler = SIG_IGN;
+	if (sigaction(SIGQUIT, &sa, NULL) == -1)
+	{
+		perror("sigaction failed for SIGQUIT");
+		return (1);
+	}
+	return (0);
+}
 
 void	exec_signal_handler(int sig, siginfo_t *info, void *context)
 {

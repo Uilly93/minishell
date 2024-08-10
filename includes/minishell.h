@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 13:45:04 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 13:15:14 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,26 +28,24 @@
 
 typedef struct s_env
 {
-	int		ex_code;
-	char	**full_env;
-	char	*full_var;
-	char	*key;
-	char	*value;
-	struct	s_env	*next;
-} t_env;
+	int				ex_code;
+	char			**full_env;
+	char			*full_var;
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}					t_env;
 
 typedef struct s_token
 {
-	int			id;
-	char		*word;
-	t_env		*env;
+	int				id;
+	char			*word;
+	t_env			*env;
 	struct s_token	*next;
-}		t_token;
+}					t_token;
 
 typedef struct s_msh
 {
-	// char 			*hlimit;
-	// char			**prompt;
 	int				here_doc;
 	char			**cmd;
 	char			**my_env;
@@ -61,10 +59,16 @@ typedef struct s_msh
 	struct s_env	*env;
 	struct s_msh	*next;
 	struct s_msh	*prev;
-}	t_msh;
+}					t_msh;
 
-extern	int	g_last_sig;
+extern int	g_last_sig;
 
+int		msh_loop(t_msh *msh, t_env **env);
+char	*custom_prompt(t_env **env);
+void	wait_pids(t_env **env);
+void	set_global(t_env **env);
+int		exec(t_msh *msh, t_env **env);
+int		check_exec(char *cmd, t_msh *msh, t_env **env);
 bool	update_it(char *av, t_env *current, const char *v, const char *v_name);
 int		print_export(char **sorted, t_msh *msh);
 char	**sort_env(char **tab, t_env *env);
@@ -73,11 +77,11 @@ void	set_excode(t_env **env, int code);
 void	add_underscore(t_env **env);
 void	add_env_node(t_env **lst, t_env *add);
 t_env	*no_env(char *full_var);
-void	setup_exec_signals();
+void	setup_exec_signals(void);
 int		split_env(t_env **env);
-int 	is_equal(char *var);
-char 	*get_key_env(char *var);
-char 	*get_value_env(char *var);
+int		is_equal(char *var);
+char	*get_key_env(char *var);
+char	*get_value_env(char *var);
 int		env_len(t_env *env);
 int		update_env(t_env **env);
 int		ft_env(t_env **env, t_msh *msh);
@@ -90,7 +94,7 @@ int		ft_exit(t_msh *msh, t_env **env);
 int		get_pwd(char **arg, t_msh *msh);
 int		ft_export(t_msh *msh, t_env **env);
 int		free_env(t_env **env);
-t_env 	**env_into_list(char **envp);
+t_env	**env_into_list(char **envp);
 t_msh	*ft_lastnode(t_msh *lst);
 int		redirect_fd(t_msh *msh);
 int		which_fd(t_msh *msh);

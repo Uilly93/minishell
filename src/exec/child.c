@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/08 17:04:34 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 12:53:00 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int	get_flags(t_msh *msh)
 	return (flags);
 }
 
+//////////////////check_fd.c//////////////////////////
+
 int	close_files(t_msh *msh)
 {
 	if (msh->in != -1)
@@ -35,6 +37,23 @@ int	close_files(t_msh *msh)
 		close(msh->pipefd[0]);
 	if (msh->pipefd[1] != -1)
 		close(msh->pipefd[1]);
+	return (0);
+}
+
+int	close_pipes(t_msh *msh)
+{
+	t_msh	*current;
+
+	current = ft_lastnode(msh);
+	while (current)
+	{
+		if (current->pipefd[0] != -1)
+			close(current->pipefd[0]);
+		if (current->pipefd[1] != -1)
+			close(current->pipefd[1]);
+		close_files(current);
+		current = current->prev;
+	}
 	return (0);
 }
 

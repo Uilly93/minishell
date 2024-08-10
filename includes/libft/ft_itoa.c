@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 09:26:50 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/02/05 10:19:20 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 13:11:20 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static size_t	mall_count(int n)
 	{
 		nbr *= -1;
 		count++;
-	}	
+	}
 	while (nbr != 0)
 	{
 		nbr /= 10;
