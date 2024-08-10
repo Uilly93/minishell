@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:18:38 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/10 13:06:46 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 17:00:33 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	create_child(t_msh *msh, t_env **env)
 		if (execve(path, msh->cmd, (*env)->full_env) == -1)
 		{
 			perror("msh");
-			return (free(path), exit(126), 1);
+			return (free_env(env), free_lst(msh), free(path), exit(126), 1);
 		}
 	}
 	return (0);
@@ -80,16 +80,23 @@ int	check_and_open(t_msh *msh)
 	{
 		msh->in = open(msh->infile, O_WRONLY, 0644);
 		if (msh->in == -1)
+		{
+			set_excode(&msh->env, 1);
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
+		}
+		set_excode(&msh->env, 1);
 	}
 	if (msh->outfile != NULL)
 	{
 		msh->out = open(msh->outfile, get_flags(msh), 0644);
 		if (msh->out == -1)
+		{
+			set_excode(&msh->env, 1);
 			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
+		}
+		set_excode(&msh->env, 1);
 	}
 	close_files(msh);
-	set_excode(&msh->env, 0);
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 13:07:13 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 16:54:52 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	here_doc(t_msh *msh)
 	const char	*cpy = ft_strdup(msh->infile);
 
 	if (!cpy || init_heredoc(msh, cpy))
-		return (1);
+		return (set_excode(&msh->env, 1) ,1);
 	line = readline(MAGENTA"msh_heredoc> "RESET);
 	while (line)
 	{
