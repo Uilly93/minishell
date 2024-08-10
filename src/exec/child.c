@@ -6,28 +6,26 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/24 09:58:14 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 12:53:00 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <fcntl.h>
-#include <linux/limits.h>
-#include <stdio.h>
 #include <unistd.h>
 
 int	get_flags(t_msh *msh)
 {
-	int flags;
-	
+	int	flags;
+
 	flags = O_WRONLY | O_CREAT;
 	if (msh->append == true)
-    	flags |= O_APPEND;
+		flags |= O_APPEND;
 	else
 		flags |= O_TRUNC;
 	return (flags);
 }
 
+//////////////////check_fd.c//////////////////////////
 
 int	close_files(t_msh *msh)
 {
@@ -42,18 +40,35 @@ int	close_files(t_msh *msh)
 	return (0);
 }
 
-int open_fd(t_msh *msh)
+int	close_pipes(t_msh *msh)
 {
-	if (msh->infile != NULL)
+	t_msh	*current;
+
+	current = ft_lastnode(msh);
+	while (current)
+	{
+		if (current->pipefd[0] != -1)
+			close(current->pipefd[0]);
+		if (current->pipefd[1] != -1)
+			close(current->pipefd[1]);
+		close_files(current);
+		current = current->prev;
+	}
+	return (0);
+}
+
+int	dup_in_fd(t_msh *msh)
+{
+	if (msh->infile)
 	{
 		msh->in = open(msh->infile, O_RDONLY, 0644);
 		if (msh->in != -1)
 		{
 			if (dup2(msh->in, STDIN_FILENO) == -1)
-				return (close_pipes(msh), close_files(msh), 1);
+				return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 		}
 		else
-			return (perror("msh: "), close_pipes(msh), close_files(msh), 1);
+			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 	}
 	if (msh->outfile != NULL)
 	{
@@ -61,10 +76,10 @@ int open_fd(t_msh *msh)
 		if (msh->out != -1)
 		{
 			if (dup2(msh->out, STDOUT_FILENO) == -1)
-				return (close_pipes(msh), close_files(msh), 1);
+				return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 		}
 		else
-			return (perror("msh: "), close_pipes(msh), close_files(msh), 1);
+			return (perror("msh"), close_pipes(msh), close_files(msh), 1);
 	}
 	return (0);
 }
@@ -73,22 +88,18 @@ int	redirect_fd(t_msh *msh)
 {
 	if (msh->index != 1 && msh->infile == NULL)
 	{
-		// printf("test1");
 		if (dup2(msh->prev->pipefd[0], STDIN_FILENO) == -1)
-			return (close_pipes(msh), 1);	
+			return (close_pipes(msh), 1);
 	}
 	if (msh->next != NULL && msh->outfile == NULL)
 	{
-		// printf("test2");
 		if (dup2(msh->pipefd[1], STDOUT_FILENO) == -1)
 			return (close_pipes(msh), 1);
 	}
-	if (open_fd(msh))
-	{
-		// printf("test1");
+	if (dup_in_fd(msh))
 		return (close_files(msh), 1);
-	}
-	close_files(msh);
+	if (msh->here_doc == 1)
+		unlink(msh->infile);
 	close_pipes(msh);
 	return (0);
 }

@@ -1,16 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexing_utils.c                                     :+:      :+:    :+:   */
+/*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/15 13:15:51 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/07/24 14:23:42 by wnocchi          ###   ########.fr       */
+/*   Created: 2024/07/24 17:38:53 by tchalaou          #+#    #+#             */
+/*   Updated: 2024/08/10 16:13:27 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+char	*get_env_value(t_env *env, char *key)
+{
+	t_env	*current;
+	int		len;
+
+	current = env;
+	len = ft_strlen(key);
+	while (current)
+	{
+		if (current->key && current->value)
+		{
+			if (!ft_strncmp(key, current->key, len) && !current->key[len])
+				return (current->value);
+		}
+		current = current->next;
+	}
+	return ("");
+}
+
+void	join_replace(char **word, char **value)
+{
+	char	*tmp;
+
+	tmp = ft_strjoin(*word, *value);
+	free(*value);
+	free(*word);
+	*word = tmp;
+}
 
 t_token	*create_token(t_env *env)
 {
@@ -19,29 +48,9 @@ t_token	*create_token(t_env *env)
 	token = ft_calloc(sizeof(t_token), 1);
 	if (!token)
 		return (NULL);
-	token->id = -1;
-	token->word = NULL;
+	token->id = 0;
 	token->env = env;
-	token->next = NULL;
 	return (token);
-}
-
-int	is_whitespace(char c)
-{
-	return (c != ' ' && c != '\t' && c != '\v' && c != '\n');
-}
-
-int	word_len(char *line, int start)
-{
-	int	len;
-
-	len = 0;
-	while (line[start] && !ft_strchr(" \t\n;<>|'\"", line[start]))
-	{
-		len++;
-		start++;
-	}
-	return (len);
 }
 
 void	token_add_back(t_token **token, t_token *add)

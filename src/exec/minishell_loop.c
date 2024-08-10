@@ -1,41 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   minishell_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/22 09:43:11 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 11:14:30 by wnocchi          ###   ########.fr       */
+/*   Created: 2024/08/10 12:40:20 by wnocchi           #+#    #+#             */
+/*   Updated: 2024/08/10 12:52:42 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	ft_free(void *pointer)
+int	msh_loop(t_msh *msh, t_env **env)
 {
-	if (pointer)
-	{
-		free(pointer);
-		pointer = NULL;
-	}
-}
+	char	*line;
+	char	*prompt;
 
-int	get_pwd(char **arg, t_msh *msh)
-{
-	char		*pwd;
-	const int	fd = which_fd(msh);
-
-	if (fd == -1)
-		return (perror("msh"), 1);
-	if (*arg && ft_strcmp(*arg, "pwd") == 0)
+	while (1)
 	{
-		pwd = getcwd(NULL, 0);
-		if (!pwd)
-			return (1);
-		ft_printf(fd, "%s\n", pwd);
-		free(pwd);
-		set_excode(&msh->env, 0);
+		set_global(env);
+		prompt = custom_prompt(env);
+		if (!prompt)
+			line = readline("Prompt not generated> ");
+		else
+			line = readline(prompt);
+		free(prompt);
+		if (!line)
+			return ((*env)->ex_code);
+		if (g_last_sig != SIGINT && ft_strlen(line))
+		{
+			add_history(line);
+			msh = get_msh(line, *env);
+			exec(msh, env);
+		}
+		wait_pids(env);
 	}
 	return (0);
 }
