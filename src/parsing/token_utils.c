@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:38:53 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/09 17:10:11 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 16:13:27 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,17 @@
 char	*get_env_value(t_env *env, char *key)
 {
 	t_env	*current;
-	int		key_len;
+	int		len;
 
 	current = env;
-	key_len = ft_strlen(key);
+	len = ft_strlen(key);
 	while (current)
 	{
-		if (!ft_strncmp(key, current->key, key_len) && !current->key[key_len])
-			return (current->value);
+		if (current->key && current->value)
+		{
+			if (!ft_strncmp(key, current->key, len) && !current->key[len])
+				return (current->value);
+		}
 		current = current->next;
 	}
 	return ("");
