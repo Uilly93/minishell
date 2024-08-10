@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:26:23 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/10 13:02:16 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/10 16:26:39 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void	wait_pids(t_env **env)
 	int	w_pid;
 	int	status;
 
+	status = 0;
 	while (1)
 	{
 		w_pid = wait(&status);
