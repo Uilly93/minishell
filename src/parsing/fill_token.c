@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:36:44 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/10 13:15:47 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/12 13:38:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ void	fill_value(t_token *token, char *line, int *i)
 		key[k++] = line[*i];
 		(*i)++;
 	}
-	if (!ft_strlen(key))
-		value = ft_strdup("$");
 	if (key && !ft_strcmp(key, "?"))
 		value = ((char *)ft_itoa(token->env->ex_code));
+	if (!ft_strlen(key))
+		value = ft_strdup("$");
 	else
 		value = ft_strdup(get_env_value(token->env, key));
 	free(key);
-	if (value)
+	if (value && *value)
 		join_replace(&token->word, &value);
 }
 
@@ -59,7 +59,6 @@ void	fill_word(t_token *token, char *line, int *i)
 		token->word[j++] = line[*i];
 		(*i)++;
 	}
-	token->word[j] = 0;
 	(*i)--;
 }
 
@@ -79,7 +78,6 @@ void	fill_quote(t_token *token, char *line, int *i)
 	j = 0;
 	while (line[*i] && line[*i] != '\'')
 		token->word[j++] = line[(*i)++];
-	token->word[j] = 0;
 	if (line[*i] != '\'')
 		(*i)--;
 }
@@ -107,8 +105,6 @@ void	fill_doublequote(t_token *token, char *line, int *i)
 		}
 		token->word[j++] = line[(*i)++];
 	}
-	if (j == len)
-		token->word[j] = 0;
 	if (line[*i] != '"')
 		(*i)--;
 }

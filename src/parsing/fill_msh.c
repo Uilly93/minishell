@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:42:48 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/05 09:02:22 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/12 13:27:58 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,21 @@ int	fill_smaller(t_msh *msh, t_token **token)
 {
 	*token = (*token)->next;
 	if (!*token)
-		return (printf("msh: parsing error\n"), 1);
+		return (set_excode(&msh->env, 2),
+			ft_printf(2, "msh: parsing error\n"), 1);
 	if ((*token)->id == SMALLER)
 	{
 		*token = (*token)->next;
 		msh->here_doc = 1;
 	}
 	if (!*token)
-		return (printf("msh: parsing error\n"), 1);
+		return (set_excode(&msh->env, 2),
+			ft_printf(2, "msh: parsing error\n"), 1);
 	if ((*token)->id == WORD)
 		msh->infile = ft_strdup((*token)->word);
 	else
-		return (printf("msh: parsing error\n"), 1);
+		return (set_excode(&msh->env, 2),
+			ft_printf(2, "msh: parsing error\n"), 1);
 	*token = (*token)->next;
 	return (0);
 }
@@ -52,18 +55,21 @@ int	fill_bigger(t_msh *msh, t_token **token)
 {
 	*token = (*token)->next;
 	if (!*token)
-		return (printf("msh: parsing error\n"), 1);
+		return (set_excode(&msh->env, 2),
+			ft_printf(2, "msh: parsing error\n"), 1);
 	if ((*token)->id == BIGGER)
 	{
 		*token = (*token)->next;
 		msh->append = 1;
 	}
 	if (!*token)
-		return (printf("msh: parsing error\n"), 1);
+		return (set_excode(&msh->env, 2),
+			ft_printf(2, "msh: parsing error\n"), 1);
 	if ((*token)->id == WORD)
 		msh->outfile = ft_strdup((*token)->word);
 	else
-		return (printf("msh: parsing error\n"), 1);
+		return (set_excode(&msh->env, 2),
+			ft_printf(2, "msh: parsing error\n"), 1);
 	*token = (*token)->next;
 	return (0);
 }
