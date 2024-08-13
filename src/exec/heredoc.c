@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/10 17:03:02 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 14:49:07 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,5 @@ int	here_doc(t_msh *msh)
 		line = readline(MAGENTA"msh_heredoc> "RESET);
 	}
 	free(line);
-	return (0);
+	return (free((void *)cpy), 0);
 }
