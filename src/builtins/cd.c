@@ -6,12 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/13 12:04:36 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 15:59:03 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <unistd.h>
 
 char	*get_home(t_env *env)
 {
@@ -43,9 +42,11 @@ int	update_oldpwd(char *old_pwd, t_env **env)
 	t_env	*new_var;
 
 	current = *env;
+	if (!old_pwd)
+		return (1);
 	while (current)
 	{
-		if (!ft_strcmp(current->key, "OLDPWD"))
+		if (!ft_strcmp(current->key, "OLDPWD") && old_pwd)
 		{
 			if (current->value)
 				free(current->value);
@@ -59,10 +60,9 @@ int	update_oldpwd(char *old_pwd, t_env **env)
 	new_var = ft_calloc(sizeof(t_env), 1);
 	if (!new_var)
 		return (set_excode(env, 1), 1);
-	new_var->full_var = ft_strjoin("OLDPWD=", old_pwd);
-	new_var->key = get_key_env("OLDPWD");
-	new_var->value = get_value_env(old_pwd);
-	return (add_env_node(env, new_var), update_env(env), 0);
+	return (new_var->full_var = ft_strjoin("OLDPWD=", old_pwd), new_var->key
+		= get_key_env("OLDPWD"), new_var->value = get_value_env(old_pwd),
+		add_env_node(env, new_var), update_env(env), 0);
 }
 
 char	*join_path(char *arg, char *pwd)
@@ -100,11 +100,8 @@ int	ft_cd(char **arg, t_env **env)
 
 	path = NULL;
 	if (arg[0] && arg[1] && arg[2])
-	{
-		free((char *)pwd);
-		set_excode(env, 1);
-		return (ft_printf(2, "msh: cd: too many arguments\n"), 0);
-	}
+		return (free((char *)pwd), set_excode(env, 1),
+			ft_printf(2, "msh: cd: too many arguments\n"), 0);
 	update_oldpwd((char *)pwd, env);
 	if (*arg && ft_strcmp(*arg++, "cd") == 0)
 	{
