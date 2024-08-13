@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:42:48 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/12 13:27:58 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 13:20:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	fill_command(t_msh *msh, t_token **token)
 	if (!msh->cmd)
 		return ;
 	i = -1;
-	while (*token && (*token)->id == WORD)
+	while (*token && (*token)->id == WORD && ((*token)->word))
 	{
 		msh->cmd[++i] = ft_strdup((*token)->word);
 		*token = (*token)->next;
@@ -65,7 +65,7 @@ int	fill_bigger(t_msh *msh, t_token **token)
 	if (!*token)
 		return (set_excode(&msh->env, 2),
 			ft_printf(2, "msh: parsing error\n"), 1);
-	if ((*token)->id == WORD)
+	if ((*token)->id == WORD && (*token)->word)
 		msh->outfile = ft_strdup((*token)->word);
 	else
 		return (set_excode(&msh->env, 2),

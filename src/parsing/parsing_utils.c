@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:47:22 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/05 09:02:38 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 13:21:57 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	word_len(char *line, int start)
 	int	len;
 
 	len = 0;
-	while (line[start] && !ft_strchr(" \t\n;<>|'\"", line[start]))
+	while (line[start] && !ft_strchr(" \t\n<>|'\"", line[start]))
 	{
 		len++;
 		start++;

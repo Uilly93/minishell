@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:36:44 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/13 12:58:26 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 13:01:54 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ void	fill_word(t_token *token, char *line, int *i)
 			(*i)--;
 			return ;
 		}
-		token->word[j++] = line[*i];
+		token->word[j] = line[*i];
+		j++;
 		(*i)++;
 	}
 	(*i)--;

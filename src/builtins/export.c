@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 10:31:19 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 13:06:35 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 13:42:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	ft_export(t_msh *msh, t_env **env)
 		return (export_print(msh, *env), 0);
 	while (msh->cmd[++i])
 	{
-		if (check_errors(msh, i))
+		if (msh->cmd[i][0] != 0 && check_errors(msh, i))
 		{
 			set_excode(env, 1);
 			continue ;
