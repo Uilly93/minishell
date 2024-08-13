@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 14:00:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/12 14:43:55 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 12:01:22 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ long	ft_atol(char *s)
 	}
 	while (s[i] >= '0' && s[i] <= '9')
 		nbr = (nbr * 10 + s[i++] - '0');
-	return (nbr);
+	return (nbr * sign);
 }
 
 int	ft_exit(t_msh *msh, t_env **env)
@@ -94,11 +94,8 @@ int	ft_exit(t_msh *msh, t_env **env)
 	if (msh->cmd[1] && msh->cmd[2] != NULL)
 		return (ft_printf(2, "exit\nmsh: exit: too many arguments"), 1);
 	exit_code = ft_atol(msh->cmd[1]);
-	if (exit_code <= 255)
-		return (ft_printf(2, "exit\n"), free_env(env), free_lst(msh),
-			exit(exit_code), 0);
-	else
-		return (ft_printf(2, "exit\n"), free_env(env), free_lst(msh),
-			exit(exit_code % 256), 0);
+	ft_printf(1, "%d\n", exit_code);
+	return (ft_printf(2, "exit\n"), free_env(env), free_lst(msh),
+		exit((unsigned char)exit_code), 0);
 	return (0);
 }

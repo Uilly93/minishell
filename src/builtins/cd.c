@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 15:16:05 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/12 16:16:39 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 12:04:36 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,28 +34,25 @@ char	*get_home(t_env *env)
 		}
 		current = current->next;
 	}
-	return (ft_printf(2, "msh: cd: $HOME not set"), NULL);
+	return (ft_printf(2, "msh: cd: $HOME not set\n"), NULL);
 }
 
-int	update_OLDPWD(char *old_pwd, t_env **env)
+int	update_oldpwd(char *old_pwd, t_env **env)
 {
 	t_env	*current;
 	t_env	*new_var;
-	
-	current = *env;
 
-	while(current)
+	current = *env;
+	while (current)
 	{
-		if(!ft_strcmp(current->key, "OLDPWD"))
+		if (!ft_strcmp(current->key, "OLDPWD"))
 		{
-			ft_printf(1, "ok\n");
-			if(current->value)
+			if (current->value)
 				free(current->value);
 			free(current->full_var);
 			current->value = ft_strdup(old_pwd);
 			current->full_var = ft_strjoin("OLDPWD=", old_pwd);
-			ft_printf(1, "full =%s\nkey =%s\nvalue =%s\n", current->full_var, current->key, current->value);
-			return (update_env(env) ,0);
+			return (update_env(env), 0);
 		}
 		current = current->next;
 	}
@@ -65,7 +62,6 @@ int	update_OLDPWD(char *old_pwd, t_env **env)
 	new_var->full_var = ft_strjoin("OLDPWD=", old_pwd);
 	new_var->key = get_key_env("OLDPWD");
 	new_var->value = get_value_env(old_pwd);
-	ft_printf(1, "full =%s\n key =%s\n value =%s\n", new_var->full_var, new_var->key, new_var->value);
 	return (add_env_node(env, new_var), update_env(env), 0);
 }
 
@@ -84,15 +80,13 @@ char	*join_path(char *arg, char *pwd)
 	return (path);
 }
 
-int	err_and_chdir(char *path, char **arg)
+int	err_and_chdir(char *path, char **arg, t_env **env)
 {
 	(void)arg;
 	if (!path)
-		return (1);
+		return (set_excode(env, 1), 1);
 	if (!*path)
-		return (ft_printf(1, "msh: cd: $HOME not set\n"), free(path), 1);
-	// if (arg && *arg != 0)
-	// 	return (ft_printf(1, "msh: cd: too many arguments\n"), free(path), 1);
+		return (ft_printf(2, "msh: cd: $HOME not set\n"), free(path), 1);
 	if (chdir(path) == -1)
 		return (perror("msh: cd"), free(path), 1);
 	free(path);
@@ -105,22 +99,25 @@ int	ft_cd(char **arg, t_env **env)
 	char		*path;
 
 	path = NULL;
-	update_OLDPWD((char *)pwd, env);
+	if (arg[0] && arg[1] && arg[2])
+	{
+		free((char *)pwd);
+		set_excode(env, 1);
+		return (ft_printf(2, "msh: cd: too many arguments\n"), 0);
+	}
+	update_oldpwd((char *)pwd, env);
 	if (*arg && ft_strcmp(*arg++, "cd") == 0)
 	{
 		if (*arg && chdir(*arg) != -1)
 			return (free((char *)pwd), set_excode(env, 0), 0);
 		if (!pwd)
-			return (set_excode(env, 1), 1);
+			return (set_excode(env, 1), 0);
 		if (*arg && **arg)
 			path = join_path(*arg++, (char *)pwd);
 		else
 			path = get_home(*env);
-		ft_printf(1, "path=%s\n",path);
 		free((char *)pwd);
-		if (!path)
-			return (set_excode(env, 1), 1);
-		set_excode(env, err_and_chdir(path, arg));
+		set_excode(env, err_and_chdir(path, arg, env));
 	}
 	return (0);
 }
