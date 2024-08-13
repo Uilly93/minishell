@@ -6,13 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:45:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/13 14:49:07 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/13 14:50:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <signal.h>
-#include <unistd.h>
 
 int	init_heredoc(t_msh *msh, const char	*cpy)
 {
