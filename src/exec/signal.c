@@ -6,12 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 09:10:45 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/14 14:05:03 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 14:35:12 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <signal.h>
 
 void	signal_handler(int sig, siginfo_t *info, void *context)
 {

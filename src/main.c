@@ -6,12 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 10:04:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/14 13:53:35 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 14:37:24 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <readline/history.h>
 
 int	g_last_sig;
 
@@ -23,6 +22,8 @@ int	main(void)
 	int			last_exit_code;
 
 	env = NULL;
+	if (!isatty(0))
+		return (1);
 	env = env_into_list(environ);
 	if (!env || !*env)
 		return (1);
