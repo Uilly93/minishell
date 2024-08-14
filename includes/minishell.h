@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/10 13:29:00 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 16:05:29 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void	free_msh(t_msh **msh);
 void	fill_command(t_msh *msh, t_token **token);
 int		fill_smaller(t_msh *msh, t_token **token);
 int		fill_bigger(t_msh *msh, t_token **token);
-void	fill_msh(t_msh *msh, t_token **token);
+int		fill_msh(t_msh *msh, t_token **token);
 t_token	*lexing(char *line, t_env *env);
 t_msh	*parsing(t_token *token, t_env *env);
 t_msh	*get_msh(char *line, t_env *env);

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:42:48 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/14 14:13:03 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 16:07:14 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	fill_bigger(t_msh *msh, t_token **token)
 	return (0);
 }
 
-void	fill_msh(t_msh *msh, t_token **token)
+int	fill_msh(t_msh *msh, t_token **token)
 {
 	while (*token)
 	{
@@ -98,19 +98,20 @@ void	fill_msh(t_msh *msh, t_token **token)
 		else if ((*token)->id == SMALLER)
 		{
 			if (fill_smaller(msh, token))
-				break ;
+				return (1);
 		}
 		else if ((*token)->id == BIGGER)
 		{
 			if (fill_bigger(msh, token))
-				break ;
+				return (1);
 		}
 		else if ((*token)->id == PIPE)
 		{
 			*token = (*token)->next;
-			break ;
+			return (0);
 		}
 		else
 			*token = (*token)->next;
 	}
+	return (0);
 }
