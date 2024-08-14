@@ -6,12 +6,11 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 11:46:46 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 11:18:31 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 14:40:25 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdbool.h>
 
 int	is_equal(char *value)
 {
@@ -78,8 +77,10 @@ int	split_env(t_env **env)
 	current = *env;
 	while (current)
 	{
-		current->value = get_value_env(current->full_var);
-		current->key = get_key_env(current->full_var);
+		if (current->full_var)
+			current->value = get_value_env(current->full_var);
+		if (current->full_var)
+			current->key = get_key_env(current->full_var);
 		current = current->next;
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 11:23:43 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/09 12:59:30 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 14:43:02 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ char	**sort_env(char **tab, t_env *env)
 
 int	print_line(char *line, int fd)
 {
+	(void)line;
 	const char	*value = get_value_env(line);
 	const char	*name = get_key_env(line);
 
