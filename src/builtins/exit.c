@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/04 14:00:34 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/13 12:01:22 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 16:56:19 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	ft_exit(t_msh *msh, t_env **env)
 		return (ft_printf(2, "exit\n"), exit_code = (*env)->ex_code,
 			free_env(env), free_lst(msh), exit(exit_code), 0);
 	if (msh->cmd[1] && msh->cmd[2] != NULL)
-		return (ft_printf(2, "exit\nmsh: exit: too many arguments"), 1);
+		return (ft_printf(2, "exit\nmsh: exit: too many arguments\n"), 1);
 	exit_code = ft_atol(msh->cmd[1]);
 	ft_printf(1, "%d\n", exit_code);
 	return (ft_printf(2, "exit\n"), free_env(env), free_lst(msh),
