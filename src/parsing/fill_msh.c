@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:42:48 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/14 09:14:48 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 13:15:51 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,21 @@ void	fill_command(t_msh *msh, t_token **token)
 {
 	int	i;
 
+	if(msh->cmd)
+		free_tab(msh->cmd);
 	msh->cmd = ft_calloc(sizeof(char *), (count_words(*token) + 1));
 	if (!msh->cmd)
 		return ;
-	i = -1;
-	while (*token && (*token)->id == WORD && ((*token)->word))
+	i = 0;
+	while (*token && (*token)->id == WORD)
 	{
-		msh->cmd[++i] = ft_strdup((*token)->word);
+		if(msh->cmd[i])
+			free(msh->cmd[i]);
+		msh->cmd[i] = NULL;
+		msh->cmd[i] = ft_strdup((*token)->word);
 		*token = (*token)->next;
+		i++;
 	}
-	msh->cmd[++i] = NULL;
 }
 
 int	fill_smaller(t_msh *msh, t_token **token)
@@ -42,8 +47,13 @@ int	fill_smaller(t_msh *msh, t_token **token)
 	if (!*token)
 		return (set_excode(&msh->env, 2),
 			ft_printf(2, "msh: parsing error\n"), 1);
-	if ((*token)->id == WORD && (*token)->word && !msh->infile)
+	if ((*token)->id == WORD)
+	{
+		if (msh->infile)
+			free(msh->infile);
+		msh->infile = NULL;
 		msh->infile = ft_strdup((*token)->word);
+	}
 	else
 		return (set_excode(&msh->env, 2),
 			ft_printf(2, "msh: parsing error\n"), 1);
@@ -65,8 +75,13 @@ int	fill_bigger(t_msh *msh, t_token **token)
 	if (!*token)
 		return (set_excode(&msh->env, 2),
 			ft_printf(2, "msh: parsing error\n"), 1);
-	if ((*token)->id == WORD && (*token)->word && !msh->infile)
+	if ((*token)->id == WORD)
+	{
+		if (msh->outfile)
+			free(msh->outfile);
+		msh->outfile = NULL;
 		msh->outfile = ft_strdup((*token)->word);
+	}
 	else
 		return (set_excode(&msh->env, 2),
 			ft_printf(2, "msh: parsing error\n"), 1);
