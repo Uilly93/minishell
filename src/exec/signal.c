@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 09:10:45 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/10 13:00:03 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 14:05:03 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <signal.h>
 
 void	signal_handler(int sig, siginfo_t *info, void *context)
 {
@@ -59,6 +60,8 @@ void	exec_signal_handler(int sig, siginfo_t *info, void *context)
 		write(2, "Quit (core dumped)\n", 19);
 		rl_done = true;
 	}
+	if (sig == SIGINT)
+		g_last_sig = sig;
 }
 
 void	setup_exec_signals(void)

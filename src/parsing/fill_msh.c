@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 17:42:48 by tchalaou          #+#    #+#             */
-/*   Updated: 2024/08/14 13:15:51 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 14:13:03 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	fill_command(t_msh *msh, t_token **token)
 {
 	int	i;
 
-	if(msh->cmd)
+	if (msh->cmd)
 		free_tab(msh->cmd);
 	msh->cmd = ft_calloc(sizeof(char *), (count_words(*token) + 1));
 	if (!msh->cmd)
@@ -24,7 +24,7 @@ void	fill_command(t_msh *msh, t_token **token)
 	i = 0;
 	while (*token && (*token)->id == WORD)
 	{
-		if(msh->cmd[i])
+		if (msh->cmd[i])
 			free(msh->cmd[i]);
 		msh->cmd[i] = NULL;
 		msh->cmd[i] = ft_strdup((*token)->word);

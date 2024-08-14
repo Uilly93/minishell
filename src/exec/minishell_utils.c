@@ -6,11 +6,12 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:26:23 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/10 16:26:39 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 14:12:26 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <signal.h>
 
 t_msh	*ft_lastnode(t_msh *lst)
 {
