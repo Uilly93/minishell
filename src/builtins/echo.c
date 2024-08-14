@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 09:01:56 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/13 13:50:29 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/14 17:24:16 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	print_args(t_msh *msh, int i, bool new_line)
 	const int	fd = which_fd(msh);
 	int			j;
 
-	j = 1;
+	j = 0;
 	if (fd == -1)
 	{
 		perror("msh");
@@ -54,12 +54,14 @@ void	print_args(t_msh *msh, int i, bool new_line)
 	}
 	if (msh->cmd[i] == NULL)
 		return ;
-	while (msh->cmd[j++] && msh->cmd[i] != NULL)
+	while (msh->cmd[++j] && msh->cmd[i] != NULL)
 	{
-		if (msh->cmd[i + 1] == NULL)
-			ft_printf(fd, "%s", msh->cmd[i++]);
-		else
+		if (msh->cmd[i] && msh->cmd[i][0] == 0)
+			i++;
+		else if (msh->cmd[i + 1] != NULL && *msh->cmd[i + 1] != 0)
 			ft_printf(fd, "%s ", msh->cmd[i++]);
+		else
+			ft_printf(fd, "%s", msh->cmd[i++]);
 	}
 	if (new_line == true)
 		ft_printf(fd, "\n");
