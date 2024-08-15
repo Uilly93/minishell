@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 10:33:48 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/13 14:49:49 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 08:39:55 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ int	get_flags(t_msh *msh)
 		flags |= O_TRUNC;
 	return (flags);
 }
-
-//////////////////check_fd.c//////////////////////////
 
 int	close_files(t_msh *msh)
 {
