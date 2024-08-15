@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 09:48:36 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/14 16:05:29 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 15:32:27 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # define SMALLER 2
 # define BIGGER 3
 # define PIPE 4
+# define HEREDOC 5
 
 typedef struct s_env
 {
@@ -42,6 +43,7 @@ typedef struct s_token
 	char			*word;
 	t_env			*env;
 	struct s_token	*next;
+	struct s_token	*prev;
 }					t_token;
 
 typedef struct s_msh
@@ -94,6 +96,7 @@ int		env_len(t_env *env);
 int		update_env(t_env **env);
 int		ft_del_node(t_env **head, char *av);
 int		here_doc(t_msh *msh);
+char	*expand_variable(t_env **env, char *line);
 int		free_env(t_env **env);
 t_env	**env_into_list(char **envp);
 t_msh	*ft_lastnode(t_msh *lst);

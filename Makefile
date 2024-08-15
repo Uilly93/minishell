@@ -5,7 +5,8 @@ LIBFT = includes/libft/
 CFLAGS = -Wall -Wextra -Werror -g3 -Iincludes -Isrc -MMD
 
 SRCS = src/main.c \
-	src/exec/child.c src/exec/heredoc.c src/exec/signal.c \
+	src/exec/child.c src/exec/heredoc.c src/exec/heredoc_expand.c \
+	src/exec/signal.c \
 	src/exec/env_create.c src/exec/env_manage.c \
 	src/exec/exec.c src/exec/exec_utils.c src/exec/init_prompt.c \
 	src/exec/minishell_utils.c src/exec/minishell_loop.c \

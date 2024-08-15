@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:26:23 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/15 08:50:12 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 15:45:27 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	wait_pids(t_env **env)
 		if (WIFEXITED(status))
 			set_excode(env, WEXITSTATUS(status));
 		else
-		 	set_excode(env, 0);
+			set_excode(env, 0);
 	}
 }
 

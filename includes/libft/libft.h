@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 15:52:42 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/07/23 08:51:51 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 10:21:54 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,14 @@ int		ft_isalpha(int c);
 int		ft_isascii(int c);
 int		ft_isdigit(int c);
 int		ft_isprint(int c);
+int		ft_isspace(int c);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 void	*ft_memmove(void *dest, const void *src, size_t n);
 void	*ft_memset(void *s, int c, size_t n);
 char	*ft_strchr(const char *s, int c);
+char	*ft_strcat(char *dest, char *src);
 size_t	ft_strlcat(char *dest, const char *src, size_t size);
+char	*ft_strcpy(char *dest, char *src);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
 size_t	ft_strlen(const char *str);
 char	*ft_strrchr(const char *s, int c);
@@ -56,6 +59,7 @@ int		ft_strcmp(char *s1, char *s2);
 
 void	*ft_calloc(size_t nmemb, size_t size);
 char	*ft_strdup(const char *s);
+char	*ft_strndup(const char *s1, size_t n);
 
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
