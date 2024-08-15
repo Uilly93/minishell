@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 10:41:41 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/15 15:50:21 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 15:52:01 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ static char	*handle_variable_expansion(char *expanded, char *var_value)
 	char	*temp;
 
 	temp = expanded;
-	expanded = ft_calloc(ft_strlen(expanded) + ft_strlen(var_value) + 1,
-			sizeof(char));
+	expanded = ft_calloc(sizeof(char), ft_strlen(expanded)
+			+ ft_strlen(var_value) + 1);
 	if (!expanded)
 		return (NULL);
 	ft_strcpy(expanded, temp);
