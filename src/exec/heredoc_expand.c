@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 10:41:41 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/15 15:45:08 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 15:50:21 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*append_char(char *str, char c)
 	char	*new_str;
 
 	len = ft_strlen(str);
-	new_str = ft_calloc(len + 2, sizeof(char));
+	new_str = ft_calloc(sizeof(char), len + 2);
 	if (!new_str)
 		return (NULL);
 	ft_strcpy(new_str, str);
