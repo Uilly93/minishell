@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 10:41:41 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/15 15:52:01 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 17:40:42 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,16 @@ static char	*handle_expansion(t_env **env, char *expanded, char *line, int *i)
 	char	*var_value;
 	int		start;
 
+	if (line[*i + 1] == '?' && line[*i + 2] && ft_isspace(line[*i + 2]))
+	{
+		(*i) += 2;
+		var_value = ft_itoa((*env)->ex_code);
+		if (!var_value)
+			return (NULL);
+		expanded = handle_variable_expansion(expanded, var_value);
+		free(var_value);
+		return (expanded);
+	}
 	start = ++(*i);
 	while (line[*i] && (line[*i] == '_' || ft_isalnum(line[*i])))
 		(*i)++;
@@ -86,8 +96,8 @@ char	*expand_variable(t_env **env, char *line)
 	i = 0;
 	while (line[i])
 	{
-		if (line[i] == '$' && line[i + 1]
-			&& (line[i + 1] == '_' || ft_isalnum(line[i + 1])))
+		if (line[i] == '$' && line[i + 1] && (line[i + 1] == '_'
+				|| line[i + 1] == '?' || ft_isalnum(line[i + 1])))
 		{
 			expanded = handle_expansion(env, expanded, line, &i);
 			if (!expanded)
@@ -95,10 +105,9 @@ char	*expand_variable(t_env **env, char *line)
 		}
 		else
 		{
-			expanded = append_char(expanded, line[i]);
+			expanded = append_char(expanded, line[i++]);
 			if (!expanded)
 				return (NULL);
-			i++;
 		}
 	}
 	return (expanded);
