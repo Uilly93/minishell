@@ -6,7 +6,7 @@
 /*   By: wnocchi <wnocchi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/15 10:41:41 by wnocchi           #+#    #+#             */
-/*   Updated: 2024/08/15 17:40:42 by wnocchi          ###   ########.fr       */
+/*   Updated: 2024/08/15 18:03:33 by wnocchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static char	*handle_expansion(t_env **env, char *expanded, char *line, int *i)
 	char	*var_value;
 	int		start;
 
-	if (line[*i + 1] == '?' && line[*i + 2] && ft_isspace(line[*i + 2]))
+	if (line[*i + 1] == '?')
 	{
 		(*i) += 2;
 		var_value = ft_itoa((*env)->ex_code);
