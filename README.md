@@ -66,15 +66,5 @@ Cela génère un exécutable :
 
 ## 🔍 Exemple d’utilisation
 
-```bash
-$ ./minishell
-> echo "Hello World"
-Hello World
-> ls -l | grep minishell > output.txt
-> cat output.txt
--rwxr-xr-x  1 user  group  123456 Oct 18 12:34 minishell
-> export TEST=42
-> echo $TEST
-42
-> exit
-```
+<img width="693" height="347" alt="image" src="https://github.com/user-attachments/assets/f03c2736-a888-4ca4-8ccb-d758ae273ee4" />
+
